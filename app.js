@@ -12,6 +12,7 @@ app.use(cors());
 
 app.use("/youtube", require("./routes/youtube"));
 app.use("/twitter", require("./routes/twitter"));
+app.use("/storypickup", require("./routes/storypickup"));
 app.get("/ping", function (req, res) {
   res.send({
     status: "ok",

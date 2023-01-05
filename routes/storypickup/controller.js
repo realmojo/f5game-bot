@@ -24,7 +24,7 @@ const postStorypickup = async (req, res) => {
 
     return res.status(200).send(returnUrl);
   } catch (e) {
-    return res.stats(500).send("error");
+    return res.status(500).send("error");
   }
 };
 

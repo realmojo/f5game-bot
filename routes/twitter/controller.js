@@ -11,11 +11,10 @@ const getTwitterVideos = async (req, res) => {
     }
 
     const { url } = req.query;
-    const { data } = await axios.post(`${twitterServerURL}/videos`, {
-      url,
-    });
+    const { data } = await axios.get(`${twitterServerURL}/videos?url=${url}`);
     return res.status(200).send(data);
   } catch (e) {
+    console.log(e);
     return res.status(200).send("no data");
   }
 };

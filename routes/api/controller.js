@@ -1,5 +1,6 @@
-const fileS3Upload = async () => {
-  const { bucket, file } = req.body;
+const fileS3Upload = async (req, res) => {
+  console.log(req);
+  res.status(200).send("ok");
 };
 
 module.exports = {

@@ -10,6 +10,7 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(cors());
 
+app.use("/api", require("./routes/api"));
 app.use("/youtube", require("./routes/youtube"));
 app.use("/twitter", require("./routes/twitter"));
 app.use("/storypickup", require("./routes/storypickup"));

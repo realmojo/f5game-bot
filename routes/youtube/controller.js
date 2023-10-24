@@ -142,7 +142,7 @@ const getYoutubeDownloadInfo = async (req, res) => {
       const quality = item.qualityLabel?.replace(regex, "") || "";
 
       return {
-        value: `${item.url}&title=${json.videoDetails.title}`,
+        value: `${item.url}&title=${encodeURI(json.videoDetails.title)}`,
         label: `${
           item.qualityLabel ? item.qualityLabel : item.audioQuality
         } / ${type === "opus" ? "mp3" : type}`,

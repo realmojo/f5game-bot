@@ -100,6 +100,42 @@ const getYoutubeScript = async (req, res) => {
   }
 };
 
+const getYoutubeDownloadInfo = async (req, res) => {
+  const { url } = req.query;
+  console.log(url);
+  try {
+    if (!url) {
+      throw new Error("url required");
+    }
+    if (url.indexOf("youtube") === -1) {
+      throw new Error("Invalid url.");
+    }
+    const { data } = await axios.get(url);
+
+    const startIndex = data.indexOf("var ytInitialPlayerResponse") + 30;
+    const endIndex = data.indexOf('<div id="player"') - 10 - startIndex;
+
+    const filterString = data.substr(startIndex, endIndex);
+
+    const json = JSON.parse(filterString);
+    const info = {
+      title: json.videoDetails.title,
+      keywords: json.videoDetails.keywords,
+      second: json.videoDetails.lengthSeconds,
+      thumbnail:
+        json.videoDetails.thumbnail.thumbnails[
+          json.videoDetails.thumbnail.thumbnails.length - 1
+        ].url,
+      author: json.videoDetails.author,
+      url: json.streamingData,
+    };
+    return res.status(200).send(info);
+  } catch (e) {
+    return res.status(200).send({ status: "err", message: e.message });
+  }
+};
+
 module.exports = {
   getYoutubeScript,
+  getYoutubeDownloadInfo,
 };

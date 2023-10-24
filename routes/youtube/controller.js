@@ -146,7 +146,6 @@ const getYoutubeDownloadInfo = async (req, res) => {
           json.videoDetails.thumbnail.thumbnails.length - 1
         ].url,
       urls: filterStreamingData,
-      full: filterData,
     };
     return res.status(200).send(info);
   } catch (e) {

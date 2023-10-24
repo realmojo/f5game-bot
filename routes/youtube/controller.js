@@ -136,12 +136,19 @@ const getYoutubeDownloadInfo = async (req, res) => {
       filterAdaptiveStremingData
     );
 
+    const regex = /[^0-9]/g;
     const filterStreamingData = filterData.map((item) => {
+      const type = item.mimeType.indexOf("mp4") !== -1 ? "mp4" : "opus";
+      const quality = item.qualityLabel?.replace(regex, "") || "";
+
       return {
         value: item.url,
         label: `${
           item.qualityLabel ? item.qualityLabel : item.audioQuality
-        } / ${item.mimeType.indexOf("mp4") !== -1 ? "MP4" : "MP3"}`,
+        } / ${type === "opus" ? "mp3" : type}`,
+        type: type,
+        title: `${json.videoDetails.title}.${type}`,
+        quality: quality ? quality : "",
       };
     });
 

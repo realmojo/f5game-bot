@@ -118,16 +118,35 @@ const getYoutubeDownloadInfo = async (req, res) => {
     const filterString = data.substr(startIndex, endIndex);
 
     const json = JSON.parse(filterString);
+
+    const filterFormatStremingData = json.streamingData.formats.filter(
+      (item) => item.audioQuality
+    );
+    const filterAdaptiveStremingData =
+      json.streamingData.adaptiveFormats.filter((item) => item.audioQuality);
+
+    const filterData = filterFormatStremingData.concat(
+      filterAdaptiveStremingData
+    );
+
+    const filterStreamingData = filterData.map((item) => {
+      return {
+        url: item.url,
+        quality: item.quality,
+        audioQuality: item.audioQuality,
+        mimeType: item.mimeType.indexOf("mp4") !== -1 ? "MP4" : "MP3",
+      };
+    });
+
     const info = {
       title: json.videoDetails.title,
-      keywords: json.videoDetails.keywords,
       second: json.videoDetails.lengthSeconds,
       thumbnail:
         json.videoDetails.thumbnail.thumbnails[
           json.videoDetails.thumbnail.thumbnails.length - 1
         ].url,
-      author: json.videoDetails.author,
-      url: json.streamingData,
+      urls: filterStreamingData,
+      full: filterData,
     };
     return res.status(200).send(info);
   } catch (e) {

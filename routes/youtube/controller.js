@@ -114,7 +114,7 @@ const getYoutubeDownloadInfo = async (req, res) => {
     if (!url) {
       throw new Error("url required");
     }
-    if (url.indexOf("youtube") === -1) {
+    if (url.indexOf("youtube") === -1 || url.indexOf("youtu.be") === -1) {
       throw new Error("Invalid url.");
     }
     const { data } = await axios.get(url);

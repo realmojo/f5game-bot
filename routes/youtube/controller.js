@@ -104,13 +104,13 @@ const getYoutubeDownloadInfo = async (req, res) => {
   const { url } = req.query;
   console.log(url);
   try {
-    if (
-      req.headers.referer !== "https://ss.f5game.co.kr/" &&
-      req.headers.referer !== "http://127.0.0.1:5173/" &&
-      req.headers.referer !== "http://localhost:5173/"
-    ) {
-      return res.status(200).send({ message: "no hack" });
-    }
+    // if (
+    //   req.headers.referer !== "https://ss.f5game.co.kr/" &&
+    //   req.headers.referer !== "http://127.0.0.1:5173/" &&
+    //   req.headers.referer !== "http://localhost:5173/"
+    // ) {
+    //   return res.status(200).send({ message: "no hack" });
+    // }
     if (!url) {
       throw new Error("url required");
     }
@@ -139,9 +139,11 @@ const getYoutubeDownloadInfo = async (req, res) => {
     const filterStreamingData = filterData.map((item) => {
       return {
         value: item.url,
-        label: `${item.quality} / ${
-          item.mimeType.indexOf("mp4") !== -1 ? "MP4" : "MP3"
-        }`,
+        label: `${
+          item.qualityLabel
+            ? item.qualityLabel.toUpperCase()
+            : item.audioQuality
+        } / ${item.mimeType.indexOf("mp4") !== -1 ? "MP4" : "MP3"}`,
       };
     });
 

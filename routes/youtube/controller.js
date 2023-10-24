@@ -138,10 +138,10 @@ const getYoutubeDownloadInfo = async (req, res) => {
 
     const filterStreamingData = filterData.map((item) => {
       return {
-        url: item.url,
-        quality: item.quality,
-        audioQuality: item.audioQuality,
-        mimeType: item.mimeType.indexOf("mp4") !== -1 ? "MP4" : "MP3",
+        value: item.url,
+        label: `${item.quality} / ${
+          item.mimeType.indexOf("mp4") !== -1 ? "MP4" : "MP3"
+        }`,
       };
     });
 

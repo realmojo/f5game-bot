@@ -140,9 +140,7 @@ const getYoutubeDownloadInfo = async (req, res) => {
       return {
         value: item.url,
         label: `${
-          item.qualityLabel
-            ? item.qualityLabel.toUpperCase()
-            : item.audioQuality
+          item.qualityLabel ? item.qualityLabel : item.audioQuality
         } / ${item.mimeType.indexOf("mp4") !== -1 ? "MP4" : "MP3"}`,
       };
     });

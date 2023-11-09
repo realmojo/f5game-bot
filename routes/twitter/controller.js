@@ -38,9 +38,7 @@ const getTwitterTrends = async (req, res) => {
 
     const f = [];
     for (const item of d) {
-      f.push({
-        name: item.item.content.trend.name,
-      });
+      f.push(item.item.content.trend.name);
     }
 
     return res.status(200).send(f);

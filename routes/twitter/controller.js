@@ -38,7 +38,14 @@ const getTwitterTrends = async (req, res) => {
 
     const f = [];
     for (const item of d) {
-      f.push(item.item.content.trend.name);
+      let name = item.item.content.trend.name.replace("#", "");
+      name = name.replace("_", "");
+      name = name.replace("_", "");
+      name = name.replace("_", "");
+      name = name.replace(" ", "");
+      name = name.replace(" ", "");
+      name = name.replace(" ", "");
+      f.push(name);
     }
 
     return res.status(200).send(f);

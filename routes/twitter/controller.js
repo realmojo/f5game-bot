@@ -6,7 +6,8 @@ const getTwitterVideos = async (req, res) => {
     const { twitterUrl } = req.query;
     if (
       req.headers.referer !== "https://twitterdownload.f5game.co.kr/" &&
-      req.headers.referer !== "http://127.0.0.1:5173/"
+      req.headers.referer !== "http://127.0.0.1:5173/" &&
+      req.headers.referer !== "http://localhost:5173/"
     ) {
       return res.status(200).send({ message: "no hack" });
     }

@@ -1,6 +1,4 @@
 const axios = require("axios");
-const twitterServerURL = "http://115.85.182.17";
-
 const getTwitterVideos = async (req, res) => {
   try {
     const { twitterUrl } = req.query;
@@ -30,8 +28,23 @@ const getTwitterVideos = async (req, res) => {
       data.data.threaded_conversation_with_injections_v2.instructions[0]
         .entries[0].content.itemContent.tweet_results.result.legacy.entities
         .media[0].video_info.variants;
+    const content =
+      data.data.threaded_conversation_with_injections_v2.instructions[0]
+        .entries[0].content.itemContent.tweet_results.result.legacy.full_text;
     const filter = a.filter((item) => item.bitrate);
-    return res.status(200).send(filter);
+
+    const thumbnail =
+      data.data.threaded_conversation_with_injections_v2.instructions[0]
+        .entries[0].content.itemContent.tweet_results.result.legacy
+        .extended_entities.media[0].media_url_https;
+
+    const t = {
+      content,
+      thumbnail,
+      videoItems: filter,
+    };
+
+    return res.status(200).send(t);
   } catch (e) {
     console.log(e);
     return res.status(200).send("no data");

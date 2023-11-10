@@ -3,6 +3,7 @@ const twitterServerURL = "http://115.85.182.17";
 
 const getTwitterVideos = async (req, res) => {
   try {
+    const { twitterUrl } = req.query;
     if (
       req.headers.referer !== "https://twitterdownload.f5game.co.kr/" &&
       req.headers.referer !== "http://127.0.0.1:5173/"
@@ -10,9 +11,26 @@ const getTwitterVideos = async (req, res) => {
       return res.status(200).send({ message: "no hack" });
     }
 
-    const { url } = req.query;
-    const { data } = await axios.get(`${twitterServerURL}/videos?url=${url}`);
-    return res.status(200).send(data);
+    const f = twitterUrl.split("/");
+    const tweetId = f[f.length - 1];
+
+    const url = `https://twitter.com/i/api/graphql/BbmLpxKh8rX8LNe2LhVujA/TweetDetail?variables=%7B%22focalTweetId%22%3A%22${tweetId}%22%2C%22with_rux_injections%22%3Afalse%2C%22includePromotedContent%22%3Atrue%2C%22withCommunity%22%3Atrue%2C%22withQuickPromoteEligibilityTweetFields%22%3Atrue%2C%22withBirdwatchNotes%22%3Atrue%2C%22withVoice%22%3Atrue%2C%22withV2Timeline%22%3Atrue%7D&features=%7B%22responsive_web_graphql_exclude_directive_enabled%22%3Atrue%2C%22verified_phone_label_enabled%22%3Afalse%2C%22responsive_web_home_pinned_timelines_enabled%22%3Atrue%2C%22creator_subscriptions_tweet_preview_api_enabled%22%3Atrue%2C%22responsive_web_graphql_timeline_navigation_enabled%22%3Atrue%2C%22responsive_web_graphql_skip_user_profile_image_extensions_enabled%22%3Afalse%2C%22c9s_tweet_anatomy_moderator_badge_enabled%22%3Atrue%2C%22tweetypie_unmention_optimization_enabled%22%3Atrue%2C%22responsive_web_edit_tweet_api_enabled%22%3Atrue%2C%22graphql_is_translatable_rweb_tweet_is_translatable_enabled%22%3Atrue%2C%22view_counts_everywhere_api_enabled%22%3Atrue%2C%22longform_notetweets_consumption_enabled%22%3Atrue%2C%22responsive_web_twitter_article_tweet_consumption_enabled%22%3Afalse%2C%22tweet_awards_web_tipping_enabled%22%3Afalse%2C%22freedom_of_speech_not_reach_fetch_enabled%22%3Atrue%2C%22standardized_nudges_misinfo%22%3Atrue%2C%22tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled%22%3Atrue%2C%22longform_notetweets_rich_text_read_enabled%22%3Atrue%2C%22longform_notetweets_inline_media_enabled%22%3Atrue%2C%22responsive_web_media_download_video_enabled%22%3Afalse%2C%22responsive_web_enhance_cards_enabled%22%3Afalse%7D&fieldToggles=%7B%22withArticleRichContentState%22%3Afalse%7D`;
+
+    const { data } = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA`,
+        "X-Csrf-Token":
+          "edaca42391b50c201c2cd879b2a0dbf7a448e0dbc22b60d54749af5539f97016eeaa16605321fb8b6a7ca7c1201cd5fafe391f9e4ad535421fe3d87db59e5604a2e2ba590950d27f45ef083776541ba0",
+        Cookie:
+          'guest_id=v1%3A167158975189415270; auth_token=22a34bbb7d986487072a6db3bd24a51562c742be; twid=u%3D1486249437466750977; guest_id_marketing=v1%3A167158975189415270; guest_id_ads=v1%3A167158975189415270; ct0=edaca42391b50c201c2cd879b2a0dbf7a448e0dbc22b60d54749af5539f97016eeaa16605321fb8b6a7ca7c1201cd5fafe391f9e4ad535421fe3d87db59e5604a2e2ba590950d27f45ef083776541ba0; _ga=GA1.2.566592255.1691995485; lang=ko; external_referer=padhuUp37zjgzgv1mFWxJ12Ozwit7owX|0|8e8t2xd8A2w%3D; _gid=GA1.2.1890311150.1699575784; personalization_id="v1_2jTNbFUL0z9s7Wdn8JmiSA=="',
+      },
+    });
+    const a =
+      data.data.threaded_conversation_with_injections_v2.instructions[0]
+        .entries[0].content.itemContent.tweet_results.result.legacy.entities
+        .media[0].video_info.variants;
+    const filter = a.filter((item) => item.bitrate);
+    return res.status(200).send(filter);
   } catch (e) {
     console.log(e);
     return res.status(200).send("no data");

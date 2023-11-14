@@ -66,7 +66,9 @@ const getYoutubeScript = async (req, res) => {
   try {
     if (
       req.headers.referer !== "https://ytsubdownload.f5game.co.kr/" &&
-      req.headers.referer !== "http://127.0.0.1:5173/"
+      req.headers.referer !== "http://127.0.0.1:5173/" &&
+      req.headers.referer !== "http://localhost:5173/" &&
+      req.headers.referer !== "http://localhost:3000/"
     ) {
       return res.status(200).send({ message: "no hack" });
     }
@@ -107,7 +109,8 @@ const getYoutubeDownloadInfo = async (req, res) => {
     if (
       req.headers.referer !== "https://ss.f5game.co.kr/" &&
       req.headers.referer !== "http://127.0.0.1:5173/" &&
-      req.headers.referer !== "http://localhost:5173/"
+      req.headers.referer !== "http://localhost:5173/" &&
+      req.headers.referer !== "http://localhost:3000/"
     ) {
       return res.status(200).send({ message: "no hack" });
     }

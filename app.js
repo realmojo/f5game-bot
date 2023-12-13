@@ -14,6 +14,7 @@ app.use("/api", require("./routes/api"));
 app.use("/youtube", require("./routes/youtube"));
 app.use("/twitter", require("./routes/twitter"));
 app.use("/storypickup", require("./routes/storypickup"));
+app.use("/mindpang", require("./routes/mindpang"));
 app.get("/ping", function (req, res) {
   res.send({
     status: "ok",

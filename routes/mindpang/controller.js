@@ -9,10 +9,7 @@ const doUploadS3 = async (req, res) => {
         idx,
         logo: location,
       };
-      await axios.post(
-        "https://mindpang.f5game.co.kr/api/test/update/logo/",
-        param
-      );
+      await axios.post("https://api.mindpang.com/api/test/update/logo/", param);
       res.status(200).send(location);
     }
   } catch (e) {

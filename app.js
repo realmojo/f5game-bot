@@ -15,6 +15,7 @@ app.use("/youtube", require("./routes/youtube"));
 app.use("/twitter", require("./routes/twitter"));
 app.use("/storypickup", require("./routes/storypickup"));
 app.use("/mindpang", require("./routes/mindpang"));
+app.use("/downsoft", require("./routes/downsoft"));
 app.use("/wp", require("./routes/wp"));
 app.get("/ping", function (req, res) {
   res.send({

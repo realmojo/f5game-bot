@@ -11,10 +11,11 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(cors());
 
 app.use("/api", require("./routes/api"));
-app.use("/youtube", require("./routes/youtube"));
-app.use("/twitter", require("./routes/twitter"));
-app.use("/storypickup", require("./routes/storypickup"));
+app.use("/downsoft", require("./routes/downsoft"));
 app.use("/mindpang", require("./routes/mindpang"));
+app.use("/storypickup", require("./routes/storypickup"));
+app.use("/twitter", require("./routes/twitter"));
+app.use("/youtube", require("./routes/youtube"));
 app.use("/wp", require("./routes/wp"));
 app.get("/ping", function (req, res) {
   res.send({

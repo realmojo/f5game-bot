@@ -33,8 +33,8 @@ const gptSend = async (word, type = "description") => {
 };
 
 const parseContents = (contents) => {
+  contents = replaceAll(contents, "####", "");
   const split = contents.split("###");
-  console.log(split.length);
 
   let ctitle1 = "";
   let ctitle2 = "";
@@ -49,7 +49,6 @@ const parseContents = (contents) => {
   let c3 = "";
   let c4 = "";
   for (const item of split) {
-    //   console.log(item);
     if (!item) {
       continue;
     }
@@ -162,8 +161,11 @@ const addContents = async (req, res) => {
   try {
     const params = req.body;
 
-    let resd = "";
-    if (params.title) {
+    const r = await axios.get(
+      `https://api.getsoftbox.com/api/getItem.php?slug=${params.slug}`
+    );
+
+    if (r.data === "no" && params.title) {
       const r1 = await gptSend(params.title, "description");
       console.log(r1.choices[0].message.content);
       const r2 = await gptSend(params.title, "contents");
@@ -181,27 +183,33 @@ const addContents = async (req, res) => {
         cdescription4,
       } = parseContents(r2.choices[0].message.content);
 
-      params.ctitle1 = ctitle1;
-      params.ctitle2 = ctitle2;
-      params.ctitle3 = ctitle3;
-      params.ctitle4 = ctitle4;
-      params.cdescription1 = cdescription1;
-      params.cdescription2 = cdescription2;
-      params.cdescription3 = cdescription3;
-      params.cdescription4 = cdescription4;
+      params.ctitle1 = replaceAll(ctitle1, "'", "");
+      params.ctitle2 = replaceAll(ctitle2, "'", "");
+      params.ctitle3 = replaceAll(ctitle3, "'", "");
+      params.ctitle4 = replaceAll(ctitle4, "'", "");
+      params.cdescription1 = replaceAll(cdescription1, "'", "");
+      params.cdescription2 = replaceAll(cdescription2, "'", "");
+      params.cdescription3 = replaceAll(cdescription3, "'", "");
+      params.cdescription4 = replaceAll(cdescription4, "'", "");
 
-      console.log(params);
-      resd = await axios.post(
+      const { data } = await axios.post(
         "https://api.getsoftbox.com/api/addItem.php",
-        params
+        params,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
+      return res.status(200).send({ status: "ok", result: data });
+    } else {
+      return res
+        .status(200)
+        .send({ status: "ok", message: "이미 등록되어 있습니다." });
     }
-
-    return res.status(200).send({ status: "ok", result: resd });
-    // return res.status(200).send({ status: "ok" });
   } catch (e) {
     console.log(e);
-    return res.status(200).send("no data");
+    return res.status(200).send({ status: "error", message: e.message });
   }
 };
 

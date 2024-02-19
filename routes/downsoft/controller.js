@@ -2,9 +2,13 @@ const axios = require("axios");
 const request = require("request");
 const fs = require("fs");
 
-const fileS3Upload = async (req, res) => {
-  console.log(req);
-  res.status(200).send("ok");
+const doUploadS3 = async (req, res) => {
+  try {
+    const { location } = req.file;
+    return res.status(200).send(location);
+  } catch (e) {
+    return res.status(500).send(e);
+  }
 };
 
 const replaceAll = (str, searchStr, replaceStr) => {
@@ -246,5 +250,5 @@ const addContents = async (req, res) => {
 module.exports = {
   getContents,
   addContents,
-  fileS3Upload,
+  doUploadS3,
 };

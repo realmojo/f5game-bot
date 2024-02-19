@@ -1,7 +1,22 @@
 const axios = require("axios");
+const request = require("request");
+const fs = require("fs");
+const watermark = require("jimp-watermark");
+const jimp = require("jimp");
 
 const replaceAll = (str, searchStr, replaceStr) => {
   return str.split(searchStr).join(replaceStr);
+};
+
+const download = async (uri, filename) => {
+  const requestOptions = {
+    method: "get",
+    uri,
+    headers: { "User-Agent": "Mozilla/5.0" },
+    endocing: null,
+  };
+
+  await request(requestOptions).pipe(fs.createWriteStream(filename));
 };
 
 const gptSend = async (word, type = "description") => {
@@ -161,47 +176,64 @@ const addContents = async (req, res) => {
   try {
     const params = req.body;
 
+    console.log(params);
+
     const r = await axios.get(
       `https://api.getsoftbox.com/api/getItem.php?slug=${params.slug}`
     );
+    console.log("이미지 다운로드");
+    console.log(1);
+    await download(params.logo, `images/${params.slug}.${params.ext}`, () => {
+      // console.log(`${params.slug}.png done`);
+    });
+    // watermark.addWatermark(
+    //   `images/${params.slug}.${params.ext}`,
+    //   `images/logo-new.${params.ext}`
+    // );
+    // console.log(2);
 
     if (r.data === "no" && params.title) {
-      const r1 = await gptSend(params.title, "description");
-      console.log(r1.choices[0].message.content);
-      const r2 = await gptSend(params.title, "contents");
-      console.log(r2.choices[0].message.content);
+      // 이미지 다운로드
 
-      params.description = r1.choices[0].message.content;
-      const {
-        ctitle1,
-        ctitle2,
-        ctitle3,
-        ctitle4,
-        cdescription1,
-        cdescription2,
-        cdescription3,
-        cdescription4,
-      } = parseContents(r2.choices[0].message.content);
+      // const r1 = await gptSend(params.title, "description");
+      // console.log(r1.choices[0].message.content);
+      // const r2 = await gptSend(params.title, "contents");
+      // console.log(r2.choices[0].message.content);
 
-      params.ctitle1 = replaceAll(ctitle1, "'", "");
-      params.ctitle2 = replaceAll(ctitle2, "'", "");
-      params.ctitle3 = replaceAll(ctitle3, "'", "");
-      params.ctitle4 = replaceAll(ctitle4, "'", "");
-      params.cdescription1 = replaceAll(cdescription1, "'", "");
-      params.cdescription2 = replaceAll(cdescription2, "'", "");
-      params.cdescription3 = replaceAll(cdescription3, "'", "");
-      params.cdescription4 = replaceAll(cdescription4, "'", "");
+      // params.description = r1.choices[0].message.content;
+      // const {
+      //   ctitle1,
+      //   ctitle2,
+      //   ctitle3,
+      //   ctitle4,
+      //   cdescription1,
+      //   cdescription2,
+      //   cdescription3,
+      //   cdescription4,
+      // } = parseContents(r2.choices[0].message.content);
 
-      const { data } = await axios.post(
-        "https://api.getsoftbox.com/api/addItem.php",
-        params,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      return res.status(200).send({ status: "ok", result: data });
+      // params.ctitle1 = replaceAll(ctitle1, "'", "");
+      // params.ctitle2 = replaceAll(ctitle2, "'", "");
+      // params.ctitle3 = replaceAll(ctitle3, "'", "");
+      // params.ctitle4 = replaceAll(ctitle4, "'", "");
+      // params.cdescription1 = replaceAll(cdescription1, "'", "");
+      // params.cdescription2 = replaceAll(cdescription2, "'", "");
+      // params.cdescription3 = replaceAll(cdescription3, "'", "");
+      // params.cdescription4 = replaceAll(cdescription4, "'", "");
+
+      console.log(params);
+
+      // const { data } = await axios.post(
+      //   "https://api.getsoftbox.com/api/addItem.php",
+      //   params,
+      //   {
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //   }
+      // );
+      // return res.status(200).send({ status: "ok", result: data });
+      return res.status(200).send({ status: "ok" });
     } else {
       return res
         .status(200)

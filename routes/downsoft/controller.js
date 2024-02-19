@@ -1,6 +1,16 @@
 const axios = require("axios");
 const request = require("request");
 const fs = require("fs");
+const aws = require("aws-sdk");
+const shortid = require("shortid");
+const promisify = require("util").promisify;
+
+const readFile = promisify(fs.readFile);
+const s3 = new aws.S3({
+  accessKeyId: process.env.ACCESS_KEY,
+  secretAccessKey: process.env.ACCESS_SECRET_KEY,
+  region: "ap-northeast-2",
+});
 
 const doUploadS3 = async (req, res) => {
   try {
@@ -15,15 +25,18 @@ const replaceAll = (str, searchStr, replaceStr) => {
   return str.split(searchStr).join(replaceStr);
 };
 
-const download = async (uri, filename) => {
-  const requestOptions = {
-    method: "get",
-    uri,
-    headers: { "User-Agent": "Mozilla/5.0" },
-    endocing: null,
-  };
+const download = (uri, filename) => {
+  return new Promise((resolve) => {
+    const requestOptions = {
+      method: "get",
+      uri,
+      headers: { "User-Agent": "Mozilla/5.0" },
+      endocing: null,
+    };
 
-  await request(requestOptions).pipe(fs.createWriteStream(filename));
+    request(requestOptions).pipe(fs.createWriteStream(filename));
+    resolve(1);
+  });
 };
 
 const gptSend = async (word, type = "description") => {
@@ -179,6 +192,19 @@ const getContents = async (req, res) => {
   }
 };
 
+const s3upload = (data, slug, ext, logo) => {
+  return s3
+    .upload({
+      Bucket: "downsoft",
+      Body: data,
+      Key: logo,
+      ContentType: `image/${ext}`,
+      ACL: "public-read",
+      CacheControl: "max-age=0",
+    })
+    .promise();
+};
+
 const addContents = async (req, res) => {
   try {
     const params = req.body;
@@ -189,58 +215,64 @@ const addContents = async (req, res) => {
       `https://api.getsoftbox.com/api/getItem.php?slug=${params.slug}`
     );
     console.log("이미지 다운로드");
-    console.log(1);
-    await download(params.logo, `images/${params.slug}.${params.ext}`, () => {
-      console.log(`${params.slug}.png done`);
+    const localImageUrl = `images/${params.slug}.${params.ext}`;
+    download(params.logo, localImageUrl, () => {
+      console.log(`${localImageUrl} done`);
     });
+    setTimeout(async () => {
+      const imageInfo = await readFile(localImageUrl);
 
-    if (r.data === "no" && params.title) {
-      // 이미지 다운로드
+      const logo = `images/${params.slug}/${shortid()}.${params.ext}`;
+      if (imageInfo) {
+        s3upload(imageInfo, params.slug, params.ext, logo);
+      }
 
-      // const r1 = await gptSend(params.title, "description");
-      // console.log(r1.choices[0].message.content);
-      // const r2 = await gptSend(params.title, "contents");
-      // console.log(r2.choices[0].message.content);
+      if (r.data === "no" && params.title) {
+        const r1 = await gptSend(params.title, "description");
+        console.log(r1.choices[0].message.content);
+        const r2 = await gptSend(params.title, "contents");
+        console.log(r2.choices[0].message.content);
 
-      // params.description = r1.choices[0].message.content;
-      // const {
-      //   ctitle1,
-      //   ctitle2,
-      //   ctitle3,
-      //   ctitle4,
-      //   cdescription1,
-      //   cdescription2,
-      //   cdescription3,
-      //   cdescription4,
-      // } = parseContents(r2.choices[0].message.content);
+        params.description = r1.choices[0].message.content;
+        const {
+          ctitle1,
+          ctitle2,
+          ctitle3,
+          ctitle4,
+          cdescription1,
+          cdescription2,
+          cdescription3,
+          cdescription4,
+        } = parseContents(r2.choices[0].message.content);
 
-      // params.ctitle1 = replaceAll(ctitle1, "'", "");
-      // params.ctitle2 = replaceAll(ctitle2, "'", "");
-      // params.ctitle3 = replaceAll(ctitle3, "'", "");
-      // params.ctitle4 = replaceAll(ctitle4, "'", "");
-      // params.cdescription1 = replaceAll(cdescription1, "'", "");
-      // params.cdescription2 = replaceAll(cdescription2, "'", "");
-      // params.cdescription3 = replaceAll(cdescription3, "'", "");
-      // params.cdescription4 = replaceAll(cdescription4, "'", "");
+        params.ctitle1 = replaceAll(ctitle1, "'", "");
+        params.ctitle2 = replaceAll(ctitle2, "'", "");
+        params.ctitle3 = replaceAll(ctitle3, "'", "");
+        params.ctitle4 = replaceAll(ctitle4, "'", "");
+        params.cdescription1 = replaceAll(cdescription1, "'", "");
+        params.cdescription2 = replaceAll(cdescription2, "'", "");
+        params.cdescription3 = replaceAll(cdescription3, "'", "");
+        params.cdescription4 = replaceAll(cdescription4, "'", "");
+        params.logo = `https://downsoft.s3.ap-northeast-2.amazonaws.com/${logo}`;
 
-      // console.log(params);
+        console.log(params);
 
-      // const { data } = await axios.post(
-      //   "https://api.getsoftbox.com/api/addItem.php",
-      //   params,
-      //   {
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //   }
-      // );
-      // return res.status(200).send({ status: "ok", result: data });
-      return res.status(200).send({ status: "ok" });
-    } else {
-      return res
-        .status(200)
-        .send({ status: "ok", message: "이미 등록되어 있습니다." });
-    }
+        const { data } = await axios.post(
+          "https://api.getsoftbox.com/api/addItem.php",
+          params,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        return res.status(200).send({ status: "ok", result: data });
+      } else {
+        return res
+          .status(200)
+          .send({ status: "ok", message: "이미 등록되어 있습니다." });
+      }
+    }, 2000);
   } catch (e) {
     console.log(e);
     return res.status(200).send({ status: "error", message: e.message });

@@ -107,7 +107,7 @@ const getYoutubeScript = async (req, res) => {
 
 const getYoutubeDownloadInfo = async (req, res) => {
   const { url } = req.query;
-  console.log(url);
+  console.log(req.headers.referer, url);
   try {
     if (
       req.headers.referer !== "https://ss.f5game.co.kr/" &&
@@ -116,6 +116,7 @@ const getYoutubeDownloadInfo = async (req, res) => {
       req.headers.referer !== "http://127.0.0.1:5173/" &&
       req.headers.referer !== "http://localhost:5173/" &&
       req.headers.referer !== "http://localhost:8000/" &&
+      req.headers.referer !== "http://localhost:3001/" &&
       req.headers.referer !== "http://localhost:3000/"
     ) {
       return res.status(200).send({ message: "no hack" });

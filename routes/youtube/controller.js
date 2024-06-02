@@ -174,7 +174,9 @@ const getYoutubeDownloadInfo = async (req, res) => {
     };
     return res.status(200).send(info);
   } catch (e) {
-    return res.status(200).send({ status: "err", message: e.message });
+    return res
+      .status(200)
+      .send({ status: "err", message: e.message, url: url, json: json });
   }
 };
 

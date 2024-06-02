@@ -49,11 +49,13 @@ const getYoutubeTransScriptItems = (obj) => {
   const items = [];
   let full = "";
   for (const item of scriptItems) {
-    items.push({
-      time: item.transcriptSegmentRenderer.startTimeText.simpleText,
-      text: item.transcriptSegmentRenderer.snippet.runs[0].text,
-    });
-    full += `${item.transcriptSegmentRenderer.snippet.runs[0].text} `;
+    if (item.transcriptSegmentRenderer) {
+      items.push({
+        time: item.transcriptSegmentRenderer.startTimeText.simpleText,
+        text: item.transcriptSegmentRenderer.snippet.runs[0].text,
+      });
+      full += `${item.transcriptSegmentRenderer.snippet.runs[0].text} `;
+    }
   }
   return { items, full };
 };
@@ -71,7 +73,8 @@ const getYoutubeScript = async (req, res) => {
       req.headers.referer !== "http://127.0.0.1:5173/" &&
       req.headers.referer !== "http://localhost:5173/" &&
       req.headers.referer !== "http://localhost:8000/" &&
-      req.headers.referer !== "http://localhost:3000/"
+      req.headers.referer !== "http://localhost:3000/" &&
+      req.headers.referer !== "http://localhost:3001/"
     ) {
       return res.status(200).send({ message: "no hack" });
     }
@@ -96,7 +99,6 @@ const getYoutubeScript = async (req, res) => {
       params,
     };
     const response = await axios.post(getYoutubeTransUrl(key), data);
-
     const scriptItems = getYoutubeTransScriptItems(response.data);
 
     return res.status(200).send({ ...scriptItems, title, thumbnail });
@@ -107,7 +109,6 @@ const getYoutubeScript = async (req, res) => {
 
 const getYoutubeDownloadInfo = async (req, res) => {
   const { url } = req.query;
-  console.log(url);
   try {
     if (
       req.headers.referer !== "https://ss.f5game.co.kr/" &&

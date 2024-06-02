@@ -117,6 +117,7 @@ const getYoutubeDownloadInfo = async (req, res) => {
       req.headers.referer !== "http://127.0.0.1:5173/" &&
       req.headers.referer !== "http://localhost:5173/" &&
       req.headers.referer !== "http://localhost:8000/" &&
+      req.headers.referer !== "http://localhost:3001/" &&
       req.headers.referer !== "http://localhost:3000/"
     ) {
       return res.status(200).send({ message: "no hack" });

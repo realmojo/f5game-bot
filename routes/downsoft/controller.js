@@ -69,7 +69,11 @@ const gptSend = async (word, type = "description") => {
 
 const parseContents = (contents) => {
   contents = replaceAll(contents, "####", "");
-  const split = contents.split("###");
+  let split = contents.split("###");
+
+  if (split.length === 1) {
+    split = contents.split("#");
+  }
 
   let ctitle1 = "";
   let ctitle2 = "";

@@ -1,4 +1,6 @@
 const axios = require("axios");
+const ytdl = require("ytdl-core");
+const { convertSecondsToMMSS } = require("../../utils/util");
 
 const getInfo = (html) => {
   const startOf = html.indexOf("<title>");
@@ -128,59 +130,98 @@ const getYoutubeDownloadInfo = async (req, res) => {
     if (url.indexOf("youtube") === -1 && url.indexOf("youtu.be") === -1) {
       throw new Error("Invalid url.");
     }
-    const { data } = await axios.get(url);
 
-    const startIndex = data.indexOf("var ytInitialPlayerResponse") + 30;
-    const endIndex = data.indexOf('<div id="player"') - 10 - startIndex;
+    let id = "";
 
-    const filterString = data.substr(startIndex, endIndex);
+    if (url.indexOf("shorts") !== -1) {
+      const split = url.split("?");
+      const t = split[0].split("/");
+      id = t[t.length - 1];
+    } else {
+      const split = url.split("v=");
+      id = split.length === 2 ? split[1] : "";
+    }
 
-    const json = JSON.parse(filterString);
-
-    const filterFormatStremingData = json.streamingData.formats.filter(
-      (item) => item.audioQuality
-    );
-    const filterAdaptiveStremingData =
-      json.streamingData.adaptiveFormats.filter((item) => item.audioQuality);
-
-    const filterData = filterFormatStremingData.concat(
-      filterAdaptiveStremingData
-    );
+    const { formats, related_videos, videoDetails } = await ytdl.getInfo(id);
 
     const regex = /[^0-9]/g;
-    const filterStreamingData = filterData.map((item) => {
-      const type = item.mimeType.indexOf("mp4") !== -1 ? "mp4" : "opus";
-      const quality = item.qualityLabel?.replace(regex, "") || "";
-
-      return {
-        value: `${item.url}&title=${encodeURI(json.videoDetails.title)}`,
-        label: `${
-          item.qualityLabel ? item.qualityLabel : item.audioQuality
-        } / ${type === "opus" ? "mp3" : type}`,
-        type: type,
-        title: `${json.videoDetails.title}.${type}`,
-        quality: quality ? quality : "",
-      };
+    const urls = [];
+    formats.map((item) => {
+      let type = "";
+      if (item.hasAudio && item.hasVideo) {
+        type = "Video";
+      } else if (item.hasAudio && !item.hasVideo) {
+        type = "Audio";
+      }
+      if (type) {
+        let label = "";
+        if (type === "Video") {
+          label = `${type} / ${
+            item.qualityLabel ? item.qualityLabel : item.audioQuality
+          } / ${item.bitrate / 1000}Kbps`;
+        } else {
+          label = `${type} / ${item.bitrate / 1000}Kbps`;
+        }
+        urls.push({
+          value: `${item.url}&title=${encodeURI(videoDetails.title)}`,
+          label: label,
+          type: item.container,
+          title: `${videoDetails.title}.${type}`,
+        });
+      }
     });
 
     const info = {
-      title: json.videoDetails.title,
-      second: json.videoDetails.lengthSeconds,
+      title: videoDetails.title,
+      description: videoDetails.description,
+      second: convertSecondsToMMSS(videoDetails.lengthSeconds),
+      keyword: videoDetails.keywords,
       thumbnail:
-        json.videoDetails.thumbnail.thumbnails[
-          json.videoDetails.thumbnail.thumbnails.length - 1
-        ].url,
-      urls: filterStreamingData,
+        videoDetails.thumbnails[videoDetails.thumbnails.length - 1].url,
+      urls: urls,
+      related_videos,
     };
     return res.status(200).send(info);
   } catch (e) {
     return res
       .status(200)
-      .send({ status: "err", message: e.message, url: url, json: json });
+      .send({ status: "err", message: e.message, url: url });
+  }
+};
+
+const getYoutubeJson = async (req, res) => {
+  const { url } = req.query;
+  try {
+    if (!url) {
+      throw new Error("url required");
+    }
+    if (url.indexOf("youtube") === -1 && url.indexOf("youtu.be") === -1) {
+      throw new Error("Invalid url.");
+    }
+
+    let id = "";
+
+    if (url.indexOf("shorts") !== -1) {
+      const split = url.split("?");
+      const t = split[0].split("/");
+      id = t[t.length - 1];
+    } else {
+      const split = url.split("v=");
+      id = split.length === 2 ? split[1] : "";
+    }
+
+    const { formats, related_videos, videoDetails } = await ytdl.getInfo(id);
+
+    return res.status(200).send(formats, related_videos, videoDetails);
+  } catch (e) {
+    return res
+      .status(200)
+      .send({ status: "err", message: e.message, url: url });
   }
 };
 
 module.exports = {
   getYoutubeScript,
   getYoutubeDownloadInfo,
+  getYoutubeJson,
 };

@@ -85,7 +85,20 @@ const getYoutubeScript = async (req, res) => {
     if (!url) {
       throw new Error("error");
     }
-    const ytRes = await axios.get(url);
+
+    let id = "";
+
+    if (url.indexOf("shorts") !== -1 || url.indexOf("youtu.be") !== -1) {
+      const split = url.split("?");
+      const t = split[0].split("/");
+      id = t[t.length - 1];
+    } else {
+      const split = url.split("v=");
+      id = split.length === 2 ? split[1] : "";
+    }
+
+    const reUrl = `https://www.youtube.com/watch?v=${id}`;
+    const ytRes = await axios.get(reUrl);
     const html = ytRes.data;
 
     const { title, thumbnail } = getInfo(html);

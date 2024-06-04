@@ -4,6 +4,7 @@ const fs = require("fs");
 const aws = require("aws-sdk");
 const shortid = require("shortid");
 const promisify = require("util").promisify;
+const moment = require("moment");
 
 const readFile = promisify(fs.readFile);
 const s3 = new aws.S3({
@@ -44,12 +45,13 @@ const gptSend = async (word, type = "description") => {
   if (type === "description") {
     content = `${word} 한 문장 슬로건으로 만들고 쌍따음표 빼줘`;
   } else if (type === "contents") {
-    content = `${word}에 대해 목차에 맞는 내용을 각각 1500자씩 3개만 작성해주고 네 번째 목차는 장단점에 대해서 작성해줘. 그리고 각 목차에 번호를 넣어줘`;
+    // content = `${word}에 대해 목차에 맞는 내용을 각각 1500자씩 3개만 작성해주고 네 번째 목차는 장단점에 대해서 작성해줘. 그리고 각 목차와 제목을 javascript array로 반환해줘`;
+    content = `${word}에 대해 제목과 내용을 1500자씩 3개 한글로 알려주고, 네 번째는 장단점에 대해서 제목과 한글로 내용을 알려줘. 각 제목에는 번호를 작성해주고 내용과 다음 제목 사이에 #을 3개 넣어줘.`;
   }
   const { data } = await axios.post(
     "https://api.openai.com/v1/chat/completions",
     {
-      model: "gpt-4-turbo-preview",
+      model: "gpt-4",
       messages: [
         {
           role: "user",
@@ -71,10 +73,6 @@ const parseContents = (contents) => {
   contents = replaceAll(contents, "####", "");
   let split = contents.split("###");
 
-  if (split.length === 1) {
-    split = contents.split("#");
-  }
-
   let ctitle1 = "";
   let ctitle2 = "";
   let ctitle3 = "";
@@ -87,64 +85,72 @@ const parseContents = (contents) => {
   let c2 = "";
   let c3 = "";
   let c4 = "";
+
   for (const item of split) {
     if (!item) {
       continue;
     }
-
-    if (item.indexOf(" 1.") !== -1) {
-      c1 = item;
+    if (item.indexOf("1.") !== -1 || item.indexOf("1번.") !== -1) {
+      c1 = item.trim();
       continue;
-    } else if (item.indexOf(" 2.") !== -1) {
-      c2 = item;
+    } else if (item.indexOf("2.") !== -1 || item.indexOf("2번.") !== -1) {
+      c2 = item.trim();
       continue;
-    } else if (item.indexOf(" 3.") !== -1) {
-      c3 = item;
+    } else if (item.indexOf("3.") !== -1 || item.indexOf("3번.") !== -1) {
+      c3 = item.trim();
       continue;
-    } else if (item.indexOf(" 4.") !== -1) {
-      c4 = item;
+    } else if (item.indexOf("4.") !== -1 || item.indexOf("4번.") !== -1) {
+      c4 = item.trim();
       continue;
     }
   }
 
   if (c1) {
-    c1 = c1.split("\n");
-    ctitle1 = replaceAll(c1[0].replace("1. ", "").trim(), "**", "");
-    for (let i = 0; i < c1.length; i++) {
-      if (i === 0 || !c1[i]) {
-        continue;
+    const f = c1.split("\n");
+    for (let i = 0; i < f.length; i++) {
+      if (i === 0) {
+        ctitle1 = replaceAll(f[i], "1번.", "1.");
+      } else {
+        if (f[i] !== "") {
+          cdescription1.push(f[i]);
+        }
       }
-      cdescription1.push(replaceAll(c1[i], "**", ""));
     }
   }
   if (c2) {
-    c2 = c2.split("\n");
-    ctitle2 = replaceAll(c2[0].replace("2. ", "").trim(), "**", "");
-    for (let i = 0; i < c2.length; i++) {
-      if (i === 0 || !c2[i]) {
-        continue;
+    const f = c2.split("\n");
+    for (let i = 0; i < f.length; i++) {
+      if (i === 0) {
+        ctitle2 = replaceAll(f[i], "2번.", "2.");
+      } else {
+        if (f[i] !== "") {
+          cdescription2.push(f[i]);
+        }
       }
-      cdescription2.push(replaceAll(c2[i], "**", ""));
     }
   }
   if (c3) {
-    c3 = c3.split("\n");
-    ctitle3 = replaceAll(c3[0].replace("3. ", "").trim(), "**", "");
-    for (let i = 0; i < c3.length; i++) {
-      if (i === 0 || !c3[i]) {
-        continue;
+    const f = c3.split("\n");
+    for (let i = 0; i < f.length; i++) {
+      if (i === 0) {
+        ctitle3 = replaceAll(f[i], "3번.", "3.");
+      } else {
+        if (f[i] !== "") {
+          cdescription3.push(f[i]);
+        }
       }
-      cdescription3.push(replaceAll(c3[i], "**", ""));
     }
   }
   if (c4) {
-    c4 = c4.split("\n");
-    ctitle4 = replaceAll(c4[0].replace("4. ", "").trim(), "**", "");
-    for (let i = 0; i < c4.length; i++) {
-      if (i === 0 || !c4[i]) {
-        continue;
+    const f = c4.split("\n");
+    for (let i = 0; i < f.length; i++) {
+      if (i === 0) {
+        ctitle4 = replaceAll(f[i], "4번.", "4.");
+      } else {
+        if (f[i] !== "") {
+          cdescription4.push(f[i]);
+        }
       }
-      cdescription4.push(replaceAll(c4[i], "**", ""));
     }
   }
 
@@ -156,7 +162,7 @@ const parseContents = (contents) => {
     cdescription1: cdescription1 ? cdescription1.join(" ").trim() : "",
     cdescription2: cdescription2 ? cdescription2.join(" ").trim() : "",
     cdescription3: cdescription3 ? cdescription3.join(" ").trim() : "",
-    cdescription4: cdescription4 ? cdescription4.join("\n").trim() : "",
+    cdescription4: cdescription4 ? cdescription4.join(" ").trim() : "",
   };
 };
 
@@ -237,7 +243,7 @@ const addContents = async (req, res) => {
         const r2 = await gptSend(params.title, "contents");
         console.log(r2.choices[0].message.content);
 
-        params.description = r1.choices[0].message.content;
+        params.description = replaceAll(r1.choices[0].message.content, '"', "");
         const {
           ctitle1,
           ctitle2,
@@ -257,6 +263,7 @@ const addContents = async (req, res) => {
         params.cdescription2 = replaceAll(cdescription2, "'", "");
         params.cdescription3 = replaceAll(cdescription3, "'", "");
         params.cdescription4 = replaceAll(cdescription4, "'", "");
+        params.created = moment().format("YYYY-MM-DD HH:mm:ss");
         params.logo = `https://downsoft.s3.ap-northeast-2.amazonaws.com/${logo}`;
 
         console.log(params);

@@ -1,5 +1,6 @@
 const axios = require("axios");
-const ytdl = require("ytdl-core");
+// const ytdl = require("ytdl-core");
+const ytdl = require("ytdl-core-discord");
 const { convertSecondsToMMSS } = require("../../utils/util");
 
 const getInfo = (html) => {

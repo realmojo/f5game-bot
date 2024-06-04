@@ -125,6 +125,7 @@ const getYoutubeDownloadInfo = async (req, res) => {
     ) {
       return res.status(200).send({ message: "no hack" });
     }
+
     if (!url) {
       throw new Error("url required");
     }
@@ -134,7 +135,7 @@ const getYoutubeDownloadInfo = async (req, res) => {
 
     let id = "";
 
-    if (url.indexOf("shorts") !== -1) {
+    if (url.indexOf("shorts") !== -1 || url.indexOf("youtu.be") !== -1) {
       const split = url.split("?");
       const t = split[0].split("/");
       id = t[t.length - 1];

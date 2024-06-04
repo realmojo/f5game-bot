@@ -144,7 +144,6 @@ const getYoutubeDownloadInfo = async (req, res) => {
 
     const { formats, related_videos, videoDetails } = await ytdl.getInfo(id);
 
-    const regex = /[^0-9]/g;
     const urls = [];
     formats.map((item) => {
       let type = "";

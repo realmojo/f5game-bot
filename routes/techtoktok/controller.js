@@ -113,7 +113,7 @@ const postFortune = (items) => {
     .create({
       title: `[오늘의 운세] ${moment().format("YYYY")}년 ${moment().format(
         "MM"
-      )}월 ${moment().format("DD")}일 띠별 운세`,
+      )}월 ${Number(moment().format("DD")) + 1}일 띠별 운세`,
       content: getHtml(items),
       categories: [70],
       status: "publish",

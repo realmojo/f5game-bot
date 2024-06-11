@@ -116,8 +116,9 @@ const postFortune = (items) => {
       )}월 ${Number(moment().format("DD")) + 1}일 띠별 운세`,
       content: getHtml(items),
       categories: [70],
-      status: "publish",
+      tags: [73],
       featured_media: 999,
+      status: "publish",
     })
     .then(function (res) {
       console.log(res);

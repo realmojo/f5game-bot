@@ -117,6 +117,7 @@ const postFortune = (items) => {
       content: getHtml(items),
       categories: [70],
       status: "publish",
+      featured_media: 999,
     })
     .then(function (res) {
       console.log(res);

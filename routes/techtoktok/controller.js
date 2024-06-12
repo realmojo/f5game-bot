@@ -109,11 +109,12 @@ const postFortune = (items) => {
     password: process.env.WP_PW || "",
   });
 
+  let d = moment().add(1, "days").format("YYYY-MM-DD");
+  const [year, month, day] = d.split("-");
+
   wp.posts()
     .create({
-      title: `[오늘의 운세] ${moment().format("YYYY")}년 ${moment().format(
-        "MM"
-      )}월 ${Number(moment().format("DD")) + 1}일 띠별 운세`,
+      title: `[오늘의 운세] ${year}년 ${month}월 ${day}일 띠별 운세`,
       content: getHtml(items),
       categories: [70],
       tags: [73],

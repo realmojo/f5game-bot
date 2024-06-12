@@ -4,7 +4,8 @@ const WPAPI = require("wpapi");
 const moment = require("moment");
 const cron = require("node-cron");
 
-cron.schedule("2 0 * * *", async () => {
+// utc 시간 적용 +9 -> 24시 === 새벽 0시
+cron.schedule("2 15 * * *", async () => {
   await axios.get("https://f5game-bot.herokuapp.com/techtoktok/fortune");
   console.log("good~");
 });

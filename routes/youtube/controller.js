@@ -134,7 +134,8 @@ const getYoutubeDownloadInfo = async (req, res) => {
       req.headers.referer !== "http://localhost:5173/" &&
       req.headers.referer !== "http://localhost:8000/" &&
       req.headers.referer !== "http://localhost:3001/" &&
-      req.headers.referer !== "http://localhost:3000/"
+      req.headers.referer !== "http://localhost:3000/" &&
+      req.headers.referer.indexOf("5game-bot") !== -1
     ) {
       return res.status(200).send({ message: "no hack" });
     }

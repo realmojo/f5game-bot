@@ -126,19 +126,19 @@ const getYoutubeScript = async (req, res) => {
 const getYoutubeDownloadInfo = async (req, res) => {
   const { url } = req.query;
   try {
-    if (
-      req.headers.referer !== "https://ss.f5game.co.kr/" &&
-      req.headers.referer !== "https://f5game.co.kr/" &&
-      req.headers.referer !== "https://mindpang.com/" &&
-      req.headers.referer !== "http://127.0.0.1:5173/" &&
-      req.headers.referer !== "http://localhost:5173/" &&
-      req.headers.referer !== "http://localhost:8000/" &&
-      req.headers.referer !== "http://localhost:3001/" &&
-      req.headers.referer !== "http://localhost:3000/" &&
-      req.headers.referer.indexOf("5game-bot") !== -1
-    ) {
-      return res.status(200).send({ message: "no hack" });
-    }
+    // if (
+    //   req.headers.referer !== "https://ss.f5game.co.kr/" &&
+    //   req.headers.referer !== "https://f5game.co.kr/" &&
+    //   req.headers.referer !== "https://mindpang.com/" &&
+    //   req.headers.referer !== "http://127.0.0.1:5173/" &&
+    //   req.headers.referer !== "http://localhost:5173/" &&
+    //   req.headers.referer !== "http://localhost:8000/" &&
+    //   req.headers.referer !== "http://localhost:3001/" &&
+    //   req.headers.referer !== "http://localhost:3000/" &&
+    //   req.headers.referer.indexOf("5game-bot") !== -1
+    // ) {
+    //   return res.status(200).send({ message: "no hack" });
+    // }
 
     if (!url) {
       throw new Error("url required");

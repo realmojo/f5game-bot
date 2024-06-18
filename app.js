@@ -16,6 +16,7 @@ app.use("/mindpang", require("./routes/mindpang"));
 app.use("/storypickup", require("./routes/storypickup"));
 app.use("/twitter", require("./routes/twitter"));
 app.use("/youtube", require("./routes/youtube"));
+app.use("/tistory", require("./routes/tistory"));
 app.use("/techtoktok", require("./routes/techtoktok"));
 app.use("/wp", require("./routes/wp"));
 app.get("/ping", function (req, res) {

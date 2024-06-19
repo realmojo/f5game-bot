@@ -170,7 +170,7 @@ const getHtml = (item) => {
   const drugItem = drugInfo[item.drug_code];
 
   let html = `
-<p>${intro[getRandomInRange(0, 19)]}</p>
+<p>${item.drug_name} ${intro[getRandomInRange(0, 19)]}</p>
 <div class="wp-block-buttons is-content-justification-center is-layout-flex wp-container-core-buttons-is-layout-1 wp-block-buttons-is-layout-flex" style="margin-bottom: 20px;">
 <div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="https://www.health.kr/searchDrug/result_drug.asp?drug_cd=${
     item.drug_code

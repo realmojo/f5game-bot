@@ -18,6 +18,7 @@ app.use("/twitter", require("./routes/twitter"));
 app.use("/youtube", require("./routes/youtube"));
 app.use("/tistory", require("./routes/tistory"));
 app.use("/techtoktok", require("./routes/techtoktok"));
+app.use("/techupbox", require("./routes/techupbox"));
 app.use("/wp", require("./routes/wp"));
 app.get("/ping", function (req, res) {
   res.send({

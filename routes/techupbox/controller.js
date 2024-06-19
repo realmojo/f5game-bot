@@ -1,18 +1,32 @@
 const axios = require("axios");
 const fs = require("fs");
 const WPAPI = require("wpapi");
+const drugInfo = require("./drug.json");
 const drugLists = require("./drugArr.json");
 var request = require("request");
 var { google } = require("googleapis");
-var key = require("./wpServiceAccount.json");
+// var key = require("./wpServiceAccount.json");
 
 const cron = require("node-cron");
 
 // utc 시간 적용 +9 -> 24시 === 새벽 0시
-// cron.schedule("* * * * *", async () => {
-// await axios.get("https://f5game-bot.herokuapp.com/techtoktok/fortune");
-// console.log("good~");
-// });
+cron.schedule("*/15 * * * *", async () => {
+  const { data } = await axios.get(
+    `https://api.mindpang.com/api/drug/item.php`
+  );
+  if (data.lastId) {
+    const previousIndex = drugLists.findIndex(
+      (item) => item.code === data.lastId
+    );
+
+    const nextCode = drugLists[previousIndex + 1].code;
+
+    await doPost(nextCode);
+    await axios.get(
+      `https://api.mindpang.com/api/drug/add.php?lastId=${nextCode}`
+    );
+  }
+});
 
 const intro = [
   "현대인의 건강 관리에 필수적인 약학정보, 이번 포스팅에서는 올바른 약물 복용법과 주의사항에 대해 자세히 알아보겠습니다. 올바른 약물 사용은 질병 예방과 치료의 핵심입니다.",
@@ -78,7 +92,9 @@ const getMediguide = (item) => {
   let html = ``;
 
   for (const d of dd) {
-    html += `<li>${numberReplace(d)}</li>`;
+    if (d) {
+      html += `<li>${numberReplace(d)}</li>`;
+    }
   }
   return html;
 };
@@ -195,26 +211,16 @@ ${getEffect(item.effect)}
 </ul>
 
 <h2 class="wp-block-heading">${item.drug_name} 주의사항</h2>
-
-
   ${getCaution(item.caution)}
-
-
 <h2 class="wp-block-heading">${item.drug_name} 용법 용량</h2>
-
 <p>
 ${getDosage(item.dosage)}
 </p>
-
 <h2 class="wp-block-heading">${item.drug_name} 복약정보</h2>
 <ul>
 ${getMediguide(item.mediguide)}
 </ul>
-
 <p>효능 효과 부작용에 대해서 상세하게 알아보았습니다. 상세하게 알려드리다보니 길이가 좀 길어졌네요. 하지만 약을 제대로 알지 못하고 드시는 경우에는 심각한 부작용이 있을 수도 있으니 꼭 주의하시고 드셔야 합니다. 약을 드시면서 몸에 조금이라도 이상이 있는거 같다 싶으면 약을 중단하시고 바로 병원에 가셔야 합니다.</p>
-
-
-
 <p>긴 글 읽어주셔서 감사하고 다음번엔 더 좋은 내용으로 찾아뵙도록 하겠습니다</p>
 <!-- CONTENT END 3 -->`;
   return html;
@@ -277,6 +283,7 @@ const post = (title, html) => {
       username: process.env.WP_TECHUPBOX_ID || "",
       password: process.env.WP_TECHUPBOX_PW || "",
     });
+
     wp.posts()
       .create({
         title: title,
@@ -292,27 +299,31 @@ const post = (title, html) => {
   });
 };
 
-const doPost = async (req, res) => {
-  for (const drugItem of drugLists) {
-    console.log(drugItem);
-    const item = await getData(drugItem.code);
-    const html = await getHtml(item);
+const doPost = async (code) => {
+  const item = await getData(code);
+  const html = await getHtml(item);
 
-    const link = await post(
-      `${item.drug_name} 효능 효과 부작용 용법에 대해 알아보세요`,
-      html
-    );
+  const link = await post(
+    `${item.drug_name} 효능 효과 부작용 용법에 대해 알아보세요`,
+    html
+  );
 
-    await naverIndexingApi(link);
-    await googleIndexingApi(link);
+  await naverIndexingApi(link);
+  await googleIndexingApi(link);
 
-    console.log(link);
-    const min = getRandomInRange(10, 15);
-    console.log(`잠시 ${min}분 기다립니다.`);
-    sleep(1000 * 60 * min);
-  }
+  console.log(link);
+
+  // console.log(link);
+  // const min = getRandomInRange(10, 15);
+  // console.log(`잠시 ${min}분 기다립니다.`);
+  // sleep(1000 * 60 * min);
+  return "ok";
+};
+
+const getList = async (req, res) => {
+  res.status(200).send("ok");
 };
 
 module.exports = {
-  doPost,
+  getList,
 };

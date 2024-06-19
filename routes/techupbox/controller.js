@@ -11,20 +11,22 @@ const cron = require("node-cron");
 
 // utc 시간 적용 +9 -> 24시 === 새벽 0시
 cron.schedule("*/15 * * * *", async () => {
-  const { data } = await axios.get(
-    `https://api.mindpang.com/api/drug/item.php`
-  );
-  if (data.lastId) {
-    const previousIndex = drugLists.findIndex(
-      (item) => item.code === data.lastId
+  try {
+    const { data } = await axios.get(
+      `https://api.mindpang.com/api/drug/item.php`
     );
-
-    const nextCode = drugLists[previousIndex + 1].code;
-
-    await doPost(nextCode);
-    await axios.get(
-      `https://api.mindpang.com/api/drug/add.php?lastId=${nextCode}`
-    );
+    if (data.lastId) {
+      const previousIndex = drugLists.findIndex(
+        (item) => item.code === data.lastId
+      );
+      const nextCode = drugLists[previousIndex + 1].code;
+      await doPost(nextCode);
+      await axios.get(
+        `https://api.mindpang.com/api/drug/add.php?lastId=${nextCode}`
+      );
+    }
+  } catch (e) {
+    console.log(e);
   }
 });
 
@@ -301,17 +303,21 @@ const post = (title, html) => {
 
 const doPost = async (code) => {
   const item = await getData(code);
-  const html = await getHtml(item);
+  if (item) {
+    const html = await getHtml(item);
 
-  const link = await post(
-    `${item.drug_name} 효능 효과 부작용 용법에 대해 알아보세요`,
-    html
-  );
+    console.log(item);
+    console.log(html);
+    const link = await post(
+      `${item.drug_name} 효능 효과 부작용 용법에 대해 알아보세요`,
+      html
+    );
 
-  await naverIndexingApi(link);
-  await googleIndexingApi(link);
+    await naverIndexingApi(link);
+    await googleIndexingApi(link);
 
-  console.log(link);
+    console.log(link);
+  }
 
   // console.log(link);
   // const min = getRandomInRange(10, 15);

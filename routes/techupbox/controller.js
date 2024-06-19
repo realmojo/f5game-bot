@@ -20,10 +20,10 @@ cron.schedule("*/15 * * * *", async () => {
         (item) => item.code === data.lastId
       );
       const nextCode = drugLists[previousIndex + 1].code;
-      await doPost(nextCode);
       await axios.get(
         `https://api.mindpang.com/api/drug/add.php?lastId=${nextCode}`
       );
+      await doPost(nextCode);
     }
   } catch (e) {
     console.log(e);

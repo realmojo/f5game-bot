@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const server = require("http").createServer(app);
+const moment = require("moment");
 const port = process.env.PORT || 3001;
 server.setTimeout(500000);
 
@@ -25,6 +26,7 @@ app.get("/ping", function (req, res) {
     status: "ok",
     result: {
       message: "pong",
+      time: moment().format("YYYY-MM-DD HH:mm:ss"),
     },
   });
 });

@@ -10,5 +10,6 @@ router.get("/env", async (req, res) => {
 
 // s3 파일 업로드
 router.post("/s3upload", upload.single("image"), controller.fileS3Upload);
+router.post("/download", controller.getDownload);
 
 module.exports = router;

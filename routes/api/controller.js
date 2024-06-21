@@ -47,12 +47,25 @@ function doRequest(url) {
 // };
 // df();
 const getDownload = async (req, res) => {
-  const { src, alt } = req.body;
-  // const data = await doRequest(src);
-  const file = fs.readFileSync(src);
-  res.writeHead(200, { "Context-Type": "image/png" });
-  res.write(file);
-  // return res.status(200).send({ src: data, alt });
+  // const { src, alt } = req.body;
+  // // const data = await doRequest(src);
+  // const file = fs.readFileSync(src);
+  // res.writeHead(200, { "Context-Type": "image/png" });
+  // res.write(file);
+
+  const { src } = req.body;
+  axios({
+    url: decodeURIComponent(src),
+    method: "GET",
+    responseType: "blob",
+  }).then((response) => {
+    return res.status(200).send({ data: response.data });
+    // const link = document.createElement("a");
+    // link.href = url;
+    // link.setAttribute("download", `${item.id}.jpg`);
+    // document.body.appendChild(link);
+    // link.click();
+  });
 };
 
 module.exports = {

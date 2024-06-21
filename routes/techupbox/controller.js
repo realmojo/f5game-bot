@@ -15,8 +15,8 @@ cron.schedule("* * * * *", async () => {
   console.log(data);
 });
 
-// utc 시간 적용 +9 -> 24시 === 새벽 0시
-cron.schedule("*/15 * * * *", async () => {
+// // utc 시간 적용 +9 -> 24시 === 새벽 0시
+cron.schedule("*/10 * * * *", async () => {
   try {
     const { data } = await axios.get(
       `https://api.mindpang.com/api/drug/item.php`
@@ -320,7 +320,6 @@ const doPost = async (code) => {
     const naverApi = await naverIndexingApi(link);
     const googleApi = await googleIndexingApi(link);
 
-    console.log(link);
     return {
       link,
       naverApi,

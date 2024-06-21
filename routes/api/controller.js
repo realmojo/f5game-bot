@@ -32,7 +32,7 @@ const getDownload = async (req, res) => {
   const { src, alt } = req.body;
   const data = await doRequest(src);
 
-  return res.status(200).send({ data, alt });
+  return res.status(200).send({ src: data, alt });
   // const file = fs.readFileSync(src);
   // res.writeHead(200, { "Context-Type": "image/png" });
   // res.write(file);

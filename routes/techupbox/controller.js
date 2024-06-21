@@ -9,6 +9,12 @@ var { google } = require("googleapis");
 
 const cron = require("node-cron");
 
+// 내꺼 안죽이게끔 살리기
+cron.schedule("* * * * *", async () => {
+  const { data } = await axios.get("https://f5game-bot.herokuapp.com/ping");
+  console.log(data);
+});
+
 // utc 시간 적용 +9 -> 24시 === 새벽 0시
 cron.schedule("*/15 * * * *", async () => {
   try {

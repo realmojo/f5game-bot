@@ -15,7 +15,7 @@ cron.schedule("* * * * *", async () => {
   console.log(data);
 });
 
-// // utc 시간 적용 +9 -> 24시 === 새벽 0시
+// utc 시간 적용 +9 -> 24시 === 새벽 0시
 cron.schedule("*/10 * * * *", async () => {
   try {
     const { data } = await axios.get(
@@ -240,6 +240,7 @@ const sleep = (ms) => {
 };
 
 const googleIndexingApi = async (link) => {
+  console.log("구글인덱싱: ", link);
   return new Promise((resolve) => {
     const jwtClient = new google.auth.JWT(
       process.env.client_email,
@@ -278,6 +279,7 @@ const googleIndexingApi = async (link) => {
 };
 
 const naverIndexingApi = async (link) => {
+  console.log("네이버인덱싱: ", link);
   const res = await axios.get(
     `https://searchadvisor.naver.com/indexnow?url=${link}&key=d1a17bfe470a410085399775403f1f55`
   );

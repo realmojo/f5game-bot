@@ -271,7 +271,7 @@ const googleIndexingApi = async (link) => {
       request(options, function (error, response, body) {
         // Handle the response
         console.log(body);
-        resolve("ok");
+        resolve(body);
       });
     });
   });
@@ -312,30 +312,50 @@ const doPost = async (code) => {
   if (item) {
     const html = await getHtml(item);
 
-    console.log(item);
-    console.log(html);
     const link = await post(
       `${item.drug_name} 효능 효과 부작용 용법에 대해 알아보세요`,
       html
     );
 
-    await naverIndexingApi(link);
-    await googleIndexingApi(link);
+    const naverApi = await naverIndexingApi(link);
+    const googleApi = await googleIndexingApi(link);
 
     console.log(link);
+    return {
+      link,
+      naverApi,
+      googleApi,
+    };
   }
+  return "no Item";
 
   // console.log(link);
   // const min = getRandomInRange(10, 15);
   // console.log(`잠시 ${min}분 기다립니다.`);
   // sleep(1000 * 60 * min);
-  return "ok";
 };
 
-const getList = async (req, res) => {
-  res.status(200).send("ok");
+const doApiPost = async (req, res) => {
+  try {
+    const { data } = await axios.get(
+      `https://api.mindpang.com/api/drug/item.php`
+    );
+    if (data.lastId) {
+      const previousIndex = drugLists.findIndex(
+        (item) => item.code === data.lastId
+      );
+      const nextCode = drugLists[previousIndex + 1].code;
+      await axios.get(
+        `https://api.mindpang.com/api/drug/add.php?lastId=${nextCode}`
+      );
+      const result = await doPost(nextCode);
+      return res.status(200).send(result);
+    }
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 module.exports = {
-  getList,
+  doApiPost,
 };

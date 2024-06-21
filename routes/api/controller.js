@@ -10,19 +10,16 @@ const fileS3Upload = async (req, res) => {
 function doRequest(url) {
   var request = require("request").defaults({ encoding: null });
   return new Promise(function (resolve, reject) {
-    request.get(
-      "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTEwMDlfNTAg%2FMDAxNjMzNzI4MTE5NTg5.hlJmZ5SGqc1U7rXpbiDa-DJgMGfI4ZWksxJ-tBeYVWAg.ltRvft1k8cmNxhbaIQeCu_V18ggjEJ6JSC5d5aCVvpog.JPEG.logsjin%2FIMG_4317.jpg&type=a340",
-      function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-          data =
-            "data:" +
-            response.headers["content-type"] +
-            ";base64," +
-            Buffer.from(body).toString("base64");
-          resolve(data);
-        }
+    request.get(url, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        data =
+          "data:" +
+          response.headers["content-type"] +
+          ";base64," +
+          Buffer.from(body).toString("base64");
+        resolve(data);
       }
-    );
+    });
   });
 }
 

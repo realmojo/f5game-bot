@@ -8,64 +8,48 @@ const fileS3Upload = async (req, res) => {
 };
 
 function doRequest(url) {
+  var request = require("request").defaults({ encoding: null });
   return new Promise(function (resolve, reject) {
-    request(url, function (error, res, body) {
-      if (!error && res.statusCode === 200) {
-        let data =
-          "data:" +
-          res.headers["content-type"] +
-          ";base64," +
-          Buffer.from(body).toString("base64");
-        resolve(data);
-      } else {
-        reject(error);
+    request.get(
+      "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTEwMDlfNTAg%2FMDAxNjMzNzI4MTE5NTg5.hlJmZ5SGqc1U7rXpbiDa-DJgMGfI4ZWksxJ-tBeYVWAg.ltRvft1k8cmNxhbaIQeCu_V18ggjEJ6JSC5d5aCVvpog.JPEG.logsjin%2FIMG_4317.jpg&type=a340",
+      function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+          data =
+            "data:" +
+            response.headers["content-type"] +
+            ";base64," +
+            Buffer.from(body).toString("base64");
+          resolve(data);
+        }
       }
-    });
+    );
   });
 }
 
-// const df = async () => {
-//   const path = "image.png";
-//   axios({
-//     method: "get",
-//     url: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzA4MjdfNTQg%2FMDAxNjkzMDk2NTQ2NzQy.oYAd51L7x3IUtt4P6n3jZxeVBtPKRJq8KJQdobgKWvkg.cvaJGAYmLP6sIbXYfHzEZ1TdJKL0Zad1NR4okQ-913Qg.JPEG.2obx83kax%2F1.jpg&type=a340",
-//     responseType: "stream",
-//   })
-//     .then((response) => {
-//       const writer = fs.createWriteStream(path);
-//       response.data.pipe(writer);
-//       writer.on("finish", () => {
-//         console.log("Download completed.");
-//       });
-//       writer.on("error", (err) => {
-//         console.error(`Error: ${err.message}`);
-//       });
-//     })
-//     .catch((err) => {
-//       console.error(`Error: ${err.message}`);
-//     });
-// };
+// const df = async () => {};
 // df();
 const getDownload = async (req, res) => {
-  // const { src, alt } = req.body;
-  // // const data = await doRequest(src);
+  const { src, alt } = req.body;
+  const data = await doRequest(src);
+
+  return res.status(200).send({ data, alt });
   // const file = fs.readFileSync(src);
   // res.writeHead(200, { "Context-Type": "image/png" });
   // res.write(file);
 
-  const { src } = req.body;
-  axios({
-    url: decodeURIComponent(src),
-    method: "GET",
-    responseType: "blob",
-  }).then((response) => {
-    return res.status(200).send({ data: response.data });
-    // const link = document.createElement("a");
-    // link.href = url;
-    // link.setAttribute("download", `${item.id}.jpg`);
-    // document.body.appendChild(link);
-    // link.click();
-  });
+  // const { src } = req.body;
+  // axios({
+  //   url: decodeURIComponent(src),
+  //   method: "GET",
+  //   responseType: "blob",
+  // }).then((response) => {
+  //   return res.status(200).send({ data: response.data });
+  // const link = document.createElement("a");
+  // link.href = url;
+  // link.setAttribute("download", `${item.id}.jpg`);
+  // document.body.appendChild(link);
+  // link.click();
+  // });
 };
 
 module.exports = {

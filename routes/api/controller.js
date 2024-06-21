@@ -1,4 +1,6 @@
 const request = require("request");
+const fs = require("fs");
+const axios = require("axios");
 
 const fileS3Upload = async (req, res) => {
   console.log(req);
@@ -22,10 +24,35 @@ function doRequest(url) {
   });
 }
 
+// const df = async () => {
+//   const path = "image.png";
+//   axios({
+//     method: "get",
+//     url: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzA4MjdfNTQg%2FMDAxNjkzMDk2NTQ2NzQy.oYAd51L7x3IUtt4P6n3jZxeVBtPKRJq8KJQdobgKWvkg.cvaJGAYmLP6sIbXYfHzEZ1TdJKL0Zad1NR4okQ-913Qg.JPEG.2obx83kax%2F1.jpg&type=a340",
+//     responseType: "stream",
+//   })
+//     .then((response) => {
+//       const writer = fs.createWriteStream(path);
+//       response.data.pipe(writer);
+//       writer.on("finish", () => {
+//         console.log("Download completed.");
+//       });
+//       writer.on("error", (err) => {
+//         console.error(`Error: ${err.message}`);
+//       });
+//     })
+//     .catch((err) => {
+//       console.error(`Error: ${err.message}`);
+//     });
+// };
+// df();
 const getDownload = async (req, res) => {
   const { src, alt } = req.body;
-  const data = await doRequest(src);
-  return res.status(200).send({ src: data, alt });
+  // const data = await doRequest(src);
+  const file = fs.readFileSync(src);
+  res.writeHead(200, { "Context-Type": "image/png" });
+  res.write(file);
+  // return res.status(200).send({ src: data, alt });
 };
 
 module.exports = {

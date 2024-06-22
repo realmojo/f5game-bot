@@ -24,7 +24,7 @@ const getModels = async () => {
 // CHAT GPT API 요청 생성
 const generateBlogContent = async (topic) => {
   try {
-    const content = `[[주제:${topic}]] 글을 SEO맞게 작성해줘. 글은 4000자 이상으로 작성해줘. 형식은 마크다운 형식을 사용해줘. 대제목을 작성해주고 소제목도 3개 정도 넣어주고 소제목에 대한 상세한 설명은 1000자 이상으로 등을 이용해서 최대한 창의적으로 작성해줘. 마지막으로 마무리도 직접 작성해서 상세히 설명해줘.`;
+    const content = `[[주제:${topic}]] 글을 SEO맞게 작성해줘. 전체 글은 3000자 정도로 작성해줘. 형식은 마크다운 형식을 사용해줘. 대제목을 작성해주고 소제목도 3개만 넣어주고 소제목에 대한 상세한 설명은 800자 내외 그리고 최대한 창의적으로 작성해줘. 마무리도 직접 작성해서 상세히 설명해줘.`;
 
     console.log(`주제 [${topic}]에 대해서 작성합니다..`);
     const { data } = await axios.post(

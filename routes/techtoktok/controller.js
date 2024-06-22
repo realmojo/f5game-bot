@@ -3,34 +3,58 @@ const cheerio = require("cheerio");
 const WPAPI = require("wpapi");
 const moment = require("moment");
 const cron = require("node-cron");
+const marked = require("marked");
+const dreams = require("./dream.json");
+const {
+  naverIndexingApi,
+  googleIndexingApi,
+  generateBlogContent,
+  getCategoryNumber,
+} = require("./common");
 
 // utc 시간 적용 +9 -> 24시 === 새벽 0시
 cron.schedule("2 15 * * *", async () => {
-  await axios.get("https://f5game-bot.herokuapp.com/techtoktok/fortune");
+  await axios.get("https://f5game-bot.herokuapp.com/techtoktok/doPostFortune");
   console.log("good~");
 });
 
-const zodiacs = [
-  "쥐",
-  "소",
-  "호랑이",
-  "토끼",
-  "용",
-  "뱀",
-  "말",
-  "양",
-  "원숭이",
-  "닭",
-  "개",
-  "돼지",
-];
+cron.schedule("*/10 * * * *", async () => {
+  try {
+    await axios.get("https://f5game-bot.herokuapp.com/techtoktok/postApiDream");
+    console.log("good~");
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 const sleep = (ms) => {
   const wakeUpTime = Date.now() + ms;
   while (Date.now() < wakeUpTime) {}
 };
-const getFortune = async (req, res) => {
+
+/**
+ *
+ * @param {운세 자동 봇} req
+ * @param {*} res
+ * @returns
+ */
+
+const postApiFortune = async (req, res) => {
   try {
+    const zodiacs = [
+      "쥐",
+      "소",
+      "호랑이",
+      "토끼",
+      "용",
+      "뱀",
+      "말",
+      "양",
+      "원숭이",
+      "닭",
+      "개",
+      "돼지",
+    ];
     const d = [];
     const regex = /[^0-9]/g;
 
@@ -74,7 +98,7 @@ const getFortune = async (req, res) => {
   }
 };
 
-const getContent = (item) => {
+const getFotrtuneContent = (item) => {
   let table = '<figure class="wp-block-table"><table><tbody>';
 
   for (const f of item.yearArr) {
@@ -92,12 +116,12 @@ const getContent = (item) => {
   ${table}`;
 };
 
-const getHtml = (items) => {
+const getFortuneHtml = (items) => {
   let contents = "";
   let image = `<figure class="wp-block-image size-large"><img fetchpriority="high" decoding="async" width="1024" height="585" src="https://techtoktok.com/wp-content/uploads/2024/06/DALL·E-2024-06-11-21.03.44-A-vibrant-and-detailed-image-showcasing-the-12-zodiac-signs.-Each-sign-should-be-represented-by-its-traditional-symbol-and-positioned-in-a-circle-sim-1024x585.webp" alt="" class="wp-image-999" srcset="https://techtoktok.com/wp-content/uploads/2024/06/DALL·E-2024-06-11-21.03.44-A-vibrant-and-detailed-image-showcasing-the-12-zodiac-signs.-Each-sign-should-be-represented-by-its-traditional-symbol-and-positioned-in-a-circle-sim-1024x585.webp 1024w, https://techtoktok.com/wp-content/uploads/2024/06/DALL·E-2024-06-11-21.03.44-A-vibrant-and-detailed-image-showcasing-the-12-zodiac-signs.-Each-sign-should-be-represented-by-its-traditional-symbol-and-positioned-in-a-circle-sim-300x171.webp 300w, https://techtoktok.com/wp-content/uploads/2024/06/DALL·E-2024-06-11-21.03.44-A-vibrant-and-detailed-image-showcasing-the-12-zodiac-signs.-Each-sign-should-be-represented-by-its-traditional-symbol-and-positioned-in-a-circle-sim-768x439.webp 768w, https://techtoktok.com/wp-content/uploads/2024/06/DALL·E-2024-06-11-21.03.44-A-vibrant-and-detailed-image-showcasing-the-12-zodiac-signs.-Each-sign-should-be-represented-by-its-traditional-symbol-and-positioned-in-a-circle-sim-1536x878.webp 1536w, https://techtoktok.com/wp-content/uploads/2024/06/DALL·E-2024-06-11-21.03.44-A-vibrant-and-detailed-image-showcasing-the-12-zodiac-signs.-Each-sign-should-be-represented-by-its-traditional-symbol-and-positioned-in-a-circle-sim.webp 1792w" sizes="(max-width: 1024px) 100vw, 1024px"></figure>`;
 
   for (const item of items) {
-    contents += getContent(item);
+    contents += getFotrtuneContent(item);
   }
 
   return `${image}${contents}`;
@@ -106,8 +130,8 @@ const getHtml = (items) => {
 const postFortune = (items) => {
   const wp = new WPAPI({
     endpoint: "https://techtoktok.com/wp-json",
-    username: process.env.WP_ID || "",
-    password: process.env.WP_PW || "",
+    username: process.env.WP_TECHTOKTOK_ID || "",
+    password: process.env.WP_TECHTOKTOK_PW || "",
   });
 
   let d = moment().add(1, "days").format("YYYY-MM-DD");
@@ -116,18 +140,142 @@ const postFortune = (items) => {
   wp.posts()
     .create({
       title: `[오늘의 운세] ${year}년 ${month}월 ${day}일 띠별 운세`,
-      content: getHtml(items),
+      content: getFortuneHtml(items),
       categories: [70],
       tags: [73],
       featured_media: 999,
       status: "publish",
     })
-    .then(function (res) {
-      console.log(res);
+    .then(async (res) => {
+      await naverIndexingApi(res.link);
+      await googleIndexingApi(res.link);
     });
 };
 
+const postWpDream = (title, html, categories, tags = [119, 124, 126, 127]) => {
+  // 꿈, 꿈해몽, 길몽, 흉몽
+  return new Promise((resolve) => {
+    const wp = new WPAPI({
+      endpoint: "https://techtoktok.com/wp-json",
+      username: process.env.WP_TECHTOKTOK_ID || "",
+      password: process.env.WP_TECHTOKTOK_PW || "",
+    });
+
+    wp.posts()
+      .create({
+        title: title,
+        content: html,
+        categories: categories,
+        tags: tags,
+        featured_media: 1108,
+        status: "publish",
+      })
+      .then(function (res) {
+        console.log(res);
+        resolve(res);
+      });
+  });
+};
+
+const postDream = async (nextIndex) => {
+  try {
+    const item = dreams[nextIndex];
+
+    const data = await generateBlogContent(item.title);
+    const result = data.choices[0].message.content;
+    console.log(result);
+    let html = marked.parse(result).split("\n");
+    let findH1Index = -1;
+    findH1Index = html.findIndex((htmlItem) => htmlItem.indexOf("<h1>") !== -1);
+    let title = "";
+    let feat = "";
+    if (findH1Index !== -1) {
+      html[findH1Index] = html[findH1Index].replace("<h1>", "");
+      html[findH1Index] = html[findH1Index].replace("</h1>", "");
+      if (item.final_category) {
+        feat = `(${item.final_category})`;
+      } else if (item.sub_category) {
+        feat = `(${item.sub_category})`;
+      } else {
+        feat = `(${item.category})`;
+      }
+      const sTitle = html[findH1Index].split(":");
+      html[findH1Index] =
+        sTitle.length === 2 ? sTitle[0].trim() : html[findH1Index].trim();
+      title = `${html[findH1Index]}${feat}`;
+    }
+    html.shift();
+    const reHtml = html.map((htmlItem) => {
+      if (htmlItem.indexOf("<h2>") !== -1) {
+        return htmlItem.replace("<h2>", '<h2 class="wp-block-heading">');
+      } else if (htmlItem.indexOf("SEO에 맞게") !== -1) {
+        return htmlItem.replace("SEO에 맞게 ", "");
+      } else if (htmlItem.indexOf("SEO에") !== -1) {
+        return htmlItem.replace("SEO에 ", "");
+      } else if (htmlItem.indexOf("SEO") !== -1) {
+        return htmlItem.replace("SEO", "");
+      } else {
+        return htmlItem;
+      }
+    });
+    reHtml.unshift(`<p>${item.description}</p>`);
+    const newHtml = reHtml.join("");
+    console.log(reHtml);
+    console.log(title, getCategoryNumber(item.category));
+    const { id: postId, link } = await postWpDream(
+      title,
+      newHtml,
+      getCategoryNumber(item.category)
+    );
+    const naverApi = await naverIndexingApi(link);
+    const googleApi = await googleIndexingApi(link);
+
+    console.log("히스토리 작성을 합니다.");
+    const params = {
+      id: nextIndex,
+      postId: postId,
+      title: item.title,
+      category: item.category,
+    };
+    console.log(params);
+    await axios.post(
+      `https://api.mindpang.com/api/dream/addHistory.php`,
+      params
+    );
+    return {
+      link,
+      googleApi,
+      naverApi,
+    };
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+const postApiDream = async (req, res) => {
+  try {
+    const { data } = await axios.get(
+      `https://api.mindpang.com/api/dream/item.php`
+    );
+    if (data.lastId) {
+      const nextIndex = Number(data.lastId) + 1;
+      const result = await postDream(nextIndex);
+
+      console.log("다음글 번호를 DB에 입력합니다.");
+      await axios.get(
+        `https://api.mindpang.com/api/dream/add.php?lastId=${nextIndex}`
+      );
+
+      return res.status(200).send(result);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 module.exports = {
-  getFortune,
   postFortune,
+  postApiFortune,
+  postDream,
+  postApiDream,
 };

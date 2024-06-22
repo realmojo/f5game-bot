@@ -20,7 +20,10 @@ cron.schedule("2 15 * * *", async () => {
 
 cron.schedule("*/10 * * * *", async () => {
   try {
-    await axios.get("https://f5game-bot.herokuapp.com/techtoktok/doPostDream");
+    const timeout = 1000 * 120;
+    await axios.get("https://f5game-bot.herokuapp.com/techtoktok/doPostDream", {
+      timeout,
+    });
     console.log("good~");
   } catch (e) {
     console.log(e);
@@ -270,6 +273,7 @@ const postApiDream = async (req, res) => {
     }
   } catch (e) {
     console.log(e);
+    return res.status(200).send(e);
   }
 };
 

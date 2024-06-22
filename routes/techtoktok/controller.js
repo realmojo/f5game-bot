@@ -20,7 +20,7 @@ cron.schedule("2 15 * * *", async () => {
 
 cron.schedule("*/10 * * * *", async () => {
   try {
-    await axios.get("https://f5game-bot.herokuapp.com/techtoktok/postApiDream");
+    await axios.get("https://f5game-bot.herokuapp.com/techtoktok/doPostDream");
     console.log("good~");
   } catch (e) {
     console.log(e);

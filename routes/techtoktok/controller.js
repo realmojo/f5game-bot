@@ -191,7 +191,6 @@ const postWpDream = (title, html, categories, tags = [119, 124, 126, 127]) => {
         status: "publish",
       })
       .then(function (res) {
-        console.log(res);
         resolve(res);
       });
   });

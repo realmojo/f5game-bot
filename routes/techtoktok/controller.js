@@ -264,9 +264,11 @@ const postDream = async (nextIndex) => {
 
 const postApiDream = async (req, res) => {
   try {
+    console.log("해몽을 작성합니다.");
     const { data } = await axios.get(
       `https://api.mindpang.com/api/dream/item.php`
     );
+    console.log("data:", data);
     if (data.lastId) {
       const nextIndex = Number(data.lastId) + 1;
       const result = await postDream(nextIndex);

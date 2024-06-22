@@ -19,14 +19,31 @@ cron.schedule("2 15 * * *", async () => {
 });
 
 cron.schedule("*/10 * * * *", async () => {
+  // try {
+  //   const timeout = 1000 * 60 * 5;
+  //   await axios.get("https://f5game-bot.herokuapp.com/techtoktok/doPostDream", {
+  //     timeout,
+  //   });
+  //   console.log("good~");
+  // } catch (e) {
+  //   console.log(e);
+  // }
   try {
-    const timeout = 1000 * 120;
-    await axios.get("https://f5game-bot.herokuapp.com/techtoktok/doPostDream", {
-      timeout,
-    });
-    console.log("good~");
+    const { data } = await axios.get(
+      `https://api.mindpang.com/api/dream/item.php`
+    );
+    if (data.lastId) {
+      const nextIndex = Number(data.lastId) + 1;
+      const result = await postDream(nextIndex);
+      console.log("다음글 번호를 DB에 입력합니다.");
+      await axios.get(
+        `https://api.mindpang.com/api/dream/add.php?lastId=${nextIndex}`
+      );
+      return res.status(200).send(result);
+    }
   } catch (e) {
     console.log(e);
+    return res.status(200).send(e);
   }
 });
 

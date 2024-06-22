@@ -31,7 +31,7 @@ cron.schedule("*/10 * * * *", async () => {
       await axios.get(
         `https://api.mindpang.com/api/dream/add.php?lastId=${nextIndex}`
       );
-      return res.status(200).send(result);
+      // return res.status(200).send(result);
     }
   } catch (e) {
     console.log(e);

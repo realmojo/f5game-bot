@@ -5,5 +5,6 @@ const controller = require("./controller");
 // 스토리픽업 올리기
 router.get("/doPostFortune", controller.postApiFortune);
 router.get("/doPostDream", controller.postApiDream);
+router.get("/getModelList", controller.getModelList);
 
 module.exports = router;

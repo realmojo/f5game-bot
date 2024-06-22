@@ -10,6 +10,7 @@ const {
   googleIndexingApi,
   generateBlogContent,
   getCategoryNumber,
+  getModels,
 } = require("./common");
 
 // utc 시간 적용 +9 -> 24시 === 새벽 0시
@@ -19,15 +20,6 @@ cron.schedule("2 15 * * *", async () => {
 });
 
 cron.schedule("*/10 * * * *", async () => {
-  // try {
-  //   const timeout = 1000 * 60 * 5;
-  //   await axios.get("https://f5game-bot.herokuapp.com/techtoktok/doPostDream", {
-  //     timeout,
-  //   });
-  //   console.log("good~");
-  // } catch (e) {
-  //   console.log(e);
-  // }
   try {
     const { data } = await axios.get(
       `https://api.mindpang.com/api/dream/item.php`
@@ -293,9 +285,19 @@ const postApiDream = async (req, res) => {
   }
 };
 
+const getModelList = async (req, res) => {
+  try {
+    const data = await getModels();
+    res.status(200).send(data);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 module.exports = {
   postFortune,
   postApiFortune,
   postDream,
   postApiDream,
+  getModelList,
 };

@@ -15,7 +15,7 @@ cron.schedule("* * * * *", async () => {
   console.log(data);
 });
 
-// utc 시간 적용 +9 -> 24시 === 새벽 0시d
+// utc 시간 적용 +9 -> 24시 === 새벽 0시ddf
 cron.schedule("*/10 * * * *", async () => {
   try {
     const { data: autoItem } = await axios.get(

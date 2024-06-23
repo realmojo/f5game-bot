@@ -38,7 +38,7 @@ cron.schedule("*/13 * * * *", async () => {
         );
       }
     } else {
-      console.log("Dream 오토모드가 까져있습니다.");
+      console.log("Dream 오토모드가 까져있습니다..");
     }
   } catch (e) {
     console.log(e);

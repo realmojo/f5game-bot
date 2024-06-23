@@ -19,7 +19,7 @@ cron.schedule("2 15 * * *", async () => {
   console.log("good~");
 });
 
-cron.schedule("*/13 * * * *", async () => {
+cron.schedule("*/10 * * * *", async () => {
   try {
     const { data: autoItem } = await axios.get(
       "https://api.mindpang.com/api/autopost/item.php"

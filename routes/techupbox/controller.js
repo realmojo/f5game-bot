@@ -291,7 +291,7 @@ const naverIndexingApi = async (link) => {
   const res = await axios.get(
     `https://searchadvisor.naver.com/indexnow?url=${link}&key=d1a17bfe470a410085399775403f1f55`
   );
-  console.log(res);
+  return link;
 };
 
 const post = (title, html) => {

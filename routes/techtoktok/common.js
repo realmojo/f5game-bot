@@ -43,7 +43,8 @@ const generateBlogContent = async (topic) => {
     );
     return data;
   } catch (e) {
-    console.log(e.data);
+    console.log(e.response.status, e.response.statusText);
+    console.log(e.response.data);
   }
 };
 

@@ -18,18 +18,26 @@ cron.schedule("* * * * *", async () => {
 // utc 시간 적용 +9 -> 24시 === 새벽 0시
 cron.schedule("*/10 * * * *", async () => {
   try {
-    const { data } = await axios.get(
-      `https://api.mindpang.com/api/drug/item.php`
+    const { data: autoItem } = await axios.get(
+      "https://api.mindpang.com/api/autopost/item.php"
     );
-    if (data.lastId) {
-      const previousIndex = drugLists.findIndex(
-        (item) => item.code === data.lastId
+
+    if (autoItem.dream === "on") {
+      const { data } = await axios.get(
+        `https://api.mindpang.com/api/drug/item.php`
       );
-      const nextCode = drugLists[previousIndex + 1].code;
-      await axios.get(
-        `https://api.mindpang.com/api/drug/add.php?lastId=${nextCode}`
-      );
-      await doPost(nextCode);
+      if (data.lastId) {
+        const previousIndex = drugLists.findIndex(
+          (item) => item.code === data.lastId
+        );
+        const nextCode = drugLists[previousIndex + 1].code;
+        await axios.get(
+          `https://api.mindpang.com/api/drug/add.php?lastId=${nextCode}`
+        );
+        await doPost(nextCode);
+      }
+    } else {
+      console.log("Drug 오토모드가 까져있습니다.");
     }
   } catch (e) {
     console.log(e);

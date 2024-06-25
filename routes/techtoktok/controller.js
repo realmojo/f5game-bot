@@ -168,7 +168,7 @@ const postFortune = (items) => {
     })
     .then(async (res) => {
       await naverIndexingApi(res.link);
-      await googleIndexingApi(res.link);
+      // await googleIndexingApi(res.link);
     });
 };
 
@@ -248,7 +248,7 @@ const postDream = async (nextIndex) => {
       getCategoryNumber(item.category)
     );
     const naverApi = await naverIndexingApi(link);
-    const googleApi = await googleIndexingApi(link);
+    // const googleApi = await googleIndexingApi(link);
 
     console.log("히스토리 작성을 합니다.");
     const params = {
@@ -264,7 +264,7 @@ const postDream = async (nextIndex) => {
     );
     return {
       link,
-      googleApi,
+      // googleApi,
       naverApi,
     };
   } catch (e) {

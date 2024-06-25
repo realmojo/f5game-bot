@@ -21,7 +21,6 @@ cron.schedule("*/10 * * * *", async () => {
     const { data: autoItem } = await axios.get(
       "https://api.mindpang.com/api/autopost/item.php"
     );
-
     if (autoItem.dream === "on") {
       const { data } = await axios.get(
         `https://api.mindpang.com/api/drug/item.php`
@@ -328,12 +327,12 @@ const doPost = async (code) => {
     );
 
     const naverApi = await naverIndexingApi(link);
-    const googleApi = await googleIndexingApi(link);
+    // const googleApi = await googleIndexingApi(link);
 
     return {
       link,
       naverApi,
-      googleApi,
+      // googleApi,
     };
   }
   return "no Item";

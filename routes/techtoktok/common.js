@@ -24,14 +24,9 @@ const getModels = async () => {
 // CHAT GPT API 요청 생성
 const generateBlogContent = async (topic) => {
   try {
-    const systemMessage = {
-      role: "system",
-      content:
-        "글을 SEO맞게 작성해줘. 전체 글은 4000자 정도로 작성해줘. 형식은 마크다운 형식을 사용해줘. 대제목에는 주제 키워드를 넣고 창의적으로 작성해주고 소제목에는 주제에 관련된 키워드를 포함해서 4개를 만들어주고 각각 상세한 설명은 1000자 내외 최대한 창의적으로 작성해줘. 마무리도 직접 작성해서 상세히 설명해줘.",
-    };
     const userMessage = {
       role: "user",
-      content: topic,
+      content: `[[주제:${topic}]]글을 SEO맞게 작성해줘. 전체 글은 4000자 정도로 작성해줘. 형식은 마크다운 형식을 사용해줘. 대제목에는 주제 키워드를 넣고 창의적으로 작성해주고 소제목에는 주제에 관련된 키워드를 포함해서 4개를 만들어주고 각각 상세한 설명은 1000자 내외 최대한 창의적으로 작성해줘. 마무리도 직접 작성해서 상세히 설명해줘.`,
     };
 
     console.log(`주제 [${topic}]에 대해서 작성합니다..`);
@@ -39,7 +34,7 @@ const generateBlogContent = async (topic) => {
       "https://api.openai.com/v1/chat/completions",
       {
         model: "gpt-4o",
-        messages: [systemMessage, userMessage],
+        messages: [userMessage],
         temperature: 0.6,
       },
       headers

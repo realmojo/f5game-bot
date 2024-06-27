@@ -364,6 +364,19 @@ const doApiPost = async (req, res) => {
   }
 };
 
+const getApiTest = async (req, res) => {
+  try {
+    const { data } = await axios.get(
+      `https://api.mindpang.com/api/drug/item.php`
+    );
+    return res.status(200).send(data);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send({ status: "err", message: e.message });
+  }
+};
+
 module.exports = {
   doApiPost,
+  getApiTest,
 };

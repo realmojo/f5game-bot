@@ -6,5 +6,6 @@ const controller = require("./controller");
 router.get("/doPostFortune", controller.postApiFortune);
 router.get("/doPostDream", controller.postApiDream);
 router.get("/getModelList", controller.getModelList);
+router.get("/apiTest", controller.getApiTest);
 
 module.exports = router;

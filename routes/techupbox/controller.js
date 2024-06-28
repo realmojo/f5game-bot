@@ -21,7 +21,7 @@ cron.schedule("*/10 * * * *", async () => {
     const { data: autoItem } = await axios.get(
       "https://api.mindpang.com/api/autopost/item.php"
     );
-    if (autoItem.dream === "on") {
+    if (autoItem.drug === "on") {
       const { data } = await axios.get(
         `https://api.mindpang.com/api/drug/item.php`
       );

@@ -16,7 +16,7 @@ cron.schedule("* * * * *", async () => {
 });
 
 // utc 시간 적용 +9 -> 24시 === 새벽 0시ddf
-cron.schedule("*/10 * * * *", async () => {
+cron.schedule("*/8 * * * *", async () => {
   try {
     const { data: autoItem } = await axios.get(
       "https://api.mindpang.com/api/autopost/item.php"

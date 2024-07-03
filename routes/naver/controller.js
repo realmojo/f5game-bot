@@ -1,5 +1,6 @@
 const axios = require("axios");
 const crypto = require("crypto");
+const { replaceAll } = require("../../utils/util");
 
 // Access Key, Secret Key, Customer ID를 상수로 정의
 const accessLicense = process.env.NAVER_ACCESS_LICENSE;
@@ -73,44 +74,48 @@ const displayResults = (data) => {
   // 최대 검색 결과 개수를 20개로 설정
   // let maxResults = 20;
   const d = [];
-  for (let i = 0; i < data.keywordList.length; i++) {
-    const keyword = data.keywordList[i];
-    const pCount =
-      typeof keyword.monthlyPcQcCnt === "string"
-        ? Number(keyword.monthlyPcQcCnt.replace("< ", ""))
-        : keyword.monthlyPcQcCnt;
-    const mCount =
-      typeof keyword.monthlyMobileQcCnt === "string"
-        ? Number(keyword.monthlyMobileQcCnt.replace("< ", ""))
-        : keyword.monthlyMobileQcCnt;
-    d.push({
-      keyword: keyword.relKeyword,
-      pc: pCount,
-      mobile: mCount,
-      total: pCount + mCount,
-      today: Math.floor((pCount + mCount) / 30),
-      pcCtr: keyword.monthlyAvePcCtr,
-      mobileCtr: keyword.monthlyAveMobileCtr,
-      complex: keyword.compIdx,
+  if (data.keywordList.length > 0) {
+    for (let i = 0; i < data.keywordList.length; i++) {
+      const keyword = data.keywordList[i];
+      const pCount =
+        typeof keyword.monthlyPcQcCnt === "string"
+          ? Number(keyword.monthlyPcQcCnt.replace("< ", ""))
+          : keyword.monthlyPcQcCnt;
+      const mCount =
+        typeof keyword.monthlyMobileQcCnt === "string"
+          ? Number(keyword.monthlyMobileQcCnt.replace("< ", ""))
+          : keyword.monthlyMobileQcCnt;
+      d.push({
+        keyword: keyword.relKeyword,
+        pc: pCount,
+        mobile: mCount,
+        total: pCount + mCount,
+        today: Math.floor((pCount + mCount) / 30),
+        pcCtr: keyword.monthlyAvePcCtr,
+        mobileCtr: keyword.monthlyAveMobileCtr,
+        complex: keyword.compIdx,
+      });
+    }
+
+    d.sort((a, b) => {
+      // first criteria
+      if (a.total > b.total) return -1;
+      if (a.total < b.total) return 1;
+
+      // second criteria
+      if (a.mobileCtr > b.mobileCtr) return 1;
+      if (a.mobileCtr < b.mobileCtr) return -1;
     });
   }
-
-  d.sort((a, b) => {
-    // first criteria
-    if (a.total > b.total) return -1;
-    if (a.total < b.total) return 1;
-
-    // second criteria
-    if (a.mobileCtr > b.mobileCtr) return 1;
-    if (a.mobileCtr < b.mobileCtr) return -1;
-  });
 
   return d;
 };
 
 const getList = async (req, res) => {
   try {
-    const { keyword } = req.query;
+    let { keyword } = req.query;
+
+    keyword = replaceAll(keyword, " ", "");
     const items = await fetchKeyword(keyword);
     const config = {
       headers: {

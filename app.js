@@ -14,12 +14,13 @@ app.use(cors());
 app.use("/api", require("./routes/api"));
 app.use("/downsoft", require("./routes/downsoft"));
 app.use("/mindpang", require("./routes/mindpang"));
+app.use("/naver", require("./routes/naver"));
 app.use("/storypickup", require("./routes/storypickup"));
-app.use("/twitter", require("./routes/twitter"));
-app.use("/youtube", require("./routes/youtube"));
-app.use("/tistory", require("./routes/tistory"));
 app.use("/techtoktok", require("./routes/techtoktok"));
 app.use("/techupbox", require("./routes/techupbox"));
+app.use("/tistory", require("./routes/tistory"));
+app.use("/twitter", require("./routes/twitter"));
+app.use("/youtube", require("./routes/youtube"));
 app.use("/wp", require("./routes/wp"));
 app.get("/ping", function (req, res) {
   res.send({

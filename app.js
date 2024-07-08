@@ -31,7 +31,6 @@ app.get("/ping", function (req, res) {
     },
   });
 });
-
 server.listen(port, () => {
   console.log(`F5Game-Bot Server Open Port: ${port}`);
 });

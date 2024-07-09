@@ -16,32 +16,32 @@ cron.schedule("* * * * *", async () => {
 });
 
 // utc 시간 적용 +9 -> 24시 === 새벽 0시ddf
-cron.schedule("*/8 * * * *", async () => {
-  try {
-    const { data: autoItem } = await axios.get(
-      "https://api.mindpang.com/api/autopost/item.php"
-    );
-    if (autoItem.drug === "on") {
-      const { data } = await axios.get(
-        `https://api.mindpang.com/api/drug/item.php`
-      );
-      if (data.lastId) {
-        const previousIndex = drugLists.findIndex(
-          (item) => item.code === data.lastId
-        );
-        const nextCode = drugLists[previousIndex + 1].code;
-        await axios.get(
-          `https://api.mindpang.com/api/drug/add.php?lastId=${nextCode}`
-        );
-        await doPost(nextCode);
-      }
-    } else {
-      console.log("Drug 오토모드가 까져있습니다.");
-    }
-  } catch (e) {
-    console.log(e);
-  }
-});
+// cron.schedule("*/8 * * * *", async () => {
+//   try {
+//     const { data: autoItem } = await axios.get(
+//       "https://api.mindpang.com/api/autopost/item.php"
+//     );
+//     if (autoItem.drug === "on") {
+//       const { data } = await axios.get(
+//         `https://api.mindpang.com/api/drug/item.php`
+//       );
+//       if (data.lastId) {
+//         const previousIndex = drugLists.findIndex(
+//           (item) => item.code === data.lastId
+//         );
+//         const nextCode = drugLists[previousIndex + 1].code;
+//         await axios.get(
+//           `https://api.mindpang.com/api/drug/add.php?lastId=${nextCode}`
+//         );
+//         await doPost(nextCode);
+//       }
+//     } else {
+//       console.log("Drug 오토모드가 까져있습니다.");
+//     }
+//   } catch (e) {
+//     console.log(e);
+//   }
+// });
 
 const intro = [
   "현대인의 건강 관리에 필수적인 약학정보, 이번 포스팅에서는 올바른 약물 복용법과 주의사항에 대해 자세히 알아보겠습니다. 올바른 약물 사용은 질병 예방과 치료의 핵심입니다.",

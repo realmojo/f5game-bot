@@ -171,11 +171,11 @@ const getYoutubeDownloadInfo = async (req, res) => {
       if (type) {
         let label = "";
         if (type === "Video") {
-          label = `${type} / ${
+          label = `${type} - ${
             item.qualityLabel ? item.qualityLabel : item.audioQuality
-          } / ${item.bitrate / 1000}Kbps`;
+          }`;
         } else {
-          label = `${type} / ${item.bitrate / 1000}Kbps`;
+          label = `${type} - ${item.bitrate / 1000}Kbps`;
         }
         urls.push({
           value: `${item.url}&title=${encodeURI(videoDetails.title)}`,

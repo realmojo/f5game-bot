@@ -20,33 +20,33 @@ cron.schedule("2 15 * * *", async () => {
 });
 
 //
-cron.schedule("*/8 * * * *", async () => {
-  try {
-    const { data: autoItem } = await axios.get(
-      "https://api.mindpang.com/api/autopost/item.php"
-    );
-    if (autoItem.dream === "on") {
-      const { data } = await axios.get(
-        `https://api.mindpang.com/api/dream/item.php`
-      );
-      if (data.lastId) {
-        const nextIndex = Number(data.lastId) + 1;
-        const result = await postDream(nextIndex);
-        if (result.link) {
-          console.log("다음글 해몽 번호를 DB에 입력합니다.");
-          await axios.get(
-            `https://api.mindpang.com/api/dream/add.php?lastId=${nextIndex}`
-          );
-        }
-      }
-    } else {
-      console.log("Dream 오토모드가 까져있습니다..");
-    }
-  } catch (e) {
-    console.log(e);
-    return res.status(200).send(e);
-  }
-});
+// cron.schedule("*/8 * * * *", async () => {
+// try {
+//   const { data: autoItem } = await axios.get(
+//     "https://api.mindpang.com/api/autopost/item.php"
+//   );
+//   if (autoItem.dream === "on") {
+//     const { data } = await axios.get(
+//       `https://api.mindpang.com/api/dream/item.php`
+//     );
+//     if (data.lastId) {
+//       const nextIndex = Number(data.lastId) + 1;
+//       const result = await postDream(nextIndex);
+//       if (result.link) {
+//         console.log("다음글 해몽 번호를 DB에 입력합니다.");
+//         await axios.get(
+//           `https://api.mindpang.com/api/dream/add.php?lastId=${nextIndex}`
+//         );
+//       }
+//     }
+//   } else {
+//     console.log("Dream 오토모드가 까져있습니다..");
+//   }
+// } catch (e) {
+//   console.log(e);
+//   return res.status(200).send(e);
+// }
+// });
 
 const sleep = (ms) => {
   const wakeUpTime = Date.now() + ms;

@@ -5,5 +5,6 @@ const controller = require("./controller");
 // 스토리픽업 올리기
 router.get("/doPost", controller.doApiPost);
 router.get("/apiTest", controller.getApiTest);
+router.get("/proxy", controller.getProxyImage);
 
 module.exports = router;

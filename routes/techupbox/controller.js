@@ -3,7 +3,7 @@ const fs = require("fs");
 const WPAPI = require("wpapi");
 const drugInfo = require("./drug.json");
 const drugLists = require("./drugArr.json");
-var request = require("request");
+const request = require("request");
 var { google } = require("googleapis");
 // var key = require("./wpServiceAccount.json");
 
@@ -376,7 +376,23 @@ const getApiTest = async (req, res) => {
   }
 };
 
+const getProxyImage = async (req, res) => {
+  const imageUrl = req.query.url;
+  if (!imageUrl) {
+    return res.status(400).send("No url provided");
+  }
+
+  request({ url: imageUrl, encoding: null }, (err, response, body) => {
+    if (err) {
+      return res.status(500).send("Error fetching image");
+    }
+    res.set("Content-Type", response.headers["content-type"]);
+    res.send(body);
+  });
+};
+
 module.exports = {
   doApiPost,
   getApiTest,
+  getProxyImage,
 };

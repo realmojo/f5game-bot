@@ -87,7 +87,6 @@ const numberReplace = (item) => {
   for (let i = 0; i < 100; i++) {
     item = item.replace(`${i}. `, "");
   }
-
   return item;
 };
 

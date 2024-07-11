@@ -2,7 +2,7 @@ const axios = require("axios");
 // const ytdl = require("ytdl-core");
 const ytdl = require("ytdl-core-discord");
 const cheerio = require("cheerio");
-const { replaceAll } = require("../../utils/util");
+const { ensureHttps } = require("../../utils/util");
 
 const getInfo = (html) => {
   const startOf = html.indexOf("<title>");
@@ -222,18 +222,6 @@ const getYoutubeDownloadInfo = async (req, res) => {
     console.log(e);
     return res.status(200).send("no data: ", e.message);
   }
-};
-
-const ensureHttps = (url) => {
-  if (!url.startsWith("https://")) {
-    if (url.startsWith("http://")) {
-      url = "https://" + url.substring(7);
-    } else {
-      url = "https://" + url;
-    }
-  }
-  url = replaceAll(url, "www.", "");
-  return url;
 };
 
 const getProgressId = async (req, res) => {

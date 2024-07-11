@@ -13,6 +13,7 @@ app.use(cors());
 
 app.use("/api", require("./routes/api"));
 app.use("/downsoft", require("./routes/downsoft"));
+app.use("/instagram", require("./routes/instagram"));
 app.use("/mindpang", require("./routes/mindpang"));
 app.use("/naver", require("./routes/naver"));
 app.use("/storypickup", require("./routes/storypickup"));

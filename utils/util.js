@@ -38,8 +38,22 @@ const getQualityForBitrate = (bitrate) => {
     return "4K";
   }
 };
+
+const ensureHttps = (url) => {
+  if (!url.startsWith("https://")) {
+    if (url.startsWith("http://")) {
+      url = "https://" + url.substring(7);
+    } else {
+      url = "https://" + url;
+    }
+  }
+  url = replaceAll(url, "www.", "");
+  return url;
+};
+
 module.exports = {
   replaceAll,
   convertSecondsToMMSS,
   getQualityForBitrate,
+  ensureHttps,
 };

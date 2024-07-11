@@ -1,7 +1,8 @@
 const axios = require("axios");
 // const ytdl = require("ytdl-core");
 const ytdl = require("ytdl-core-discord");
-const { convertSecondsToMMSS } = require("../../utils/util");
+const cheerio = require("cheerio");
+const { replaceAll } = require("../../utils/util");
 
 const getInfo = (html) => {
   const startOf = html.indexOf("<title>");
@@ -123,6 +124,30 @@ const getYoutubeScript = async (req, res) => {
   }
 };
 
+const getytInitialData = ($) => {
+  const scriptTags = $("script");
+  let ytInitialData;
+
+  scriptTags.each((index, element) => {
+    const scriptContent = $(element).html();
+    if (scriptContent.includes("ytInitialData")) {
+      const ytInitialDataString = scriptContent.match(
+        /var ytInitialData = ({.*?});/s
+      );
+      if (ytInitialDataString && ytInitialDataString.length > 1) {
+        ytInitialData = JSON.parse(ytInitialDataString[1]);
+      }
+    }
+  });
+
+  if (ytInitialData) {
+    return ytInitialData;
+  } else {
+    console.log("ytInitialData not found.");
+    return null;
+  }
+};
+
 const getYoutubeDownloadInfo = async (req, res) => {
   try {
     const { url } = req.query;
@@ -132,7 +157,6 @@ const getYoutubeDownloadInfo = async (req, res) => {
     if (url.indexOf("youtube") === -1 && url.indexOf("youtu.be") === -1) {
       throw new Error("Invalid url.");
     }
-
     let id = "";
 
     if (url.indexOf("shorts") !== -1 || url.indexOf("youtu.be") !== -1) {
@@ -144,20 +168,71 @@ const getYoutubeDownloadInfo = async (req, res) => {
       id = split.length === 2 ? split[1] : "";
     }
 
-    const { related_videos, videoDetails } = await ytdl.getInfo(id);
+    const { data } = await axios.get(url);
+
+    const $ = cheerio.load(data);
+
+    const title = $("title").text();
+    const thumbnail = $('link[rel="image_src"]').attr("href")
+      ? $('link[rel="image_src"]').attr("href")
+      : `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+    const keywords = $('meta[name="keywords"]').attr("content")
+      ? $('meta[name="keywords"]').attr("content").split(", ")
+      : [];
+
+    const ytInitialData = await getytInitialData($);
+    let related_videos = [];
+    if (ytInitialData) {
+      const df =
+        ytInitialData.contents.twoColumnWatchNextResults.secondaryResults
+          .secondaryResults.results;
+
+      df.map((item) => {
+        if (item?.compactVideoRenderer) {
+          const f = item.compactVideoRenderer;
+          related_videos.push({
+            id: f.videoId,
+            title: f.title.simpleText,
+            thumbnail: `https://i.ytimg.com/vi/${f.videoId}/maxresdefault.jpg`,
+          });
+        }
+      });
+    }
+
     const info = {
-      title: videoDetails.title,
-      description: videoDetails.description,
-      second: convertSecondsToMMSS(videoDetails.lengthSeconds),
-      keyword: videoDetails.keywords,
-      thumbnail:
-        videoDetails.thumbnails[videoDetails.thumbnails.length - 1].url,
+      title,
+      thumbnail,
+      keywords,
       related_videos,
     };
+
+    // const { related_videos, videoDetails } = await ytdl.getInfo(id);
+    // const info = {
+    //   title: videoDetails.title,
+    //   description: videoDetails.description,
+    //   second: convertSecondsToMMSS(videoDetails.lengthSeconds),
+    //   keyword: videoDetails.keywords,
+    //   thumbnail:
+    //     videoDetails.thumbnails[videoDetails.thumbnails.length - 1].url,
+    //   related_videos,
+    // };
     return res.status(200).send(info);
   } catch (e) {
-    return res.status(200).send("no data");
+    console.log(e);
+    return res.status(200).send("no data: ", e.message);
   }
+};
+
+const ensureHttps = (url) => {
+  if (!url.startsWith("https://")) {
+    if (url.startsWith("http://")) {
+      url = "https://" + url.substring(7);
+    } else {
+      url = "https://" + url;
+    }
+  }
+  url = replaceAll(url, "www.", "");
+  return url;
 };
 
 const getProgressId = async (req, res) => {
@@ -169,8 +244,9 @@ const getProgressId = async (req, res) => {
     if (url.indexOf("youtube") === -1 && url.indexOf("youtu.be") === -1) {
       throw new Error("Invalid url.");
     }
-
-    const axiosUrl = `https://ab.cococococ.com/ajax/download.php?copyright=0&format=${format}&url=${url}?si=GgDJYw0ivOIY-5SG&api=dfcb6d76f2f6a9894gjkege8a4ab232222`;
+    const axiosUrl = `https://ab.cococococ.com/ajax/download.php?copyright=0&format=${format}&url=${ensureHttps(
+      url
+    )}?si=GgDJYw0ivOIY-5SG&api=dfcb6d76f2f6a9894gjkege8a4ab232222`;
     const { data } = await axios.get(axiosUrl);
     return res.status(200).send(data.id);
   } catch (e) {

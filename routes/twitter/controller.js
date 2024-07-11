@@ -1,4 +1,6 @@
 const axios = require("axios");
+const { getQualityForBitrate } = require("../../utils/util");
+
 const getTwitterVideos = async (req, res) => {
   try {
     const { url } = req.query;
@@ -43,7 +45,8 @@ const getTwitterVideos = async (req, res) => {
       return {
         ...item,
         value: item.url,
-        label: `${item.bitrate} / ${item.content_type}`,
+        bitrate: getQualityForBitrate(item.bitrate),
+        label: `${getQualityForBitrate(item.bitrate)} / ${item.content_type}`,
       };
     });
 

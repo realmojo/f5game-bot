@@ -171,7 +171,6 @@ const getYoutubeDownloadInfo = async (req, res) => {
     const { data } = await axios.get(url);
 
     const $ = cheerio.load(data);
-
     const title = $("title").text();
     const thumbnail = $('link[rel="image_src"]').attr("href")
       ? $('link[rel="image_src"]').attr("href")

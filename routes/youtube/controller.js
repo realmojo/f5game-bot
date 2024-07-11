@@ -238,6 +238,7 @@ const ensureHttps = (url) => {
 const getProgressId = async (req, res) => {
   try {
     const { url, format } = req.query;
+
     if (!url) {
       throw new Error("url required");
     }

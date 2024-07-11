@@ -183,19 +183,21 @@ const getYoutubeDownloadInfo = async (req, res) => {
     let related_videos = [];
     if (ytInitialData) {
       const df =
-        ytInitialData.contents.twoColumnWatchNextResults.secondaryResults
-          .secondaryResults.results;
+        ytInitialData?.contents?.twoColumnWatchNextResults?.secondaryResults
+          ?.secondaryResults?.results;
 
-      df.map((item) => {
-        if (item?.compactVideoRenderer) {
-          const f = item.compactVideoRenderer;
-          related_videos.push({
-            id: f.videoId,
-            title: f.title.simpleText,
-            thumbnail: `https://i.ytimg.com/vi/${f.videoId}/maxresdefault.jpg`,
-          });
-        }
-      });
+      if (df) {
+        df.map((item) => {
+          if (item?.compactVideoRenderer) {
+            const f = item.compactVideoRenderer;
+            related_videos.push({
+              id: f.videoId,
+              title: f.title.simpleText,
+              thumbnail: `https://i.ytimg.com/vi/${f.videoId}/maxresdefault.jpg`,
+            });
+          }
+        });
+      }
     }
 
     const info = {

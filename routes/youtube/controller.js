@@ -12,7 +12,6 @@ const getInfo = (html) => {
   const title = d[0];
 
   const thumbStartOf = html.indexOf('image_src" href="');
-
   const s = html.substr(thumbStartOf + 17, 200);
   const f = s.split('">');
   const thumbnail = f[0];

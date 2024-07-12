@@ -147,13 +147,18 @@ const getytInitialData = ($) => {
   }
 };
 
+const isYouTubeURL = (url) => {
+  const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/;
+  return youtubeRegex.test(url);
+};
+
 const getYoutubeDownloadInfo = async (req, res) => {
   try {
     const { url } = req.query;
     if (!url) {
       throw new Error("url required");
     }
-    if (url.indexOf("youtube") === -1 && url.indexOf("youtu.be") === -1) {
+    if (!isYouTubeURL(url)) {
       throw new Error("Invalid url.");
     }
     let id = "";
@@ -218,8 +223,7 @@ const getYoutubeDownloadInfo = async (req, res) => {
     // };
     return res.status(200).send(info);
   } catch (e) {
-    console.log(e);
-    return res.status(200).send("no data: ", e.message);
+    return res.status(200).send(`no data: ${e.message}`);
   }
 };
 

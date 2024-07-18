@@ -251,7 +251,11 @@ const getProgressing = async (req, res) => {
   try {
     const { id } = req.query;
 
-    if (id.includes("getProgress") || id.includes("no-data")) {
+    if (
+      id.includes("getProgress") ||
+      id.includes("no-data") ||
+      id.includes("no")
+    ) {
       console.log(`${id}값이 잘못되어 다시 호출하지 않음`);
       return res.status(200).send({
         progress: 0,

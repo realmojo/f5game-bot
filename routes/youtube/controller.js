@@ -255,7 +255,7 @@ const getProgressing = async (req, res) => {
       return res.status(200).send({
         progress: 0,
         downloadUrl: null,
-        message: "유튜브를 다시 다운로드 하여주시길 바랍니다.",
+        message: "유튜브를 다시 다운로드 해주시길 바랍니다.",
       });
     }
 
@@ -265,6 +265,7 @@ const getProgressing = async (req, res) => {
     const a = {
       progress: data.progress,
       downloadUrl: data.download_url,
+      message: "",
     };
 
     console.log(a);
@@ -274,7 +275,7 @@ const getProgressing = async (req, res) => {
     return res.status(200).send({
       progress: 0,
       downloadUrl: null,
-      message: "유튜브를 다시 다운로드 하여주시길 바랍니다.",
+      message: "유튜브를 다시 다운로드 해주시길 바랍니다.",
     });
   }
 };

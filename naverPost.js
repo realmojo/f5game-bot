@@ -41,7 +41,7 @@ const run = async () => {
 
   const url = "https://blog.naver.com/sdfddf?Redirect=Write&";
 
-  await driver.sleep(1000);
+  await driver.sleep(3000);
 
   // 창 focus 변경
   const window = await driver.getWindowHandle();
@@ -52,6 +52,27 @@ const run = async () => {
 
   // iframe으로 전환
   await driver.switchTo().frame(await driver.findElement(By.id("mainFrame")));
+
+  await driver.sleep(3000);
+  // 작성중인 글이 있는지 확인 후 있으면 취소처리
+  try {
+    // Chrome 브라우저 열기
+    // se-popup-button-cancel 클래스명을 가진 요소가 있는지 확인
+    let elements = await driver.findElements(
+      By.className("se-popup-button-cancel")
+    );
+
+    if (elements.length > 0) {
+      // 요소가 있으면 클릭
+      await elements[0].click();
+      console.log("Popup cancel button clicked.");
+    } else {
+      // 요소가 없으면 무시
+      console.log("Popup cancel button not found, proceeding.");
+    }
+  } finally {
+    // 브라우저 종료
+  }
 
   // 특정 클래스명을 가진 요소가 로드될 때까지 기다림
   const titleElement = await driver.wait(

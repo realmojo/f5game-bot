@@ -243,13 +243,21 @@ const getProgressId = async (req, res) => {
     const { data } = await axios.get(axiosUrl);
     return res.status(200).send(data.id);
   } catch (e) {
-    return res.status(200).send("no");
+    return res.status(200).send("no-data");
   }
 };
 
 const getProgressing = async (req, res) => {
   try {
     const { id } = req.query;
+
+    if (id.includes("getProgress") || id.includes("no-data")) {
+      return res.status(200).send({
+        progress: 0,
+        downloadUrl: null,
+        message: "유튜브를 다시 다운로드 하여주시길 바랍니다.",
+      });
+    }
 
     const url = `https://p.oceansaver.in/ajax/progress.php?id=${id}`;
     const { data } = await axios.get(url);
@@ -263,7 +271,11 @@ const getProgressing = async (req, res) => {
 
     return res.status(200).send(a);
   } catch (e) {
-    return res.status(200).send("no");
+    return res.status(200).send({
+      progress: 0,
+      downloadUrl: null,
+      message: "유튜브를 다시 다운로드 하여주시길 바랍니다.",
+    });
   }
 };
 

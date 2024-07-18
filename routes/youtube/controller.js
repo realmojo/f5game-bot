@@ -243,7 +243,7 @@ const getProgressId = async (req, res) => {
     const { data } = await axios.get(axiosUrl);
     return res.status(200).send(data.id);
   } catch (e) {
-    return res.status(200).send("getProgress Id Error");
+    return res.status(200).send("no");
   }
 };
 
@@ -263,7 +263,7 @@ const getProgressing = async (req, res) => {
 
     return res.status(200).send(a);
   } catch (e) {
-    return res.status(200).send("getProgress Id Error");
+    return res.status(200).send("no");
   }
 };
 

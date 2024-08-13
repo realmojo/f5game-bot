@@ -121,7 +121,12 @@ const getKeywordList = async (req, res) => {
           keyword
         )}`
       );
-      res.status(200).send(data);
+      return res.status(200).send(data);
+    } else {
+      const { data } = await axios.get(
+        `https://api.mindpang.com/api/keyword/list.php`
+      );
+      return res.status(200).send(data);
     }
   } catch (e) {
     console.log(e);

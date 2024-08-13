@@ -90,6 +90,8 @@ const displayResults = (data) => {
         mobile: mCount,
         total: pCount + mCount,
         today: Math.floor((pCount + mCount) / 30),
+        pcClickCnt: keyword.monthlyAvePcClkCnt,
+        mobileClickCnt: keyword.monthlyAveMobileClkCnt,
         pcCtr: keyword.monthlyAvePcCtr,
         mobileCtr: keyword.monthlyAveMobileCtr,
         complex: keyword.compIdx,

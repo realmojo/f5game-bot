@@ -61,7 +61,6 @@ const fetchKeyword = async (keywords) => {
       },
     }
   );
-  console.log(data);
 
   // 검색 결과를 출력하는 함수를 호출
   const data = await response.json();

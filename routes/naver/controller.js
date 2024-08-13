@@ -85,7 +85,7 @@ const displayResults = (data) => {
           ? Number(keyword.monthlyMobileQcCnt.replace("< ", ""))
           : keyword.monthlyMobileQcCnt;
       d.push({
-        keyword: keyword.relKeyword,
+        keyword: keyword.relKeyword.trim(),
         pc: pCount,
         mobile: mCount,
         total: pCount + mCount,

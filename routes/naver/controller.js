@@ -140,6 +140,53 @@ const getList = async (req, res) => {
   }
 };
 
+const doCreateQrUrl = async (req, res) => {
+  try {
+    const { title, link } = req.query;
+
+    const url = "https://qr-web.naver.com/code/createCode";
+    const params = {
+      infoType: "url",
+      qrColorBorderCd: "#03C75A",
+      qrDesc: "",
+      qrDirectLink: link,
+      qrDirectLinkTypeCd: 29,
+      qrName: title,
+      qrSaveStatusCd: 79,
+      qrShape: 1,
+      sessions: [
+        {
+          attachment: {
+            title,
+            desc: "",
+          },
+          orderId: 0,
+          type: "Basic",
+        },
+        {
+          attachment: {
+            linkSubject: `web-${new Date().getTime()}`,
+          },
+          attachments: [{ linkUrl: link }],
+          orderId: 1,
+          type: "Link",
+        },
+      ],
+    };
+
+    const headers = {
+      Cookie:
+        "NID_AUT=SjN4eWg14W6TJ2vETxD0lkuKi3AhsBKUvaXlebtHkiispmdLqlzGS0/1GhDHnZCV; NID_SES=AAABnXL8YOR0IW1MYWvZ0IVDAiqNQ+a6YS92SI8vrBioU2p30Ph4N8eKYiVrfVWYX4VQMQMEBLIuihxaufDiWfXZFU6BJFDRgrRgR8KhXFnORX8tMayQTlZgjpTLr9exM9eEi6l/2coquayKVNpU6I1rcaG6pwEkkYeVvc3iB0dCX6FEkiMUL0pdPfVVXGI9+TrnycbKuw6hDQv7bnUbeuCpFFyFWUQAwuSSTl8kd2scOwzWfZ6Mgu0QzZR62BYRnhLX0FSCojW1Mf/r3xuU/S1N85IovzCaN5cKcnKBSIVdgaVDZrCBtq4Xzc/SeGsJSx7WftYU0xrSsB72PJq8fU3gMojV0n5FQnc3WqIcxlkHQu2/JyfKjoAus1USMg34vQyUOIx4a/PzsWUFmNg3iNMjXws4dvjl9wDz9EXN1G8S127IZj0eTQhX2I8BFus6rXAVBwGPB5Urb9zadjQ1oPVG3YI1XZcTYUD4l1nN7ZNOPAzATMP4uu5RrLhP6hAclk1wTsBn91v/opTTNkjdjahGJxyWTM3Vkywtz60vZdbV1OvB",
+    };
+
+    const { data } = await axios.post(url, params, { headers });
+    return res.status(200).send(data);
+  } catch (e) {
+    return res.status(200).send("no data");
+  }
+};
+
 module.exports = {
   getList,
+  doCreateQrUrl,
 };

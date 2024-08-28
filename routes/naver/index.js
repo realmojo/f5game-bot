@@ -4,5 +4,6 @@ const controller = require("./controller");
 
 // 유튜브 스크립트 텍스트 가져오기
 router.get("/list", controller.getList);
+router.get("/qrCreate", controller.doCreateQrUrl);
 
 module.exports = router;

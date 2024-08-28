@@ -180,7 +180,10 @@ const doCreateQrUrl = async (req, res) => {
     };
 
     const { data } = await axios.post(url, params, { headers });
-    return res.status(200).send(data);
+    if (data?.data) {
+      return res.status(200).send(`https://m.site.naver.com/${data?.data}`);
+    }
+    return res.status(200).send("no");
   } catch (e) {
     return res.status(200).send("no data");
   }

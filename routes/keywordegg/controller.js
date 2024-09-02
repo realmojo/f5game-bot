@@ -33,7 +33,7 @@ const createSignature = async (secretKey, timestamp, method, api_url) => {
 };
 
 // 네이버 키워드 검색 API를 이용하여 주어진 키워드에 대한 검색 결과 반환
-const fetchKeyword = async (keywords) => {
+const fetchKeyword = async (keywords, isStat = false) => {
   // API 호출에 필요한 인자들을 정의
   const method = "GET";
   const api_url = "/keywordstool";
@@ -47,11 +47,25 @@ const fetchKeyword = async (keywords) => {
     api_url
   );
 
-  // 생성한 서명과 함께 API를 호출하여 검색 결과 반환
-  const response = await fetch(
-    `https://api.naver.com/keywordstool?hintKeywords=${encodeURIComponent(
+  let queryString = `format=json&hintKeywords=${encodeURIComponent(
+    keywords
+  )}&showDetail=1`;
+  if (isStat) {
+    queryString = `?format=json&siteId=&month=&biztpId=&event=&includeHintKeywords=0&showDetail=1&keyword=${encodeURIComponent(
       keywords
-    )}&showDetail=1`,
+    )}`;
+  }
+
+  console.log(`https://api.naver.com/keywordstool?${queryString}`);
+  // 생성한 서명과 함께 API를 호출하여 검색 결과 반환
+  console.log(isStat, {
+    "X-Timestamp": timestamp,
+    "X-API-KEY": accessLicense,
+    "X-CUSTOMER": customerId,
+    "X-Signature": signature,
+  });
+  const response = await fetch(
+    `https://api.naver.com/keywordstool?${queryString}`,
     {
       headers: {
         "X-Timestamp": timestamp,
@@ -62,8 +76,11 @@ const fetchKeyword = async (keywords) => {
     }
   );
 
+  // console.log(response);
+
   // 검색 결과를 출력하는 함수를 호출
   const data = await response.json();
+
   const items = displayResults(data);
   return items;
 };
@@ -134,12 +151,43 @@ const getKeywordList = async (req, res) => {
   }
 };
 
+const getKeyword = async (req, res) => {
+  try {
+    let { keyword } = req.query;
+    if (!keyword) {
+      throw new Error("no keyword");
+    }
+    keyword = replaceAll(keyword, " ", "");
+    const data = await fetchKeyword(keyword, false);
+    return res.status(200).send(data);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send(e);
+  }
+};
+
+const getKeywordStat = async (req, res) => {
+  try {
+    let { keyword } = req.query;
+    if (!keyword) {
+      throw new Error("no keyword");
+    }
+    keyword = replaceAll(keyword, " ", "");
+    const data = await fetchKeyword(keyword, true);
+    console.log(data);
+    return res.status(200).send(data);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send(e);
+  }
+};
+
 const addKeyword = async (req, res) => {
   try {
     let { keyword } = req.query;
 
     keyword = replaceAll(keyword, " ", "");
-    const items = await fetchKeyword(keyword);
+    const items = await fetchKeyword(keyword, false);
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -164,5 +212,7 @@ const addKeyword = async (req, res) => {
 
 module.exports = {
   getKeywordList,
+  getKeywordStat,
+  getKeyword,
   addKeyword,
 };

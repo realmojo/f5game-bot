@@ -175,6 +175,7 @@ const getYoutubeDownloadInfo = async (req, res) => {
     const { data } = await axios.get(url);
 
     const $ = cheerio.load(data);
+
     const title = $("title").text();
     const thumbnail = $('link[rel="image_src"]').attr("href")
       ? $('link[rel="image_src"]').attr("href")
@@ -182,6 +183,8 @@ const getYoutubeDownloadInfo = async (req, res) => {
     const keywords = $('meta[name="keywords"]').attr("content")
       ? $('meta[name="keywords"]').attr("content").split(", ")
       : [];
+
+    console.log(`title: ${title}`);
 
     const ytInitialData = await getytInitialData($);
     let related_videos = [];

@@ -29,7 +29,8 @@ const getInstagramDownloadInfo = async (req, res) => {
     };
     return res.status(200).send(info);
   } catch (e) {
-    return res.status(200).send("no data: ", e?.message);
+    console.log(e);
+    return res.status(200).send("no data: ", e.response.data);
   }
 };
 

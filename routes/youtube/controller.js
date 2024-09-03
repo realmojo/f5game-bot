@@ -173,6 +173,7 @@ const getYoutubeDownloadInfo = async (req, res) => {
     }
 
     const { data } = await axios.get(url);
+    console.log(data);
 
     const $ = cheerio.load(data);
 
@@ -185,6 +186,7 @@ const getYoutubeDownloadInfo = async (req, res) => {
       : [];
 
     console.log(`title: ${title}`);
+    console.log(`thumbnail: ${thumbnail}`);
 
     const ytInitialData = await getytInitialData($);
     let related_videos = [];
@@ -212,6 +214,7 @@ const getYoutubeDownloadInfo = async (req, res) => {
       thumbnail,
       keywords,
       related_videos,
+      data,
     };
 
     // const { related_videos, videoDetails } = await ytdl.getInfo(id);

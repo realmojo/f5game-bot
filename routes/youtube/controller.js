@@ -4,24 +4,6 @@ const ytdl = require("ytdl-core-discord");
 const cheerio = require("cheerio");
 const { ensureHttps } = require("../../utils/util");
 
-const getInfo = (html) => {
-  const startOf = html.indexOf("<title>");
-
-  const t = html.substr(startOf + 7, 200);
-  const d = t.split("</title>");
-  const title = d[0];
-
-  const thumbStartOf = html.indexOf('image_src" href="');
-  const s = html.substr(thumbStartOf + 17, 200);
-  const f = s.split('">');
-  const thumbnail = f[0];
-
-  return {
-    title,
-    thumbnail,
-  };
-};
-
 const getYoutubeTransKey = (html) => {
   const startOf = html.indexOf("INNERTUBE_API_KEY");
 
@@ -33,13 +15,17 @@ const getYoutubeTransKey = (html) => {
 };
 
 const getYoutubeTransParams = (html) => {
-  const startOf = html.indexOf("getTranscriptEndpoint");
+  try {
+    const startOf = html.indexOf("getTranscriptEndpoint");
 
-  const t = html.substr(startOf, 300);
-  const d = t.split('"params":"');
-  const a = d[1].split('"}}}}');
+    const t = html.substr(startOf, 300);
+    const d = t.split('"params":"');
+    const a = d[1].split('"}}}}');
 
-  return a[0];
+    return a[0];
+  } catch (e) {
+    console.log("error: ", e.message);
+  }
 };
 
 const getYoutubeTransScriptItems = (obj) => {
@@ -69,23 +55,13 @@ const getYoutubeTransUrl = (key) => {
 
 const getYoutubeScript = async (req, res) => {
   try {
-    if (
-      req.headers.referer !== "https://ytsubdownload.f5game.co.kr/" &&
-      req.headers.referer !== "https://f5game.co.kr/" &&
-      req.headers.referer !== "https://mindpang.com/" &&
-      req.headers.referer !== "http://127.0.0.1:5173/" &&
-      req.headers.referer !== "http://localhost:5173/" &&
-      req.headers.referer !== "http://localhost:8000/" &&
-      req.headers.referer !== "http://localhost:3000/" &&
-      req.headers.referer !== "http://localhost:3001/"
-    ) {
-      return res.status(200).send({ message: "no hack" });
-    }
     const { url } = req.query;
     if (!url) {
-      throw new Error("error");
+      throw new Error("url required");
     }
-
+    if (!isYouTubeURL(url)) {
+      throw new Error("Invalid url.");
+    }
     let id = "";
 
     if (url.indexOf("shorts") !== -1 || url.indexOf("youtu.be") !== -1) {
@@ -98,14 +74,23 @@ const getYoutubeScript = async (req, res) => {
     }
 
     const reUrl = `https://www.youtube.com/watch?v=${id}`;
-    const ytRes = await axios.get(reUrl);
-    const html = ytRes.data;
+    const { data } = await axios.get(reUrl);
 
-    const { title, thumbnail } = getInfo(html);
-    const key = getYoutubeTransKey(html);
-    const params = getYoutubeTransParams(html);
+    const $ = cheerio.load(data);
 
-    const data = {
+    let title = "Youtube";
+    let thumbnail = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+    const ytInitialData = await getytInitialData($);
+    if (ytInitialData) {
+      title =
+        ytInitialData?.contents?.twoColumnWatchNextResults?.results?.results
+          ?.contents[0].videoPrimaryInfoRenderer.title.runs[0].text;
+    }
+
+    const key = getYoutubeTransKey(data);
+    const params = getYoutubeTransParams(data);
+
+    const postParams = {
       context: {
         client: {
           clientName: "WEB",
@@ -114,7 +99,7 @@ const getYoutubeScript = async (req, res) => {
       },
       params,
     };
-    const response = await axios.post(getYoutubeTransUrl(key), data);
+    const response = await axios.post(getYoutubeTransUrl(key), postParams);
     const scriptItems = getYoutubeTransScriptItems(response.data);
 
     return res.status(200).send({ ...scriptItems, title, thumbnail });
@@ -214,16 +199,6 @@ const getYoutubeDownloadInfo = async (req, res) => {
       related_videos,
     };
 
-    // const { related_videos, videoDetails } = await ytdl.getInfo(id);
-    // const info = {
-    //   title: videoDetails.title,
-    //   description: videoDetails.description,
-    //   second: convertSecondsToMMSS(videoDetails.lengthSeconds),
-    //   keyword: videoDetails.keywords,
-    //   thumbnail:
-    //     videoDetails.thumbnails[videoDetails.thumbnails.length - 1].url,
-    //   related_videos,
-    // };
     return res.status(200).send(info);
   } catch (e) {
     return res.status(200).send(`no data: ${e.message}`);
@@ -327,84 +302,3 @@ module.exports = {
   getProgressId,
   getProgressing,
 };
-
-// const getYoutubeDownloadInfoBak = async (req, res) => {
-//   const { url } = req.query;
-//   try {
-//     // if (
-//     //   req.headers.referer !== "https://ss.f5game.co.kr/" &&
-//     //   req.headers.referer !== "https://f5game.co.kr/" &&
-//     //   req.headers.referer !== "https://mindpang.com/" &&
-//     //   req.headers.referer !== "http://127.0.0.1:5173/" &&
-//     //   req.headers.referer !== "http://localhost:5173/" &&
-//     //   req.headers.referer !== "http://localhost:8000/" &&
-//     //   req.headers.referer !== "http://localhost:3001/" &&
-//     //   req.headers.referer !== "http://localhost:3000/" &&
-//     //   req.headers.referer.indexOf("5game-bot") !== -1
-//     // ) {
-//     //   return res.status(200).send({ message: "no hack" });
-//     // }
-
-//     if (!url) {
-//       throw new Error("url required");
-//     }
-//     if (url.indexOf("youtube") === -1 && url.indexOf("youtu.be") === -1) {
-//       throw new Error("Invalid url.");
-//     }
-
-//     let id = "";
-
-//     if (url.indexOf("shorts") !== -1 || url.indexOf("youtu.be") !== -1) {
-//       const split = url.split("?");
-//       const t = split[0].split("/");
-//       id = t[t.length - 1];
-//     } else {
-//       const split = url.split("v=");
-//       id = split.length === 2 ? split[1] : "";
-//     }
-
-//     const { formats, related_videos, videoDetails } = await ytdl.getInfo(id);
-
-//     const urls = [];
-//     formats.map((item) => {
-//       let type = "";
-//       if (item.hasAudio && item.hasVideo) {
-//         type = "Video";
-//       } else if (item.hasAudio && !item.hasVideo) {
-//         type = "Audio";
-//       }
-//       if (type) {
-//         let label = "";
-//         if (type === "Video") {
-//           label = `${type} - ${
-//             item.qualityLabel ? item.qualityLabel : item.audioQuality
-//           }`;
-//         } else {
-//           label = `${type} - ${item.bitrate / 1000}Kbps`;
-//         }
-//         urls.push({
-//           value: `${item.url}&title=${encodeURI(videoDetails.title)}`,
-//           label: label,
-//           type: item.container,
-//           title: `${videoDetails.title}.${type}`,
-//         });
-//       }
-//     });
-
-//     const info = {
-//       title: videoDetails.title,
-//       description: videoDetails.description,
-//       second: convertSecondsToMMSS(videoDetails.lengthSeconds),
-//       keyword: videoDetails.keywords,
-//       thumbnail:
-//         videoDetails.thumbnails[videoDetails.thumbnails.length - 1].url,
-//       urls: urls,
-//       related_videos,
-//     };
-//     return res.status(200).send(info);
-//   } catch (e) {
-//     return res
-//       .status(200)
-//       .send({ status: "err", message: e.message, url: url });
-//   }
-// };

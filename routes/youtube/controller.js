@@ -173,24 +173,22 @@ const getYoutubeDownloadInfo = async (req, res) => {
     }
 
     const { data } = await axios.get(url);
-    console.log(data);
 
     const $ = cheerio.load(data);
 
-    const title = $("title").text();
-    const thumbnail = $('link[rel="image_src"]').attr("href")
-      ? $('link[rel="image_src"]').attr("href")
-      : `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+    let title = "Youtube";
+    let thumbnail = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
     const keywords = $('meta[name="keywords"]').attr("content")
       ? $('meta[name="keywords"]').attr("content").split(", ")
       : [];
 
-    console.log(`title: ${title}`);
-    console.log(`thumbnail: ${thumbnail}`);
-
     const ytInitialData = await getytInitialData($);
     let related_videos = [];
     if (ytInitialData) {
+      title =
+        ytInitialData?.contents?.twoColumnWatchNextResults?.results?.results
+          ?.contents[0].videoPrimaryInfoRenderer.title.runs[0].text;
+
       const df =
         ytInitialData?.contents?.twoColumnWatchNextResults?.secondaryResults
           ?.secondaryResults?.results;
@@ -214,7 +212,6 @@ const getYoutubeDownloadInfo = async (req, res) => {
       thumbnail,
       keywords,
       related_videos,
-      data,
     };
 
     // const { related_videos, videoDetails } = await ytdl.getInfo(id);

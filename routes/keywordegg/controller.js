@@ -230,6 +230,10 @@ const getBlogAnalysisInfo = async (req, res) => {
       } else if (url.indexOf("blog.naver.com") !== -1) {
         type = "블로그";
         url = transBlogUrl(url);
+      } else if (url.indexOf("post.naver.com") !== -1) {
+        type = "포스트";
+      } else if (url.indexOf("in.naver.com") !== -1) {
+        type = "인플루언서";
       } else if (url.indexOf("cafe.naver.com") !== -1) {
         type = "카페";
 
@@ -241,10 +245,6 @@ const getBlogAnalysisInfo = async (req, res) => {
           linkCount: 0,
         });
         continue;
-      } else if (url.indexOf("post.naver.com") !== -1) {
-        type = "포스트";
-      } else if (url.indexOf("in.naver.com") !== -1) {
-        type = "인플루언서";
       } else {
         type = "홈페이지";
       }
@@ -252,8 +252,8 @@ const getBlogAnalysisInfo = async (req, res) => {
       const { data } = await axios.get(url);
       const $ = cheerio.load(data);
       const d = $(".se-main-container");
-      const imageCount = d.find("img").length || 0;
-      const linkCount = d.find("a").length || 0;
+      const imageCount = d.find("img").length.toLocaleString() || 0;
+      const linkCount = d.find("a").length.toLocaleString() || 0;
       const wordInfo = d.find(".se-text-paragraph").text() || "";
 
       const trimExcludeWords = replaceAll(wordInfo, " ", "");
@@ -261,8 +261,8 @@ const getBlogAnalysisInfo = async (req, res) => {
       items.push({
         type,
         imageCount,
-        wordCount: trimExcludeWords.length,
-        wordSpaceCount: wordInfo.length,
+        wordCount: trimExcludeWords.length.toLocaleString(),
+        wordSpaceCount: wordInfo.length.toLocaleString(),
         linkCount,
       });
     }

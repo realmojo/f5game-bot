@@ -224,9 +224,17 @@ const getBlogAnalysisInfo = async (req, res) => {
     const items = [];
 
     for (let url of urls) {
-      let type = "naver";
+      let type = "";
       if (url.indexOf("tistory.com") !== -1) {
         type = "티스토리";
+        items.push({
+          type,
+          imageCount: 0,
+          wordCount: 0,
+          wordSpaceCount: 0,
+          linkCount: 0,
+        });
+        continue;
       } else if (url.indexOf("blog.naver.com") !== -1) {
         type = "블로그";
         url = transBlogUrl(url);
@@ -247,6 +255,14 @@ const getBlogAnalysisInfo = async (req, res) => {
         continue;
       } else {
         type = "홈페이지";
+        items.push({
+          type,
+          imageCount: 0,
+          wordCount: 0,
+          wordSpaceCount: 0,
+          linkCount: 0,
+        });
+        continue;
       }
 
       const { data } = await axios.get(url);

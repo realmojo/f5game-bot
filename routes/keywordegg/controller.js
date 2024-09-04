@@ -104,12 +104,12 @@ const displayResults = (data) => {
           : keyword.monthlyMobileQcCnt;
       d.push({
         keyword: keyword.relKeyword.trim(),
-        pc: pCount.toLocaleString(),
-        mobile: mCount.toLocaleString(),
-        total: (pCount + mCount).toLocaleString(),
-        today: Math.floor((pCount + mCount) / 30).toLocaleString(),
-        pcClickCnt: keyword.monthlyAvePcClkCnt.toLocaleString(),
-        mobileClickCnt: keyword.monthlyAveMobileClkCnt.toLocaleString(),
+        pc: pCount,
+        mobile: mCount,
+        total: pCount + mCount,
+        today: Math.floor((pCount + mCount) / 30),
+        pcClickCnt: keyword.monthlyAvePcClkCnt,
+        mobileClickCnt: keyword.monthlyAveMobileClkCnt,
         pcCtr: keyword.monthlyAvePcCtr,
         mobileCtr: keyword.monthlyAveMobileCtr,
         complex: keyword.compIdx,

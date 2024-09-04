@@ -232,6 +232,14 @@ const getBlogAnalysisInfo = async (req, res) => {
         url = transBlogUrl(url);
       } else if (url.indexOf("cafe.naver.com") !== -1) {
         type = "카페";
+
+        items.push({
+          type,
+          imageCount: 0,
+          wordCount: 0,
+          wordSpaceCount: 0,
+          linkCount: 0,
+        });
         continue;
       } else if (url.indexOf("post.naver.com") !== -1) {
         type = "포스트";

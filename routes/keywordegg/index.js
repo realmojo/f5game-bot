@@ -6,6 +6,7 @@ const controller = require("./controller");
 router.get("/getKeywordList", controller.getKeywordList);
 router.get("/getKeyword", controller.getKeyword);
 router.get("/getKeywordStat", controller.getKeywordStat);
+router.post("/getBlogAnalysisInfo", controller.getBlogAnalysisInfo);
 router.get("/addKeyword", controller.addKeyword);
 
 module.exports = router;

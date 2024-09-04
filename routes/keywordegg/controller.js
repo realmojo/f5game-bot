@@ -1,5 +1,6 @@
 const axios = require("axios");
 const crypto = require("crypto");
+const cheerio = require("cheerio");
 const { replaceAll } = require("../../utils/util");
 
 // Access Key, Secret Key, Customer ID를 상수로 정의
@@ -210,9 +211,63 @@ const addKeyword = async (req, res) => {
   }
 };
 
+const transBlogUrl = (url) => {
+  const d = url.split("/");
+  return `https://blog.naver.com/PostView.naver?blogId=${
+    d[d.length - 2]
+  }&logNo=${d[d.length - 1]}`;
+};
+
+const getBlogAnalysisInfo = async (req, res) => {
+  try {
+    const { urls } = req.body;
+    const items = [];
+
+    for (let url of urls) {
+      let type = "naver";
+      if (url.indexOf("tistory.com") !== -1) {
+        type = "티스토리";
+      } else if (url.indexOf("blog.naver.com") !== -1) {
+        type = "블로그";
+        url = transBlogUrl(url);
+      } else if (url.indexOf("cafe.naver.com") !== -1) {
+        type = "카페";
+      } else if (url.indexOf("post.naver.com") !== -1) {
+        type = "포스트";
+      } else if (url.indexOf("in.naver.com") !== -1) {
+        type = "인플루언서";
+      } else {
+        type = "홈페이지";
+      }
+
+      const { data } = await axios.get(url);
+      const $ = cheerio.load(data);
+      const d = $(".se-main-container");
+      const imageCount = d.find("img").length || 0;
+      const linkCount = d.find("a").length || 0;
+      const wordInfo = d.find(".se-text-paragraph").text() || "";
+
+      const trimExcludeWords = replaceAll(wordInfo, " ", "");
+
+      items.push({
+        type,
+        imageCount,
+        wordCount: trimExcludeWords.length,
+        wordSpaceCount: wordInfo.length,
+        linkCount,
+      });
+    }
+
+    return res.status(200).send(items);
+  } catch (e) {
+    console.log(e);
+    return res.status(200).send("no data");
+  }
+};
 module.exports = {
   getKeywordList,
   getKeywordStat,
   getKeyword,
   addKeyword,
+  getBlogAnalysisInfo,
 };

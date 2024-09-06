@@ -253,7 +253,7 @@ const getBlogAnalysisInfo = async (req, res) => {
         const d = $(".se-main-container");
         imageCount = d.find(".se-image-resource").length.toLocaleString() || 0;
         linkCount = d.find("a").length.toLocaleString() || 0;
-        let wordInfo = d.find(".se-text-paragraph").text() || "";
+        wordInfo = d.find(".se-text-paragraph").text() || "";
 
         trimExcludeWords = replaceAll(wordInfo, " ", "");
       } else if (url.indexOf("post.naver.com") !== -1) {
@@ -264,7 +264,7 @@ const getBlogAnalysisInfo = async (req, res) => {
         const d = $(".se_component_wrap");
         imageCount = d.find(".se_mediaImage").length.toLocaleString() || 0;
         linkCount = d.find("a").length.toLocaleString() || 0;
-        let wordInfo = d.find(".se_textarea").text() || "";
+        wordInfo = d.find(".se_textarea").text() || "";
 
         trimExcludeWords = replaceAll(wordInfo, " ", "");
       } else if (url.indexOf("cafe.naver.com") !== -1) {

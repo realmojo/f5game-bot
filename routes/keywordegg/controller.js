@@ -225,6 +225,10 @@ const getBlogAnalysisInfo = async (req, res) => {
 
     for (let url of urls) {
       let type = "";
+      let imageCount = 0;
+      let linkCount = 0;
+      let trimExcludeWords = 0;
+      let wordInfo = "";
       if (url.indexOf("tistory.com") !== -1) {
         type = "티스토리";
         items.push({
@@ -235,13 +239,34 @@ const getBlogAnalysisInfo = async (req, res) => {
           linkCount: 0,
         });
         continue;
-      } else if (url.indexOf("blog.naver.com") !== -1) {
-        type = "블로그";
-        url = transBlogUrl(url);
+      } else if (
+        url.indexOf("blog.naver.com") !== -1 ||
+        url.indexOf("in.naver.com") !== -1
+      ) {
+        type = "인플루언서";
+        if (url.indexOf("blog.naver.com") !== -1) {
+          type = "블로그";
+          url = transBlogUrl(url);
+        }
+        const { data } = await axios.get(url);
+        const $ = cheerio.load(data);
+        const d = $(".se-main-container");
+        imageCount = d.find(".se-image-resource").length.toLocaleString() || 0;
+        linkCount = d.find("a").length.toLocaleString() || 0;
+        let wordInfo = d.find(".se-text-paragraph").text() || "";
+
+        trimExcludeWords = replaceAll(wordInfo, " ", "");
       } else if (url.indexOf("post.naver.com") !== -1) {
         type = "포스트";
-      } else if (url.indexOf("in.naver.com") !== -1) {
-        type = "인플루언서";
+
+        const { data } = await axios.get(url);
+        const $ = cheerio.load(data);
+        const d = $(".se_component_wrap");
+        imageCount = d.find(".se_mediaImage").length.toLocaleString() || 0;
+        linkCount = d.find("a").length.toLocaleString() || 0;
+        let wordInfo = d.find(".se_textarea").text() || "";
+
+        trimExcludeWords = replaceAll(wordInfo, " ", "");
       } else if (url.indexOf("cafe.naver.com") !== -1) {
         type = "카페";
         items.push({
@@ -263,16 +288,6 @@ const getBlogAnalysisInfo = async (req, res) => {
         });
         continue;
       }
-
-      const { data } = await axios.get(url);
-      const $ = cheerio.load(data);
-      const d = $(".se-main-container");
-      const imageCount =
-        d.find(".se-image-resource").length.toLocaleString() || 0;
-      const linkCount = d.find("a").length.toLocaleString() || 0;
-      const wordInfo = d.find(".se-text-paragraph").text() || "";
-
-      const trimExcludeWords = replaceAll(wordInfo, " ", "");
 
       items.push({
         type,

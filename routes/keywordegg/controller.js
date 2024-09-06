@@ -244,7 +244,6 @@ const getBlogAnalysisInfo = async (req, res) => {
         type = "인플루언서";
       } else if (url.indexOf("cafe.naver.com") !== -1) {
         type = "카페";
-
         items.push({
           type,
           imageCount: 0,
@@ -268,7 +267,8 @@ const getBlogAnalysisInfo = async (req, res) => {
       const { data } = await axios.get(url);
       const $ = cheerio.load(data);
       const d = $(".se-main-container");
-      const imageCount = d.find("img").length.toLocaleString() || 0;
+      const imageCount =
+        d.find(".se-image-resource").length.toLocaleString() || 0;
       const linkCount = d.find("a").length.toLocaleString() || 0;
       const wordInfo = d.find(".se-text-paragraph").text() || "";
 

@@ -11,7 +11,7 @@ const cron = require("node-cron");
 
 // 내꺼 안죽이게끔 살리기
 cron.schedule("* * * * *", async () => {
-  const { data } = await axios.get("https://f5game-bot.herokuapp.com/ping");
+  const { data } = await axios.get("https://f5game-bot.vercel.app/ping");
   console.log(data);
 });
 

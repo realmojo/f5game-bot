@@ -32,7 +32,26 @@ cron.schedule("2 15 * * *", async () => {
 // utc 시간 적용 +9 -> 24시 === 새벽 0시
 cron.schedule("0 */3 * * *", async () => {
   try {
-    axios.get("https://f5game-bot.vercel.app/techtoktok/crawl");
+    const links = await getLinks();
+
+    for (const link of links) {
+      if (link.type === "theqoo") {
+        doTheqooPost(link);
+      } else if (link.type === "bobaedream") {
+        doBobaedreamPost(link);
+      } else if (link.type === "natepann") {
+        doNatepannPost(link);
+      } else if (link.type === "teamblind") {
+        doTeamblindPost(link);
+      } else if (link.type === "ddanzi") {
+        doDdanziPost(link);
+      } else if (link.type === "instiz") {
+        doInstizPost(link);
+      }
+      console.log(`${link.type}: ${link.link} 포스팅 완료.`);
+      await delay(10000);
+    }
+    console.log("good~");
   } catch (e) {
     console.log(e);
   }

@@ -12,11 +12,30 @@ const {
   getCategoryNumber,
   getModels,
 } = require("./common");
+const {
+  doTheqooPost,
+  doBobaedreamPost,
+  doNatepannPost,
+  doTeamblindPost,
+  doDdanziPost,
+  doInstizPost,
+  getLinks,
+} = require("./community");
+const { delay } = require("../../utils/util");
 
 // utc 시간 적용 +9 -> 24시 === 새벽 0시
 cron.schedule("2 15 * * *", async () => {
-  await axios.get("https://f5game-bot.herokuapp.com/techtoktok/doPostFortune");
+  await axios.get("https://f5game-bot.vercel.app/techtoktok/doPostFortune");
   console.log("good~");
+});
+
+// utc 시간 적용 +9 -> 24시 === 새벽 0시
+cron.schedule("0 */3 * * *", async () => {
+  try {
+    axios.get("https://f5game-bot.vercel.app/techtoktok/crawl");
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 //
@@ -320,6 +339,34 @@ const getApiTest = async (req, res) => {
   }
 };
 
+const getCrawl = async (req, res) => {
+  try {
+    const links = await getLinks();
+
+    for (const link of links) {
+      if (link.type === "theqoo") {
+        doTheqooPost(link);
+      } else if (link.type === "bobaedream") {
+        doBobaedreamPost(link);
+      } else if (link.type === "natepann") {
+        doNatepannPost(link);
+      } else if (link.type === "teamblind") {
+        doTeamblindPost(link);
+      } else if (link.type === "ddanzi") {
+        doDdanziPost(link);
+      } else if (link.type === "instiz") {
+        doInstizPost(link);
+      }
+      console.log(`${link.type}: ${link.link} 포스팅 완료.`);
+      await delay(10000);
+    }
+    return res.status(200).send("ok");
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send({ status: "err" });
+  }
+};
+
 module.exports = {
   postFortune,
   postApiFortune,
@@ -327,4 +374,5 @@ module.exports = {
   postApiDream,
   getModelList,
   getApiTest,
+  getCrawl,
 };

@@ -1,4 +1,5 @@
 const axios = require("axios");
+const WPAPI = require("wpapi");
 var request = require("request");
 var { google } = require("googleapis");
 
@@ -7,6 +8,38 @@ const headers = {
     Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     "Content-Type": "application/json",
   },
+};
+
+const removeDuplicateLinks = (arr) => {
+  const seenLinks = new Set(); // 중복을 체크하기 위한 Set
+  return arr.filter((item) => {
+    if (seenLinks.has(item.link)) {
+      return false; // 중복된 링크는 제외
+    } else {
+      seenLinks.add(item.link); // 새로운 링크는 Set에 추가
+      return true; // 중복이 아니므로 유지
+    }
+  });
+};
+
+const doTechtoktokPost = async (title, content) => {
+  const wp = new WPAPI({
+    endpoint: "https://techtoktok.com/wp-json",
+    username: process.env.WP_TECHTOKTOK_ID || "",
+    password: process.env.WP_TECHTOKTOK_PW || "",
+  });
+
+  wp.posts()
+    .create({
+      title: title,
+      content: content,
+      categories: [128],
+      status: "publish",
+    })
+    .then(async (res) => {
+      // await naverIndexingApi(res.link);
+      // await googleIndexingApi(res.link);
+    });
 };
 
 const getModels = async () => {
@@ -152,4 +185,6 @@ module.exports = {
   generateBlogContent,
   getCategoryNumber,
   getModels,
+  doTechtoktokPost,
+  removeDuplicateLinks,
 };

@@ -2,6 +2,7 @@ const axios = require("axios");
 const WPAPI = require("wpapi");
 var request = require("request");
 var { google } = require("googleapis");
+const { resolve } = require("path/posix");
 
 const headers = {
   headers: {
@@ -23,23 +24,30 @@ const removeDuplicateLinks = (arr) => {
 };
 
 const doTechtoktokPost = async (title, content) => {
-  const wp = new WPAPI({
-    endpoint: "https://techtoktok.com/wp-json",
-    username: process.env.WP_TECHTOKTOK_ID || "",
-    password: process.env.WP_TECHTOKTOK_PW || "",
-  });
+  return new Promise((resolve) => {
+    try {
+      const wp = new WPAPI({
+        endpoint: "https://techtoktok.com/wp-json",
+        username: process.env.WP_TECHTOKTOK_ID || "",
+        password: process.env.WP_TECHTOKTOK_PW || "",
+      });
 
-  wp.posts()
-    .create({
-      title: title,
-      content: content,
-      categories: [128],
-      status: "publish",
-    })
-    .then(async (res) => {
-      // await naverIndexingApi(res.link);
-      // await googleIndexingApi(res.link);
-    });
+      wp.posts()
+        .create({
+          title: title,
+          content: content,
+          categories: [128],
+          status: "publish",
+        })
+        .then(async (res) => {
+          resolve(res.link);
+          // await naverIndexingApi(res.link);
+          // await googleIndexingApi(res.link);
+        });
+    } catch (e) {
+      resolve("wp err");
+    }
+  });
 };
 
 const getModels = async () => {

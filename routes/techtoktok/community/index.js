@@ -29,6 +29,7 @@ axiosRetry(axios, {
 
 const getTheqooLinks = async () => {
   try {
+    console.log("더쿠 링크를 가져옵니다.");
     const { data: r } = await axios.get("https://theqoo.net/hot");
     const $ = cheerio.load(r);
 
@@ -56,7 +57,6 @@ const getTheqooLinks = async () => {
 const doTheqooPost = async (item) => {
   try {
     const { data: lists } = await axios.get(item.link);
-    console.log(item);
     const $ = cheerio.load(lists);
 
     let article = $('article[itemprop="articleBody"]');
@@ -66,23 +66,24 @@ const doTheqooPost = async (item) => {
       let imgSrc = $(img).attr("src");
 
       const fileName = `${pathname}/${path.basename(imgSrc)}`;
-      await uploadImageToS3(imgSrc, "techtoktok", fileName);
+      const imageUrl = await uploadImageToS3(imgSrc, "techtoktok", fileName);
       $(img).attr("src", imageUrl);
     }
 
     let title = item.title;
     let content = article.html();
+    let wpLink = await doTechtoktokPost(title, content);
 
-    await doTechtoktokPost(title, content);
-
-    return "ok";
+    return wpLink;
   } catch (e) {
+    console.log("err: ", e);
     return "err";
   }
 };
 
 const getBobaedreamLinks = async () => {
   try {
+    console.log("보배드림 링크를 가져옵니다.");
     const { data: r } = await axios.get(
       "https://www.bobaedream.co.kr/list?code=best"
     );
@@ -106,7 +107,6 @@ const getBobaedreamLinks = async () => {
 const doBobaedreamPost = async (item) => {
   try {
     const { data: lists } = await axios.get(item.link);
-    console.log(item);
     const $ = cheerio.load(lists);
 
     let article = $('div[itemprop="articleBody"]');
@@ -123,16 +123,18 @@ const doBobaedreamPost = async (item) => {
     let title = item.title;
     let content = article.html();
 
-    await doTechtoktokPost(title, content);
+    let wpLink = await doTechtoktokPost(title, content);
 
-    return "ok";
+    return wpLink;
   } catch (e) {
+    console.log(e.response.data);
     return "err";
   }
 };
 
 const getNatepannLinks = async () => {
   try {
+    console.log("네이트판 링크를 가져옵니다.");
     const { data: r } = await axios.get("https://pann.nate.com/talk/ranking");
     const $ = cheerio.load(r);
 
@@ -155,7 +157,6 @@ const doNatepannPost = async (item) => {
   try {
     const { data: lists } = await axios.get(item.link);
 
-    console.log(item);
     const $ = cheerio.load(lists);
     let article = $("#contentArea");
 
@@ -181,16 +182,18 @@ const doNatepannPost = async (item) => {
     let title = item.title;
     let content = article.html();
 
-    await doTechtoktokPost(title, content);
+    let wpLink = await doTechtoktokPost(title, content);
 
-    return "ok";
+    return wpLink;
   } catch (e) {
+    console.log(e.response.data);
     return "err";
   }
 };
 
 const getTeamblindLinks = async () => {
   try {
+    console.log("블라인드 링크를 가져옵니다.");
     const { data: r } = await axios.get("https://www.teamblind.com/kr/");
     const $ = cheerio.load(r);
 
@@ -216,8 +219,6 @@ const getTeamblindLinks = async () => {
 const doTeamblindPost = async (item) => {
   try {
     const { data: lists } = await axios.get(item.link);
-
-    console.log(item);
     const $ = cheerio.load(lists);
     let article = $(".article-view-contents");
 
@@ -235,16 +236,18 @@ const doTeamblindPost = async (item) => {
     let title = item.title;
     let content = article.html();
 
-    await doTechtoktokPost(title, content);
+    let wpLink = await doTechtoktokPost(title, content);
 
-    return "ok";
+    return wpLink;
   } catch (e) {
+    console.log(e.response.data);
     return "err";
   }
 };
 
 const getDdanziLinks = async () => {
   try {
+    console.log("딴지일보 링크를 가져옵니다.");
     const { data: r } = await axios.get("https://www.ddanzi.com/hot_all");
     const $ = cheerio.load(r);
 
@@ -268,8 +271,6 @@ const getDdanziLinks = async () => {
 const doDdanziPost = async (item) => {
   try {
     const { data: lists } = await axios.get(item.link);
-    console.log(item);
-
     const $ = cheerio.load(lists);
     let article = $(".read_content");
 
@@ -286,16 +287,18 @@ const doDdanziPost = async (item) => {
     let title = item.title;
     let content = article.html();
 
-    await doTechtoktokPost(title, content);
+    let wpLink = await doTechtoktokPost(title, content);
 
-    return "ok";
+    return wpLink;
   } catch (e) {
+    console.log(e.response.data);
     return "err";
   }
 };
 
 const getInstizLinks = async () => {
   try {
+    console.log("인스티즈 링크를 가져옵니다.");
     const { data: r } = await axios.get("https://www.instiz.net/pt?category=1");
     const $ = cheerio.load(r);
 
@@ -325,8 +328,6 @@ const getInstizLinks = async () => {
 const doInstizPost = async (item) => {
   try {
     const { data: lists } = await axios.get(item.link);
-    console.log(item);
-
     const $ = cheerio.load(lists);
     let article = $('div[itemprop="articleBody"]');
 
@@ -356,10 +357,11 @@ const doInstizPost = async (item) => {
     let title = item.title;
     let content = article.html();
 
-    await doTechtoktokPost(title, content);
+    let wpLink = await doTechtoktokPost(title, content);
 
-    return "ok";
+    return wpLink;
   } catch (e) {
+    console.log(e.response.data);
     return "err";
   }
 };
@@ -369,7 +371,7 @@ const getLinks = async () => {
   const theqooLinks = await getTheqooLinks();
   const bobaedreamLinks = await getBobaedreamLinks();
   const natepannLinks = await getNatepannLinks();
-  const teamblindLinks = await getTeamblindLinks();
+  // const teamblindLinks = await getTeamblindLinks();
   const ddanziLinks = await getDdanziLinks();
   const instizLinks = await getInstizLinks();
   links = links.concat(theqooLinks);

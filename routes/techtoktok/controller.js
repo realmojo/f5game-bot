@@ -33,22 +33,23 @@ cron.schedule("2 15 * * *", async () => {
 cron.schedule("0 */3 * * *", async () => {
   try {
     const links = await getLinks();
-
+    let wpLink = "";
     for (const link of links) {
+      console.log(link);
       if (link.type === "theqoo") {
-        doTheqooPost(link);
+        wpLink = await doTheqooPost(link);
       } else if (link.type === "bobaedream") {
-        doBobaedreamPost(link);
+        wpLink = await doBobaedreamPost(link);
       } else if (link.type === "natepann") {
-        doNatepannPost(link);
+        wpLink = await doNatepannPost(link);
       } else if (link.type === "teamblind") {
-        doTeamblindPost(link);
+        wpLink = await doTeamblindPost(link);
       } else if (link.type === "ddanzi") {
-        doDdanziPost(link);
+        wpLink = await doDdanziPost(link);
       } else if (link.type === "instiz") {
-        doInstizPost(link);
+        wpLink = await doInstizPost(link);
       }
-      console.log(`${link.type}: ${link.link} 포스팅 완료.`);
+      console.log(`${link.type}: (${link.link} / ${wpLink}) 포스팅 완료.`);
       await delay(10000);
     }
     console.log("good~");
@@ -361,22 +362,23 @@ const getApiTest = async (req, res) => {
 const getCrawl = async (req, res) => {
   try {
     const links = await getLinks();
-
+    let wpLink = "";
     for (const link of links) {
+      console.log(link);
       if (link.type === "theqoo") {
-        doTheqooPost(link);
+        wpLink = await doTheqooPost(link);
       } else if (link.type === "bobaedream") {
-        doBobaedreamPost(link);
+        wpLink = await doBobaedreamPost(link);
       } else if (link.type === "natepann") {
-        doNatepannPost(link);
+        wpLink = await doNatepannPost(link);
       } else if (link.type === "teamblind") {
-        doTeamblindPost(link);
+        wpLink = await doTeamblindPost(link);
       } else if (link.type === "ddanzi") {
-        doDdanziPost(link);
+        wpLink = await doDdanziPost(link);
       } else if (link.type === "instiz") {
-        doInstizPost(link);
+        wpLink = await doInstizPost(link);
       }
-      console.log(`${link.type}: ${link.link} 포스팅 완료.`);
+      console.log(`${link.type}: (${link.link} / ${wpLink}) 포스팅 완료.`);
       await delay(10000);
     }
     return res.status(200).send("ok");

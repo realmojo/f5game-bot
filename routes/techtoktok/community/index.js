@@ -377,7 +377,7 @@ const getLinks = async () => {
   links = links.concat(theqooLinks);
   links = links.concat(bobaedreamLinks);
   links = links.concat(natepannLinks);
-  links = links.concat(teamblindLinks);
+  // links = links.concat(teamblindLinks);
   links = links.concat(ddanziLinks);
   links = links.concat(instizLinks);
 

@@ -30,7 +30,7 @@ cron.schedule("2 15 * * *", async () => {
 });
 
 // utc 시간 적용 +9 -> 24시 === 새벽 0시
-cron.schedule("0 */3 * * *", async () => {
+cron.schedule("0 */1 * * *", async () => {
   try {
     const links = await getLinks();
     let wpLink = "";

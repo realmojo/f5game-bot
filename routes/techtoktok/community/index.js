@@ -347,7 +347,7 @@ const doInstizPost = async (item) => {
     const imgs = article.find("img");
     const pathname = `images/${moment().format("YYYY-MM-DD")}`;
     for (let img of imgs) {
-      let imgSrc = $(img).attr("src");
+      let imgSrc = `http:${$(img).attr("src")}`;
 
       const fileName = `${pathname}/${path.basename(imgSrc)}`;
       const imageUrl = await uploadImageToS3(imgSrc, "techtoktok", fileName);

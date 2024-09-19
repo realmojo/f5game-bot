@@ -11,6 +11,7 @@ const {
   generateBlogContent,
   getCategoryNumber,
   getModels,
+  doTechtoktokPost,
 } = require("./common");
 const {
   doTheqooPost,
@@ -21,42 +22,42 @@ const {
   doInstizPost,
   getLinks,
 } = require("./community");
-const { delay } = require("../../utils/util");
+const { delay, replaceAll } = require("../../utils/util");
 
 // utc 시간 적용 +9 -> 24시 === 새벽 0시
-cron.schedule("2 15 * * *", async () => {
-  await axios.get("https://f5game-bot.vercel.app/techtoktok/doPostFortune");
-  console.log("good~");
-});
+// cron.schedule("2 15 * * *", async () => {
+//   await axios.get("https://f5game-bot.vercel.app/techtoktok/doPostFortune");
+//   console.log("good~");
+// });
 
 // utc 시간 적용 +9 -> 24시 === 새벽 0시
-cron.schedule("0 */1 * * *", async () => {
-  try {
-    const links = await getLinks();
-    let wpLink = "";
-    for (const link of links) {
-      console.log(link);
-      if (link.type === "theqoo") {
-        wpLink = await doTheqooPost(link);
-      } else if (link.type === "bobaedream") {
-        wpLink = await doBobaedreamPost(link);
-      } else if (link.type === "natepann") {
-        wpLink = await doNatepannPost(link);
-      } else if (link.type === "teamblind") {
-        wpLink = await doTeamblindPost(link);
-      } else if (link.type === "ddanzi") {
-        wpLink = await doDdanziPost(link);
-      } else if (link.type === "instiz") {
-        wpLink = await doInstizPost(link);
-      }
-      console.log(`${link.type}: (${link.link} / ${wpLink}) 포스팅 완료.`);
-      await delay(10000);
-    }
-    console.log("good~");
-  } catch (e) {
-    console.log(e);
-  }
-});
+// cron.schedule("0 */1 * * *", async () => {
+//   try {
+//     const links = await getLinks();
+//     let wpLink = "";
+//     for (const link of links) {
+//       console.log(link);
+//       if (link.type === "theqoo") {
+//         wpLink = await doTheqooPost(link);
+//       } else if (link.type === "bobaedream") {
+//         wpLink = await doBobaedreamPost(link);
+//       } else if (link.type === "natepann") {
+//         wpLink = await doNatepannPost(link);
+//       } else if (link.type === "teamblind") {
+//         wpLink = await doTeamblindPost(link);
+//       } else if (link.type === "ddanzi") {
+//         wpLink = await doDdanziPost(link);
+//       } else if (link.type === "instiz") {
+//         wpLink = await doInstizPost(link);
+//       }
+//       console.log(`${link.type}: (${link.link} / ${wpLink}) 포스팅 완료.`);
+//       await delay(10000);
+//     }
+//     console.log("good~");
+//   } catch (e) {
+//     console.log(e);
+//   }
+// });
 
 //
 // cron.schedule("*/8 * * * *", async () => {
@@ -388,6 +389,37 @@ const getCrawl = async (req, res) => {
   }
 };
 
+const doKinToTechtoktokPost = async (req, res) => {
+  try {
+    const { kinUrl } = req.body;
+
+    const { data } = await axios.get(kinUrl);
+    const $ = cheerio.load(data);
+
+    const description = $(".questionDetail").text().trim();
+    const results = await generateBlogContent(description);
+    console.log(results.choices[0].message.content);
+
+    let d = results.choices[0].message.content;
+    d = replaceAll(d, "```", "");
+    d = replaceAll(d, "json", "");
+    console.log("------------------------------------------------");
+    d = d.trim();
+    console.log(d.trim());
+    const { title, content } = JSON.parse(d);
+
+    console.log("title: ", title);
+    console.log("content: ", content);
+
+    const techtoktokUrl = await doTechtoktokPost(title, content);
+
+    return res.status(500).send({ status: "ok", techtoktokUrl, content });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send({ status: "err" });
+  }
+};
+
 module.exports = {
   postFortune,
   postApiFortune,
@@ -396,4 +428,5 @@ module.exports = {
   getModelList,
   getApiTest,
   getCrawl,
+  doKinToTechtoktokPost,
 };

@@ -2,7 +2,6 @@ const axios = require("axios");
 const WPAPI = require("wpapi");
 var request = require("request");
 var { google } = require("googleapis");
-const { resolve } = require("path/posix");
 
 const headers = {
   headers: {
@@ -28,14 +27,14 @@ const getRandomElement = (arr) => {
   return arr[randomIndex];
 };
 
-const doTechtoktokPost = async (title, content, categories = 129) => {
-  const fea = [76, 79, 88, 104, 107, 109, 122, 124, 146, 152];
+const doTechupboxPost = async (title, content, categories = 61) => {
+  // const fea = [76, 79, 88, 104, 107, 109, 122, 124, 146, 152];
   return new Promise((resolve) => {
     try {
       const wp = new WPAPI({
-        endpoint: "https://techtoktok.com/wp-json",
-        username: process.env.WP_TECHTOKTOK_ID || "",
-        password: process.env.WP_TECHTOKTOK_PW || "",
+        endpoint: "https://techupbox.com/wp-json",
+        username: process.env.WP_TECHUPBOX_ID || "",
+        password: process.env.WP_TECHUPBOX_PW || "",
       });
 
       wp.posts()
@@ -43,7 +42,7 @@ const doTechtoktokPost = async (title, content, categories = 129) => {
           title: title,
           content: content,
           categories: [categories],
-          featured_media: getRandomElement(fea),
+          // featured_media: getRandomElement(fea),
           status: "publish",
         })
         .then(async (res) => {
@@ -90,9 +89,12 @@ const generateBlogContent = async (topic) => {
 
 결과값 title, content를 json으로 반환해줘`,
     };
-    const userMessage = { role: "user", content: topic };
+    const userMessage = {
+      role: "user",
+      content: `[${topic}]에 대해서 글을 작성해줘`,
+    };
 
-    console.log(`주제 [${topic}]에 대해서 작성합니다..`);
+    console.log(userMessage);
     const { data } = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
@@ -217,6 +219,6 @@ module.exports = {
   generateBlogContent,
   getCategoryNumber,
   getModels,
-  doTechtoktokPost,
+  doTechupboxPost,
   removeDuplicateLinks,
 };

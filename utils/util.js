@@ -109,6 +109,10 @@ const shuffle = (array) => {
   return array;
 };
 
+const toSingleLine = (str) => {
+  return str.replace(/\s+/g, " ").trim();
+};
+
 module.exports = {
   replaceAll,
   convertSecondsToMMSS,
@@ -117,4 +121,5 @@ module.exports = {
   delay,
   uploadImageToS3,
   shuffle,
+  toSingleLine,
 };

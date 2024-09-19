@@ -74,7 +74,6 @@ const generateBlogContent = async (topic) => {
     const systemMessage = {
       role: "system",
       content: `글을 만들 때 영어(English)로 문서를 찾고 한글(Korean)로 번역해서 작성해줘.(필수)
-구글SEO, 네이버SEO에 최적화 되게끔 글을 작성 해야해.(필수)
 글의 소제목은 주제 키워드를 가끔씩 포함하고 설명은 1000자 이내로 작성해줘.(필수)
 글의 총 길이는 공백을 제외하고 3000자 정도 작성을 해야해.(필수)
 고유한 단어는 700자 이상 필요해(필수)

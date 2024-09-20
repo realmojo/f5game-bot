@@ -477,15 +477,37 @@ const doKinToTechupboxPost = async (req, res) => {
     console.log("------------------------------------------------");
     d = d.trim();
     d = toSingleLine(d);
-    console.log(d);
-    const { title, content } = JSON.parse(d);
+    const { title, content, answer } = JSON.parse(d);
 
     console.log("title: ", title);
     console.log("content: ", content);
+    console.log("answer: ", answer);
 
     const techupboxUrl = await doTechupboxPost(title, content);
 
-    return res.status(500).send({ status: "ok", techupboxUrl, content });
+    const rrr = await axios.get(
+      `http://localhost:3001/naver/qrCreate?title=${new Date().getTime()}&link=${techupboxUrl}`
+    );
+
+    const rrrss = {
+      status: "ok",
+      naverUrl: rrr.data,
+      techupboxUrl,
+      content,
+      answer: `[질문]
+    ${description}
+
+    [답변]
+    ${answer}
+    ${rrr.data}`,
+    };
+    console.log(rrrss);
+    return res.status(500).send(`[질문]
+${description}
+
+[답변]
+${answer}
+${rrr.data}`);
   } catch (e) {
     console.log(e);
     return res.status(500).send({ status: "err" });

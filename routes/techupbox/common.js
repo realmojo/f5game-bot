@@ -78,19 +78,20 @@ const generateBlogContent = async (topic) => {
 글의 총 길이는 공백을 제외하고 3000자 정도 작성을 해야해.(필수)
 고유한 단어는 700자 이상 필요해(필수)
 표절이 없게끔 작성하는 것이 가장 중요해(필수)
-사람이 글을 쓴것 처럼 작성해줘(필수)
 글 내용을 워드프레스에 올릴 수 있게 HTML코드로 변환해서 작성해줘.(필수)
 
 글 예시는 아래와 같이 해줘, 소제목과 소제목에 대한 설명은 최소 3개 이상 만들어줘.
-대제목에 대한 설명 500자(주제에 대한 키워드를 꼭 넣기)
 소제목 (주제에 대한 키워드 일부만 넣기)
 소제목에 대한 설명(li 문법과 p문법을 적당히 혼용해서 작성)
+title은 [질문]을 요약해서 만들어줘
+content에는 h1 태그를 적지 말아줘(필수)
+answer는 content를 기반으로 요약해서 200자 정도 텍스트로 작성해줘
 
-결과값 title, content를 json으로 반환해줘`,
+결과값 title, content, answer를 json으로 반환해줘`,
     };
     const userMessage = {
       role: "user",
-      content: `[${topic}]에 대해서 글을 작성해줘`,
+      content: `[질문: ${topic}]에 대해서 글을 작성해줘`,
     };
 
     console.log(userMessage);
@@ -99,7 +100,7 @@ const generateBlogContent = async (topic) => {
       {
         model: "gpt-4o",
         messages: [systemMessage, userMessage],
-        temperature: 0.7,
+        temperature: 0.8,
         top_p: 0.9,
       },
       headers

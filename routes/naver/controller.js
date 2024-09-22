@@ -174,9 +174,13 @@ const doCreateQrUrl = async (req, res) => {
       ],
     };
 
+    const NID_AUT =
+      "X4+6JnKnd3UMoSvCOYk3vPKaCjPZoXo3r0Xy1jrVR8+xL0hLStQnPNCgretuTkm1";
+    const NID_SES =
+      "AAABg42Tzoej+vJBGT0BphstmaqlbH/a2oTDWahY7ZKeSbcnRHDScFMhayRnqMMIcedtBgjQwuPRaxnJJOML8iFUPurTNgh/xv4S5SYQTzR0Tlfc+W59rCMEpRp0cb2DF7W+ejQzP/Cht0UTrTCkabwz7JUUQ5fG4OEajuvkui2VzP305kUXTWAcsL859ph8yN0R8owiLQZeVtvIH8Z3xqAKoa1LGf5EupqgFwfxBywtawYlatu1ZDU8NDV5NoYm8EKcEGFBgIHFR27Mq9/AAAuAY+dbXvHJo/itKWaykiO2VWnaglELVVDkBvvIDDlybo1QuLT7EmrRBJA2zdBUfW1zoHcmX5GVAlyziX1K+jhcJvYDXPQO4D65xU4v3SFBJ/PoIxzU/x3CiSGW/t3JBywb+8+V3W637cnv82KvW3smqhYw5+X917Cp8gkFmxU/bxIkCBawNFsiff4+gdNM40lf63M9+arQWfId0mViF+muZm0aOAtrsLSqZvbWGTGH2h0GBTbOZYl+ErjtrPYimR8p1qM=";
+
     const headers = {
-      Cookie:
-        "NID_AUT=hsfn9AlQ4x3BqWK99trbMGE+54rKyLpWOpw2vMKKVADjKsxGIJ8AhiWWtvVfrzIh; NID_SES=AAABiCfJfNtlfNS0KF27aBr0Uga4E4R9M70LQWKlYGa7W7XTqegx2jB3K6+Okj4NLRbeoNsRaKyGqeVMTlF7XM9+4aPHkN+fdSK1H5biN7KGgGbKtzL5P9ZsMmaJPyj47z3k/TBhfPEBJc4loHbZdQgK1ffqv+SdL/NNQpvgKWe80JdoitaGVvoBKOib0JqXaVzLZ4UKb5ceNZ3SvL3EzxVty41nDwOLPFCoJDiyLsa2wkyHbo66G2+7DnlgabaIFuygolvgXzQo1b1Y25wkHFFbu8ZWunyZIHGEPoFertiFREuTF2cZU7vARfdNe9trvuVLhs2uyPVQrEAcHKJjUOrlWOgv3axfLuLspa95XKW5Nqqdy1w8Tq037iFdBeA+uTAQjQYyjEtOOWR66ClL+VvUSjP+OxBeisT3iMuQgBGNlCtI007vKWzGQqTlLo6uESuz5Sv70a6B6WlhqF3AW3pICx2UEBLPqcJvxRiiWUX+Wm8/0PyR6ez/qODBaWgpcw1UJ1n5ePVdCUi6Ch1ymMP+h0k=",
+      Cookie: `NID_AUT=${NID_AUT}; NID_SES=${NID_SES}`,
     };
 
     const { data } = await axios.post(url, params, { headers });

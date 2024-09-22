@@ -467,8 +467,10 @@ const doKinToTechupboxPost = async (req, res) => {
     const { data } = await axios.get(kinUrl);
     const $ = cheerio.load(data);
 
+    $(".iconQuestion").remove();
+    const kinTitle = $(".endTitleSection").text().trim();
     const description = $(".questionDetail").text().trim();
-    const results = await generateBlogContent(description);
+    const results = await generateBlogContent(kinTitle, description);
     console.log(results.choices[0].message.content);
 
     let d = results.choices[0].message.content;
@@ -479,6 +481,7 @@ const doKinToTechupboxPost = async (req, res) => {
     d = toSingleLine(d);
     const { title, content, answer } = JSON.parse(d);
 
+    console.log("kinTitle: ", kinTitle);
     console.log("title: ", title);
     console.log("content: ", content);
     console.log("answer: ", answer);
@@ -495,19 +498,19 @@ const doKinToTechupboxPost = async (req, res) => {
       techupboxUrl,
       content,
       answer: `[질문]
-    ${description}
+        ${description}
 
-    [답변]
-    ${answer}
-    ${rrr.data}`,
+        [답변]
+        ${answer.trim()}
+        ${rrr.data}`,
     };
     console.log(rrrss);
     return res.status(500).send(`[질문]
-${description}
+    ${description}
 
-[답변]
-${answer}
-${rrr.data}`);
+    [답변]
+    ${answer.trim()}
+    ${rrr.data}`);
   } catch (e) {
     console.log(e);
     return res.status(500).send({ status: "err" });

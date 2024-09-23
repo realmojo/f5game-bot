@@ -6,7 +6,12 @@ const drugLists = require("./drugArr.json");
 const request = require("request");
 var { google } = require("googleapis");
 const cheerio = require("cheerio");
-const { doTechupboxPost, generateBlogContent, qrCreate } = require("./common");
+const {
+  doTechupboxPost,
+  generateBlogContent,
+  qrCreate,
+  getTop10Data,
+} = require("./common");
 const { replaceAll, toSingleLine, delay } = require("../../utils/util");
 const {
   doTheqooPost,
@@ -553,9 +558,10 @@ const doGenerateContent = async (req, res) => {
     console.log("content: ", content);
     console.log("answer: ", answer);
 
-    return res
-      .status(200)
-      .send({ status: "ok", item: { title, description, content, answer } });
+    return res.status(200).send({
+      status: "ok",
+      item: { title, description, content, answer },
+    });
   } catch (e) {
     console.log(e);
     return res.status(500).send({ status: "err" });

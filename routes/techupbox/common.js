@@ -1,5 +1,7 @@
 const axios = require("axios");
 const WPAPI = require("wpapi");
+const moment = require("moment");
+const crypto = require("crypto");
 var request = require("request");
 var { google } = require("googleapis");
 
@@ -8,6 +10,62 @@ const headers = {
     Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     "Content-Type": "application/json",
   },
+};
+
+const naverIndexingApi = async (link) => {
+  console.log("네이버인덱싱: ", link);
+  const res = await axios.get(
+    `https://searchadvisor.naver.com/indexnow?url=${link}&key=aec34b39906648a0872fdad9356d4f79`
+  );
+  return link;
+};
+
+/**
+ * 여기는 꿈해몽
+ */
+
+const getCategoryNumber = (value) => {
+  let number = 0;
+  if (value === "행동,행위") {
+    number = 101;
+  } else if (value === "태몽") {
+    number = 117;
+  } else if (value === "죽음,질병") {
+    number = 106;
+  } else if (value === "장소") {
+    number = 108;
+  } else if (value === "자연") {
+    number = 111;
+  } else if (value === "인물") {
+    number = 100;
+  } else if (value === "이성") {
+    number = 102;
+  } else if (value === "음식") {
+    number = 107;
+  } else if (value === "신체") {
+    number = 104;
+  } else if (value === "식물") {
+    number = 113;
+  } else if (value === "배설물,분비물") {
+    number = 105;
+  } else if (value === "물건") {
+    number = 110;
+  } else if (value === "로또,복권") {
+    number = 118;
+  } else if (value === "동물") {
+    number = 112;
+  } else if (value === "교통수단") {
+    number = 115;
+  } else if (value === "광물,금속,보석") {
+    number = 116;
+  } else if (value === "곤충,벌레") {
+    number = 114;
+  } else if (value === "건물") {
+    number = 109;
+  } else if (value === "감정,감각") {
+    number = 103;
+  }
+  return number;
 };
 
 const removeDuplicateLinks = (arr) => {
@@ -86,9 +144,46 @@ const getModels = async () => {
   }
 };
 
+const getProductKeyword = async (title, topic) => {
+  "keyword는 메인주제와 메인설명에 대해 상품과 관련된 키워드를 1개만 작성해줘. 상품과 관련된 키워드가 없는거 같으면 아무 상품 키워드나 1개 추천해줘.";
+  try {
+    const systemMessage = {
+      role: "system",
+      content: `keyword는 메인주제와 메인설명에 대해 상품과 관련된 키워드를 1개만 작성해줘. 상품과 관련된 키워드가 없는거 같으면 아무 상품 키워드나 1개 추천해줘.
+        결과값 keyword를 string으로 반환해줘`,
+    };
+    const userMessage = {
+      role: "user",
+      content: `[질문: 메인주제(${title.trim()})에 대한, 메인설명(${topic})]에 대해서 상품키워드를 추출해줘`,
+    };
+    console.log(userMessage);
+    const { data } = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        model: "gpt-4o-mini",
+        messages: [systemMessage, userMessage],
+        temperature: 0.95,
+      },
+      headers
+    );
+
+    return data.choices[0].message.content;
+  } catch (e) {
+    return "";
+  }
+};
+
 // CHAT GPT API 요청 생성
 const generateBlogContent = async (title, topic) => {
   try {
+    const productKeyword = await getProductKeyword(title, topic);
+    console.log("productKeyword: ", productKeyword);
+    let landingUrl = "";
+    if (productKeyword) {
+      const coupangItems = await getTop10Data(productKeyword);
+      landingUrl = coupangItems?.landingUrl || "";
+    }
+
     const systemMessage = {
       role: "system",
       content: `포스팅의 소제목은 주제 키워드를 가끔씩 포함하고 설명은 1000자 이내로 작성해줘.(필수)
@@ -96,7 +191,8 @@ const generateBlogContent = async (title, topic) => {
 고유한 단어는 최소 700자 이상 필요해(필수)
 표절이 없게끔 작성하는 것이 가장 중요해(필수)
 글 내용을 워드프레스에 올릴 수 있게 HTML코드로 변환해서 작성해줘.(필수)
-최신 뉴스나 블로그등 웹사이트에서 대한 정보를 제공하고, 그에 대한 출처 실제 링크도 함께 <button class="tech-link"><a href="링크주소 넣기" target="_blank">👉 자세히 알아보기</a></button>을 첫 번째 소제목과 설명 사이에 한 개만 제공해줘(필수)
+쿠팡파트너스 버튼 링크를 <button class="tech-link"><a href="${landingUrl}" target="_blank">👉 ${productKeyword} 알아보기</a></button> 첫 번째 소제목과 설명사이에 작성해줘(필수)
+최신 뉴스나 블로그등 웹사이트에서 대한 정보를 제공해주고, 그에 대한 출처 실제 링크도 함께 <button class="tech-link"><a href="링크주소 넣기" target="_blank">👉 자세히 알아보기</a></button>을 두 번째 소제목과 설명 사이에 한 개만 제공해줘(필수)
 출처링크 제공할 때 https://example.com 도메인은 추천하지 말아주고 대한민국의 다른 사이트의 링크를 넣어줘.
 글 예시는 아래와 같이 해줘, 소제목과 소제목에 대한 설명은 최소 3개 이상 만들어줘.
 소제목 (주제에 대한 키워드 일부만 넣기)
@@ -174,62 +270,6 @@ const googleIndexingApi = async (link) => {
   });
 };
 
-const naverIndexingApi = async (link) => {
-  console.log("네이버인덱싱: ", link);
-  const res = await axios.get(
-    `https://searchadvisor.naver.com/indexnow?url=${link}&key=aec34b39906648a0872fdad9356d4f79`
-  );
-  return link;
-};
-
-/**
- * 여기는 꿈해몽
- */
-
-const getCategoryNumber = (value) => {
-  let number = 0;
-  if (value === "행동,행위") {
-    number = 101;
-  } else if (value === "태몽") {
-    number = 117;
-  } else if (value === "죽음,질병") {
-    number = 106;
-  } else if (value === "장소") {
-    number = 108;
-  } else if (value === "자연") {
-    number = 111;
-  } else if (value === "인물") {
-    number = 100;
-  } else if (value === "이성") {
-    number = 102;
-  } else if (value === "음식") {
-    number = 107;
-  } else if (value === "신체") {
-    number = 104;
-  } else if (value === "식물") {
-    number = 113;
-  } else if (value === "배설물,분비물") {
-    number = 105;
-  } else if (value === "물건") {
-    number = 110;
-  } else if (value === "로또,복권") {
-    number = 118;
-  } else if (value === "동물") {
-    number = 112;
-  } else if (value === "교통수단") {
-    number = 115;
-  } else if (value === "광물,금속,보석") {
-    number = 116;
-  } else if (value === "곤충,벌레") {
-    number = 114;
-  } else if (value === "건물") {
-    number = 109;
-  } else if (value === "감정,감각") {
-    number = 103;
-  }
-  return number;
-};
-
 const qrCreate = async (title, link, NID_AUT, NID_SES) => {
   try {
     const url = "https://qr-web.naver.com/code/createCode";
@@ -276,6 +316,61 @@ const qrCreate = async (title, link, NID_AUT, NID_SES) => {
   }
 };
 
+const getTop10Data = async (keyword) => {
+  const DOMAIN = "https://api-gateway.coupang.com";
+  const REQUEST_METHOD = "GET";
+  const URL = "/v2/providers/affiliate_open_api/apis/openapi/products/search";
+  const url = `${URL}?subId=techupbox&limit=3&srpLinkOnly=true&keyword=${encodeURI(
+    keyword
+  )}`;
+  const ACCESS_KEY = process.env.COUPANG_ACCESS_KEY;
+  const SECRET_KEY = process.env.COUPANG_SECRET_KEY;
+
+  const authorization = generateHmac(
+    REQUEST_METHOD,
+    url,
+    SECRET_KEY,
+    ACCESS_KEY
+  );
+
+  console.log(url);
+  console.log(ACCESS_KEY);
+  console.log(SECRET_KEY);
+  console.log(authorization);
+  axios.defaults.baseURL = DOMAIN;
+  return new Promise(async (resolve) => {
+    try {
+      const response = await axios.request({
+        method: REQUEST_METHOD,
+        url: url,
+        headers: { Authorization: authorization },
+        // data: REQUEST,
+      });
+
+      resolve({
+        data: response.data.data.productData,
+        landingUrl: response.data.data.landingUrl,
+      });
+    } catch (err) {
+      // console.error(err.response.data);
+    }
+  });
+};
+
+const generateHmac = (method, url, secretKey, accessKey) => {
+  const parts = url.split(/\?/);
+  const [path, query = ""] = parts;
+  const datetime = moment.utc().format("YYMMDD[T]HHmmss[Z]");
+  const message = datetime + method + path + query;
+
+  const signature = crypto
+    .createHmac("sha256", secretKey)
+    .update(message)
+    .digest("hex");
+
+  return `CEA algorithm=HmacSHA256, access-key=${accessKey}, signed-date=${datetime}, signature=${signature}`;
+};
+
 module.exports = {
   naverIndexingApi,
   googleIndexingApi,
@@ -285,4 +380,5 @@ module.exports = {
   doTechupboxPost,
   removeDuplicateLinks,
   qrCreate,
+  getTop10Data,
 };

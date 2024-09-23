@@ -10,6 +10,17 @@ server.setTimeout(500000);
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(cors());
+app.use((req, res, next) => {
+  const allowedOrigins = ["https://qr.naver.com"];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin); // 요청한 도메인이 허용된 경우 설정
+  }
+  res.header("Access-Control-Allow-Credentials", "true"); // 자격 증명 허용
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
 
 app.use("/api", require("./routes/api"));
 app.use("/downsoft", require("./routes/downsoft"));

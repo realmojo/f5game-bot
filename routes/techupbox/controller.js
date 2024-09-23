@@ -577,14 +577,9 @@ const createTechupboxPost = async (req, res) => {
 
 const getQrLink = async (req, res) => {
   try {
-    const { techupboxUrl, NID_AUT, NID_SES } = req.body;
+    const { link, NID_AUT, NID_SES } = req.body;
 
-    const qrLink = await qrCreate(
-      new Date().getTime(),
-      techupboxUrl,
-      NID_AUT,
-      NID_SES
-    );
+    const qrLink = await qrCreate(new Date().getTime(), link, NID_AUT, NID_SES);
 
     return res.status(200).send({ status: "ok", item: { qrLink } });
   } catch (e) {

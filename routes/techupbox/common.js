@@ -201,7 +201,7 @@ const generateBlogContent = async (title, topic) => {
 소제목에 대한 설명(ul, li 문법과 p문법을 2:1 비율로 혼합해서 작성)
 title은 [질문]을 요약해서 만들어줘
 content에는 h1 태그를 적지 말아줘(필수)
-answer는 content를 기반으로 요약해서 200자 정도 해요체 등의 부드러운 말투 텍스트로 작성해줘
+answer는 content를 기반으로 요약해서 200자 정도로 해주고 말투는 합니다, 했습니다 등의 부드럽고 공손한 텍스트로 작성해줘
 
 결과값 title, content, answer를 json으로 반환해줘`,
     };

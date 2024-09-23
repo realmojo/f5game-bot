@@ -3,7 +3,12 @@
   "builds": [
     {
       "src": "app.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "functions": {
+        "routes/**/*.js": {
+          "maxDuration": 60
+        }
+      }
     }
   ],
   "routes": [
@@ -12,10 +17,5 @@
       "dest": "/app.js"
     }
   ],
-  "functions": {
-    "routes/**/*.js": {
-      "maxDuration": 60
-    }
-  },
   "regions": ["icn1"]
 }

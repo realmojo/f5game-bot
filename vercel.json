@@ -14,7 +14,7 @@
   ],
   "regions": ["icn1"],
   "functions": {
-    "techupbox/*.js": {
+    "/api/techupbox/*.js": {
       "maxDuration": 30
     }
   }

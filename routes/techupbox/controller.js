@@ -524,10 +524,82 @@ const doKinToTechupboxPost = async (req, res) => {
     return res.status(500).send({ status: "err" });
   }
 };
+
+/** ------------- */
+
+const doGenerateContent = async (req, res) => {
+  try {
+    const { kinUrl } = req.body;
+
+    const { data } = await axios.get(kinUrl);
+    const $ = cheerio.load(data);
+
+    $(".iconQuestion").remove();
+    const kinTitle = $(".endTitleSection").text().trim();
+    const description = $(".questionDetail").text().trim();
+    const results = await generateBlogContent(kinTitle, description);
+    console.log(results.choices[0].message.content);
+
+    let d = results.choices[0].message.content;
+    d = replaceAll(d, "```", "");
+    d = replaceAll(d, "json", "");
+    console.log("------------------------------------------------");
+    d = d.trim();
+    d = toSingleLine(d);
+    const { title, content, answer } = JSON.parse(d);
+
+    console.log("kinTitle: ", kinTitle);
+    console.log("title: ", title);
+    console.log("content: ", content);
+    console.log("answer: ", answer);
+
+    return res
+      .status(200)
+      .send({ status: "ok", item: { title, description, content, answer } });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send({ status: "err" });
+  }
+};
+
+const createTechupboxPost = async (req, res) => {
+  try {
+    const { title, content } = req.body;
+
+    const techupboxUrl = await doTechupboxPost(title, content);
+
+    return res.status(200).send({ status: "ok", item: { techupboxUrl } });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send({ status: "err" });
+  }
+};
+
+const getQrLink = async (req, res) => {
+  try {
+    const { techupboxUrl, NID_AUT, NID_SES } = req.body;
+
+    const qrLink = await qrCreate(
+      new Date().getTime(),
+      techupboxUrl,
+      NID_AUT,
+      NID_SES
+    );
+
+    return res.status(200).send({ status: "ok", item: { qrLink } });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send({ status: "err" });
+  }
+};
+
 module.exports = {
   doApiPost,
   getApiTest,
   getProxyImage,
   doKinToTechupboxPost,
   getCrawl,
+  doGenerateContent,
+  createTechupboxPost,
+  getQrLink,
 };

@@ -9,4 +9,8 @@ router.get("/proxy", controller.getProxyImage);
 router.get("/getCrawl", controller.getCrawl);
 router.post("/doKinToTechupboxPost", controller.doKinToTechupboxPost);
 
+router.post("/doGenerateContent", controller.doGenerateContent);
+router.post("/createTechupboxPost", controller.createTechupboxPost);
+router.post("/getQrLink", controller.getQrLink);
+
 module.exports = router;

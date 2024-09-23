@@ -175,9 +175,9 @@ const doCreateQrUrl = async (req, res) => {
     };
 
     const NID_AUT =
-      "4AkmD2DXAyLYmMFUeYxrGgmQ6RiPFFDfD8vwJJovEImx8rZB34932/htc1Rz/43F";
+      "8k+dFKu1a5/1y5RdEzxK2269LTuwNBTd1GboYGkMg2yXTSG0wN915rjOZs2d4lWW";
     const NID_SES =
-      "AAABiMP0ylK1k9uVbnH8rmaz25GPpR+/3dU3dMoaHpp3p+MxiMWiwIG4wqAGlKIcWaD5rqO5Ht4xefRuXOIExvmgYmQP4BwpjY563jlS+aY44Ik4LDLUkUv5+ReHz9D6J21jG2fMdtt9gLu1AxevUZHJvyVjGdbZ27iz/MO97s57gRuvYmWnO+ah6Q7jEb+Q83ddzmuBiFG4U+evEZ2SXr1v0aTPnCT9jQE67nKvkv9w+Kdtrwpn7Wmum6dTw6nB1lyJuYOcjzSVdAiqOXVw2ClQttthoK9KRFBmH5t1KNOAPrr3+U1miSlZfgxPHA5sBBlmPc/wh6O1EXai1WITBNbfy8UaJNII5H4w00+8IYxTbtcTmOGQp7XQHXsqstK6hQkjBjdwpglVCDiGCezCfmJ9HtrsfAyY+qRvZUfEkJod8G2VZdRPXh2k2gZ2ig0e3CE7Kb+6nec4/wHUvFlpT0tACP7BX6V0mrgXe1v4MgI7Cm370JkeX/GCMYQ1p4Z5f0rwVG8/p7ehICsrxY2Ogy9lFnU=";
+      "AAABi9FtleKltv4CqXGkIp9ojN9PSlp0ffMU0tCuCeAamyaGlSWxJr5uH1uWNHIb/MtQVDyufBYiwQBHVtOwXWUIVdpYvUJVTP+Iu07zLmLOKFasvy3I0+Fvay3obv+DEW3hOnvj+RsHoBm70NGG4Cv1G7otfcXdUliWjgwjlGLXDY39LF45l9iuH7F1fbRd/VcW7OBbar0Lfjc+K4SMRzRs4bNcJzA0j+axvy6cPZ5mGGcGJkLwkAjDRmz6nzX+lXdFUOCPVyZqMlgyP5lTs1NSi8Nq6yLo4CvM4wDmLIy+dekqXXhkjogoVSx94fXT7fv4Uo0lVl325cCjxSFJKeXZOFJDfvcRx27pRoKYlxWYAbiOomERAeLjZfcRDLDVXq8ea1ZBGOYHmX1g69BJ18RD4zYizo223ZU7ezOjOtd6UEhtO+xdWQPIHOmd7ojnmAJeBtHFTUKoGzd7rvNA3i8UQYUksYP8KVQRHZK8m5MIsXvjABImedW75UCAUAIJVmj2fHpZQ6IiPc80SLeuu6CJsEU=";
 
     const headers = {
       Cookie: `NID_AUT=${NID_AUT}; NID_SES=${NID_SES}`,
@@ -187,7 +187,7 @@ const doCreateQrUrl = async (req, res) => {
     if (data?.data) {
       return res.status(200).send(`https://m.site.naver.com/${data?.data}`);
     }
-    return res.status(200).send("no");
+    return res.status(200).send(link);
   } catch (e) {
     return res.status(200).send("no data");
   }

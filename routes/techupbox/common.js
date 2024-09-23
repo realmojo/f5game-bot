@@ -91,13 +91,12 @@ const generateBlogContent = async (title, topic) => {
   try {
     const systemMessage = {
       role: "system",
-      content: `글을 만들 때 영어(English)로 문서를 찾고 한글(Korean)로 번역해서 작성해줘.(필수)
-글의 소제목은 주제 키워드를 가끔씩 포함하고 설명은 1000자 이내로 작성해줘.(필수)
-글의 총 길이는 공백을 제외하고 3000자 정도 작성을 해야해.(필수)
-고유한 단어는 700자 이상 필요해(필수)
+      content: `포스팅의 소제목은 주제 키워드를 가끔씩 포함하고 설명은 1000자 이내로 작성해줘.(필수)
+포스팅의 글자수 길이는 공백을 제외하고 5000자 작성을 해야해.(필수)
+고유한 단어는 최소 700자 이상 필요해(필수)
 표절이 없게끔 작성하는 것이 가장 중요해(필수)
 글 내용을 워드프레스에 올릴 수 있게 HTML코드로 변환해서 작성해줘.(필수)
-최신 뉴스나 블로그등 웹사이트에서 대한 정보를 제공하고, 그에 대한 출처 실제 링크도 함께 <button class="tech-link"><a href="링크주소 넣기" target="_blank">👉 링크에 대한 설명 알아보기</a></button>을 첫 번째 소제목과 설명 사이에 한 개만 제공해줘(필수)
+최신 뉴스나 블로그등 웹사이트에서 대한 정보를 제공하고, 그에 대한 출처 실제 링크도 함께 <button class="tech-link"><a href="링크주소 넣기" target="_blank">👉 자세히 알아보기</a></button>을 첫 번째 소제목과 설명 사이에 한 개만 제공해줘(필수)
 출처링크 제공할 때 https://example.com 도메인은 추천하지 말아주고 다른 사이트의 링크를 넣어줘.
 
 글 예시는 아래와 같이 해줘, 소제목과 소제목에 대한 설명은 최소 3개 이상 만들어줘.
@@ -118,10 +117,9 @@ answer는 content를 기반으로 요약해서 200자 정도 텍스트로 작성
     const { data } = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "gpt-4o",
+        model: "gpt-4o-mini",
         messages: [systemMessage, userMessage],
-        temperature: 0.8,
-        top_p: 0.9,
+        temperature: 0.95,
       },
       headers
     );

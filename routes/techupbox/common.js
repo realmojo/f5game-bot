@@ -230,6 +230,53 @@ const getCategoryNumber = (value) => {
   }
   return number;
 };
+
+const qrCreate = async (title, link, NID_AUT, NID_SES) => {
+  try {
+    const url = "https://qr-web.naver.com/code/createCode";
+    const params = {
+      infoType: "url",
+      qrColorBorderCd: "#03C75A",
+      qrDesc: "",
+      qrDirectLink: link,
+      qrDirectLinkTypeCd: 29,
+      qrName: title,
+      qrSaveStatusCd: 79,
+      qrShape: 1,
+      sessions: [
+        {
+          attachment: {
+            title,
+            desc: "",
+          },
+          orderId: 0,
+          type: "Basic",
+        },
+        {
+          attachment: {
+            linkSubject: `web-${new Date().getTime()}`,
+          },
+          attachments: [{ linkUrl: link }],
+          orderId: 1,
+          type: "Link",
+        },
+      ],
+    };
+
+    const headers = {
+      Cookie: `NID_AUT=${NID_AUT}; NID_SES=${NID_SES}`,
+    };
+
+    const { data } = await axios.post(url, params, { headers });
+    if (data?.data) {
+      return `https://m.site.naver.com/${data?.data}`;
+    }
+    return link;
+  } catch (e) {
+    return "no data";
+  }
+};
+
 module.exports = {
   naverIndexingApi,
   googleIndexingApi,
@@ -238,4 +285,5 @@ module.exports = {
   getModels,
   doTechupboxPost,
   removeDuplicateLinks,
+  qrCreate,
 };

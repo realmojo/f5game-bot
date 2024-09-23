@@ -6,7 +6,7 @@ const drugLists = require("./drugArr.json");
 const request = require("request");
 var { google } = require("googleapis");
 const cheerio = require("cheerio");
-const { doTechupboxPost, generateBlogContent } = require("./common");
+const { doTechupboxPost, generateBlogContent, qrCreate } = require("./common");
 const { replaceAll, toSingleLine, delay } = require("../../utils/util");
 const {
   doTheqooPost,
@@ -462,7 +462,12 @@ const getCrawl = async (req, res) => {
 
 const doKinToTechupboxPost = async (req, res) => {
   try {
-    const { kinUrl } = req.body;
+    const { kinUrl, NID_AUT, NID_SES } = req.body;
+    if (!NID_AUT || !NID_SES) {
+      return res
+        .status(200)
+        .send({ status: "ok", message: "QR 세션 확인 필요" });
+    }
 
     const { data } = await axios.get(kinUrl);
     const $ = cheerio.load(data);
@@ -488,13 +493,16 @@ const doKinToTechupboxPost = async (req, res) => {
 
     const techupboxUrl = await doTechupboxPost(title, content);
 
-    const rrr = await axios.get(
-      `http://localhost:3001/naver/qrCreate?title=${new Date().getTime()}&link=${techupboxUrl}`
+    const qrLink = await qrCreate(
+      new Date().getTime(),
+      techupboxUrl,
+      NID_AUT,
+      NID_SES
     );
 
     const rrrss = {
       status: "ok",
-      naverUrl: rrr.data,
+      qrLink: qrLink || "",
       techupboxUrl,
       content,
       answer: `[질문]
@@ -502,7 +510,7 @@ const doKinToTechupboxPost = async (req, res) => {
 
         [답변]
         ${answer.trim()}
-        ${rrr.data}`,
+        ${qrLink}`,
     };
     console.log(rrrss);
     return res.status(500).send(`[질문]
@@ -510,7 +518,7 @@ const doKinToTechupboxPost = async (req, res) => {
 
     [답변]
     ${answer.trim()}
-    ${rrr.data}`);
+    ${qrLink}`);
   } catch (e) {
     console.log(e);
     return res.status(500).send({ status: "err" });

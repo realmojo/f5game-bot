@@ -4,6 +4,7 @@ const moment = require("moment");
 const crypto = require("crypto");
 var request = require("request");
 var { google } = require("googleapis");
+const { replaceAll } = require("../../utils/util");
 
 const headers = {
   headers: {
@@ -176,9 +177,10 @@ const getProductKeyword = async (title, topic) => {
 // CHAT GPT API 요청 생성
 const generateBlogContent = async (title, topic) => {
   try {
-    const productKeyword = await getProductKeyword(title, topic);
-    console.log("productKeyword: ", productKeyword);
+    let productKeyword = await getProductKeyword(title, topic);
     let landingUrl = "";
+    productKeyword = replaceAll(productKeyword, '"', "");
+    console.log("productKeyword: ", productKeyword);
     if (productKeyword) {
       const coupangItems = await getTop10Data(productKeyword);
       landingUrl = coupangItems?.landingUrl || "";

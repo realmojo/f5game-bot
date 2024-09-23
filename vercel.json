@@ -12,5 +12,10 @@
       "dest": "/app.js"
     }
   ],
+  "functions": {
+    "routes/**/*.js": {
+      "maxDuration": 60
+    }
+  },
   "regions": ["icn1"]
 }

@@ -12,10 +12,5 @@
       "dest": "/app.js"
     }
   ],
-  "regions": ["icn1"],
-  "functions": {
-    "/api/techupbox/*.js": {
-      "maxDuration": 30
-    }
-  }
+  "regions": ["icn1"]
 }

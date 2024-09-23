@@ -175,9 +175,9 @@ const doCreateQrUrl = async (req, res) => {
     };
 
     const NID_AUT =
-      "X4+6JnKnd3UMoSvCOYk3vPKaCjPZoXo3r0Xy1jrVR8+xL0hLStQnPNCgretuTkm1";
+      "4AkmD2DXAyLYmMFUeYxrGgmQ6RiPFFDfD8vwJJovEImx8rZB34932/htc1Rz/43F";
     const NID_SES =
-      "AAABg42Tzoej+vJBGT0BphstmaqlbH/a2oTDWahY7ZKeSbcnRHDScFMhayRnqMMIcedtBgjQwuPRaxnJJOML8iFUPurTNgh/xv4S5SYQTzR0Tlfc+W59rCMEpRp0cb2DF7W+ejQzP/Cht0UTrTCkabwz7JUUQ5fG4OEajuvkui2VzP305kUXTWAcsL859ph8yN0R8owiLQZeVtvIH8Z3xqAKoa1LGf5EupqgFwfxBywtawYlatu1ZDU8NDV5NoYm8EKcEGFBgIHFR27Mq9/AAAuAY+dbXvHJo/itKWaykiO2VWnaglELVVDkBvvIDDlybo1QuLT7EmrRBJA2zdBUfW1zoHcmX5GVAlyziX1K+jhcJvYDXPQO4D65xU4v3SFBJ/PoIxzU/x3CiSGW/t3JBywb+8+V3W637cnv82KvW3smqhYw5+X917Cp8gkFmxU/bxIkCBawNFsiff4+gdNM40lf63M9+arQWfId0mViF+muZm0aOAtrsLSqZvbWGTGH2h0GBTbOZYl+ErjtrPYimR8p1qM=";
+      "AAABiMP0ylK1k9uVbnH8rmaz25GPpR+/3dU3dMoaHpp3p+MxiMWiwIG4wqAGlKIcWaD5rqO5Ht4xefRuXOIExvmgYmQP4BwpjY563jlS+aY44Ik4LDLUkUv5+ReHz9D6J21jG2fMdtt9gLu1AxevUZHJvyVjGdbZ27iz/MO97s57gRuvYmWnO+ah6Q7jEb+Q83ddzmuBiFG4U+evEZ2SXr1v0aTPnCT9jQE67nKvkv9w+Kdtrwpn7Wmum6dTw6nB1lyJuYOcjzSVdAiqOXVw2ClQttthoK9KRFBmH5t1KNOAPrr3+U1miSlZfgxPHA5sBBlmPc/wh6O1EXai1WITBNbfy8UaJNII5H4w00+8IYxTbtcTmOGQp7XQHXsqstK6hQkjBjdwpglVCDiGCezCfmJ9HtrsfAyY+qRvZUfEkJod8G2VZdRPXh2k2gZ2ig0e3CE7Kb+6nec4/wHUvFlpT0tACP7BX6V0mrgXe1v4MgI7Cm370JkeX/GCMYQ1p4Z5f0rwVG8/p7ehICsrxY2Ogy9lFnU=";
 
     const headers = {
       Cookie: `NID_AUT=${NID_AUT}; NID_SES=${NID_SES}`,
@@ -193,24 +193,7 @@ const doCreateQrUrl = async (req, res) => {
   }
 };
 
-const getCookie = async (req, res) => {
-  try {
-    // const token = req.cookies["token"]; // 'token'이라는 HttpOnly 쿠키 값 가져오기
-    // console.log(token);
-    // res.json({ token });
-    let q = {};
-    if (req?.cookies) {
-      q = req.cookies;
-    }
-
-    return res.status(200).send({ status: "ok", q });
-  } catch (e) {
-    return res.status(200).send("no");
-  }
-};
-
 module.exports = {
   getList,
   doCreateQrUrl,
-  getCookie,
 };

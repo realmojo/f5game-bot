@@ -193,7 +193,24 @@ const doCreateQrUrl = async (req, res) => {
   }
 };
 
+const getCookie = async (req, res) => {
+  try {
+    // const token = req.cookies["token"]; // 'token'이라는 HttpOnly 쿠키 값 가져오기
+    // console.log(token);
+    // res.json({ token });
+    let q = {};
+    if (req?.cookies) {
+      q = req.cookies;
+    }
+
+    return res.status(200).send({ status: "ok", q });
+  } catch (e) {
+    return res.status(200).send("no");
+  }
+};
+
 module.exports = {
   getList,
   doCreateQrUrl,
+  getCookie,
 };

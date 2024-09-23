@@ -17,7 +17,6 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
-
 app.use("/api", require("./routes/api"));
 app.use("/downsoft", require("./routes/downsoft"));
 app.use("/keywordegg", require("./routes/keywordegg"));

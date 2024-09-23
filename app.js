@@ -12,6 +12,7 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(cors());
 app.use((req, res, next) => {
   const origin = req.headers.origin;
+  console.log(origin);
   if (origin) {
     res.header("Access-Control-Allow-Origin", origin); // 요청한 도메인을 그대로 허용
     res.header("Access-Control-Allow-Credentials", "true"); // 자격 증명 허용

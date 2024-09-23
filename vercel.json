@@ -12,11 +12,5 @@
       "dest": "/app.js"
     }
   ],
-  "regions": ["icn1"],
-  "crons": [
-    {
-      "path": "/api/cron",
-      "schedule": "* * * * *"
-    }
-  ]
+  "regions": ["icn1"]
 }

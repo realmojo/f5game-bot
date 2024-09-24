@@ -149,8 +149,7 @@ const getProductKeyword = async (title, topic) => {
   try {
     const systemMessage = {
       role: "system",
-      content: `keyword는 메인주제와 메인설명에 대해 상품과 관련된 키워드를 1개만 작성해줘. 상품과 관련된 키워드가 없는거 같으면 인기상품으로 반환해줘.
-        결과값 keyword를 string으로 반환해줘`,
+      content: `keyword는 메인주제와 메인설명에 대해 상품과 관련된 키워드를 1개만 작성해줘.`,
     };
     const userMessage = {
       role: "user",
@@ -178,11 +177,17 @@ const generateBlogContent = async (title, topic) => {
   try {
     let productKeyword = await getProductKeyword(title, topic);
     let landingUrl = "";
+    let secondKeyword = "";
+    let secondLandingUrl = "";
     productKeyword = replaceAll(productKeyword, '"', "");
     console.log("productKeyword: ", productKeyword);
     if (productKeyword) {
       const coupangItems = await getTop10Data(productKeyword);
+      console.log(coupangItems);
       landingUrl = coupangItems?.landingUrl || "";
+
+      secondKeyword = coupangItems.data[0].productName;
+      secondLandingUrl = coupangItems.data[0].productUrl;
     }
 
     const systemMessage = {
@@ -192,9 +197,8 @@ const generateBlogContent = async (title, topic) => {
 고유한 단어는 최소 700자 이상 필요해(필수)
 표절이 없게끔 작성하는 것이 가장 중요해(필수)
 글 내용을 워드프레스에 올릴 수 있게 HTML코드로 변환해서 작성해줘.(필수)
-쿠팡파트너스 버튼 링크를 <a href="${landingUrl}" target="_blank"><button class="tech-link">👉 ${productKeyword} 알아보기</button></a> 첫 번째 소제목 h2, p 태그 바로 다음에 작성해줘(필수)
-최신 뉴스나 블로그등 웹사이트에서 대한 정보를 제공해주고, 그에 대한 출처 실제 링크도 함께 <a href="링크주소 넣기" target="_blank"><button class="tech-link">👉 자세히 알아보기</button></a>을 두 번째 소제목과 설명 사이에 한 개만 제공해줘(필수)
-출처링크 제공할 때 https://example.com 도메인은 추천하지 말아주고 대한민국의 다른 사이트의 링크를 넣어줘.
+첫 번째 소제목에는 쿠팡파트너스 버튼 링크를 <a href="${landingUrl}" target="_blank"><button class="tech-link">👉 ${productKeyword} 알아보기</button></a> 첫 번째 소제목 h2, p 태그 바로 다음에 작성해줘(필수)
+두 번째 소제목에는 쿠팡파트너스 버튼 링크를 <a href="${secondLandingUrl}" target="_blank"><button class="tech-link">👉 ${secondKeyword} 알아보기</button></a> 두 번째 소제목 h2, p 태그 바로 다음에 작성해줘(필수)
 글 예시는 아래와 같이 해줘, 소제목과 소제목에 대한 설명은 최소 3개 이상 만들어줘.
 소제목 (주제에 대한 키워드 일부만 넣기)
 소제목에 대한 설명(ul, li 문법과 p문법을 2:1 비율로 혼합해서 작성)
@@ -321,9 +325,7 @@ const getTop10Data = async (keyword) => {
   const DOMAIN = "https://api-gateway.coupang.com";
   const REQUEST_METHOD = "GET";
   const URL = "/v2/providers/affiliate_open_api/apis/openapi/products/search";
-  const url = `${URL}?subId=techupbox&limit=3&srpLinkOnly=true&keyword=${encodeURI(
-    keyword
-  )}`;
+  const url = `${URL}?subId=techupbox&limit=3&keyword=${encodeURI(keyword)}`;
   const ACCESS_KEY = process.env.COUPANG_ACCESS_KEY;
   const SECRET_KEY = process.env.COUPANG_SECRET_KEY;
 

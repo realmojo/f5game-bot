@@ -1,0 +1,22 @@
+{
+  "name": "지식인 자동화",
+  "description": "지식인 자동화 Extension",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_icon": "logo.png",
+    "default_popup": "index.html",
+    "default_title": "지식인 자동화"
+  },
+  "icons": {
+    "128": "logo.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["index.js"]
+    }
+  ],
+  "permissions": ["cookies", "storage"],
+  "host_permissions": ["https://*.naver.com/*"]
+}

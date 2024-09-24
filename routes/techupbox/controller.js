@@ -558,9 +558,13 @@ const doGenerateContent = async (req, res) => {
     console.log("content: ", content);
     console.log("answer: ", answer);
 
+    console.log("워드프레스 글 등록 중...");
+    const techupboxUrl = await doTechupboxPost(title, content);
+    console.log("워드프레스 글 등록 완료");
+
     return res.status(200).send({
       status: "ok",
-      item: { title, description, content, answer },
+      item: { title, description, content, answer, techupboxUrl },
     });
   } catch (e) {
     console.log(e);

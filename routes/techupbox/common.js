@@ -124,7 +124,7 @@ const doTechupboxPost = async (title, content, categories = 61) => {
         })
         .then(async (res) => {
           resolve(res.link);
-          await naverIndexingApi(res.link);
+          // await naverIndexingApi(res.link);
           // googleIndexingApi(res.link);
         });
     } catch (e) {

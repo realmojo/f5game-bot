@@ -209,7 +209,8 @@ const generateBlogContent = async (title, topic) => {
 두 번째 소제목에는 쿠팡파트너스 버튼 링크를 <a href="${secondLandingUrl}" target="_blank"><button class="tech-link">👉 ${secondKeyword} 알아보기</button></a> 두 번째 소제목 h2, p 태그 바로 다음에 작성해줘(필수)
 세 번째 소제목에는 쿠팡파트너스 버튼 링크를 <a href="${thirdLandingUrl}" target="_blank"><button class="tech-link">👉 ${thirdKeyword} 알아보기</button></a> 세 번째 소제목 h2, p 태그 바로 다음에 작성해줘(필수)
 글 예시는 아래와 같이 해줘, 소제목과 소제목에 대한 설명은 최소 3개 이상 만들어줘.
-소제목 (주제에 대한 키워드 일부만 넣기)
+소제목 (h2 태그 주제에 대한 키워드 일부만 넣기)
+쿠팡파트너스 링크
 소제목에 대한 설명(ul, li 문법과 p문법을 2:1 비율로 혼합해서 작성)
 title은 [질문]을 요약해서 만들어줘
 content에는 h1 태그를 적지 말아줘(필수)

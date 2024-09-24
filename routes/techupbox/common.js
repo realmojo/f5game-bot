@@ -146,11 +146,10 @@ const getModels = async () => {
 };
 
 const getProductKeyword = async (title, topic) => {
-  "keyword는 메인주제와 메인설명에 대해 상품과 관련된 키워드를 1개만 작성해줘. 상품과 관련된 키워드가 없는거 같으면 아무 상품 키워드나 1개 추천해줘.";
   try {
     const systemMessage = {
       role: "system",
-      content: `keyword는 메인주제와 메인설명에 대해 상품과 관련된 키워드를 1개만 작성해줘. 상품과 관련된 키워드가 없는거 같으면 아무 상품 키워드나 1개 추천해줘.
+      content: `keyword는 메인주제와 메인설명에 대해 상품과 관련된 키워드를 1개만 작성해줘. 상품과 관련된 키워드가 없는거 같으면 최근 유행하는 상품 1개 추천해줘.
         결과값 keyword를 string으로 반환해줘`,
     };
     const userMessage = {

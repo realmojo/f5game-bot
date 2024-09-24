@@ -190,11 +190,12 @@ const generateBlogContent = async (title, topic) => {
 
       secondKeyword = coupangItems?.data[0]?.productName || "";
       secondLandingUrl = coupangItems?.data[0]?.productUrl || "";
-      thirdKeyword =
-        coupangItems?.data[1]?.productName ||
-        coupangItems?.data[0]?.productName;
-      thirdLandingUrl =
-        coupangItems?.data[1]?.productUrl || coupangItems?.data[0]?.productUrl;
+      thirdKeyword = coupangItems?.data[1]?.productName
+        ? coupangItems?.data[1]?.productName
+        : coupangItems?.data[0]?.productName;
+      thirdLandingUrl = coupangItems?.data[1]?.productUrl
+        ? coupangItems?.data[1]?.productUrl
+        : coupangItems?.data[0]?.productUrl;
     }
 
     const systemMessage = {

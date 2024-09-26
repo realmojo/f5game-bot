@@ -1,0 +1,79 @@
+[
+  {
+    "@ctype": "text",
+    "id": "SE-dfe38f17-7bc9-11ef-b567-a367f7c64bfe",
+    "layout": "default",
+    "value": [
+      {
+        "@ctype": "paragraph",
+        "id": "SE-dfe38f0c-7bc9-11ef-b567-a513590d0e34",
+        "nodes": [
+          {
+            "@ctype": "textNode",
+            "id": "SE-dfe38f0b-7bc9-11ef-b567-671e9c0520eb",
+            "value": "[질문]"
+          }
+        ]
+      },
+      {
+        "@ctype": "paragraph",
+        "id": "SE-dfe38f0e-7bc9-11ef-b567-c7f1d88945ad",
+        "nodes": [
+          {
+            "@ctype": "textNode",
+            "id": "SE-dfe38f0d-7bc9-11ef-b567-d98fb1d77c10",
+            "value": "아이폰 13프로를 떨어트렸는데 초록색 화면이 나와서 폰을 못 쓰게 됐어요 당장 이틀 뒤에 폰이 꼭 필요한데 지금 쓰는 폰을 고쳐서 계속 써야할까요아이폰 16 을 새로 살까요..  그냥 16을 새로 사는게 나을 것 같지만 화면이 안 켜지니까 연동이 안 돼서전 폰에 있던 게 다 날라가서 걱정돼요ㅠ 어떻게 하는 게 나을까요..."
+          }
+        ]
+      },
+      {
+        "@ctype": "paragraph",
+        "id": "SE-dfe38f10-7bc9-11ef-b567-8b98bcea4695",
+        "nodes": [
+          {
+            "@ctype": "textNode",
+            "id": "SE-dfe38f0f-7bc9-11ef-b567-398b678e703b",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "@ctype": "paragraph",
+        "id": "SE-dfe38f12-7bc9-11ef-b567-c9962fffd198",
+        "nodes": [
+          {
+            "@ctype": "textNode",
+            "id": "SE-dfe38f11-7bc9-11ef-b567-b5788b7adea9",
+            "value": "[답변]"
+          }
+        ]
+      },
+      {
+        "@ctype": "paragraph",
+        "id": "SE-dfe38f14-7bc9-11ef-b567-07eff8c4e7cb",
+        "nodes": [
+          {
+            "@ctype": "textNode",
+            "id": "SE-dfe38f13-7bc9-11ef-b567-27de839017ef",
+            "value": "아이폰 13 프로가 초록색 화면이 나타나면 수리와 새 기기 구매를 고민해야 합니다. 서비스 센터 방문, 자가 수리 또는 소프트웨어 문제 해결을 먼저 고려하고, 필요한 경우 아이폰 16으로 업그레이드하는 것도 좋은 선택입니다. 데이터 보호 방법을 미리 알아보는 것이 중요합니다."
+          }
+        ]
+      },
+      {
+        "@ctype": "paragraph",
+        "id": "SE-dfe38f16-7bc9-11ef-b567-f54aa95f0861",
+        "nodes": [
+          {
+            "@ctype": "textNode",
+            "id": "SE-dfe38f15-7bc9-11ef-b567-4713b6145bd4",
+            "link": {
+              "@ctype": "urlLink",
+              "url": "https://m.site.naver.com/1uhBe"
+            },
+            "value": "https:"
+          }
+        ]
+      }
+    ]
+  }
+]

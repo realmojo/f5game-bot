@@ -10,10 +10,9 @@ const getNaverCookie = async () => {
 };
 
 const run = async () => {
-  const { item } = await getNaverCookie();
-
-  localStorage.setItem("NID_AUT", item.NID_AUT);
-  localStorage.setItem("NID_SES", item.NID_SES);
+  // const { item } = await getNaverCookie();
+  // localStorage.setItem("NID_AUT", item.NID_AUT);
+  // localStorage.setItem("NID_SES", item.NID_SES);
 };
 
 run();

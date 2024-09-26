@@ -17,6 +17,9 @@
       "js": ["index.js"]
     }
   ],
-  "permissions": ["cookies", "storage"],
-  "host_permissions": ["https://*.naver.com/*"]
+  "permissions": ["cookies", "storage", "tabs", "activeTab"],
+  "host_permissions": ["https://*.naver.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  }
 }

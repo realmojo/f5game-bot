@@ -26,6 +26,9 @@ const {
 
 const cron = require("node-cron");
 
+global.NID_AUT = "";
+global.NID_SES = "";
+
 // 내꺼 안죽이게끔 살리기
 cron.schedule("* * * * *", async () => {
   const { data } = await axios.get("https://f5game-bot.vercel.app/ping");
@@ -598,6 +601,34 @@ const getQrLink = async (req, res) => {
   }
 };
 
+const setNaverCookie = async (req, res) => {
+  try {
+    const { NID_AUT, NID_SES } = req.body;
+
+    global.NID_AUT = NID_AUT;
+    global.NID_SES = NID_SES;
+
+    return res.status(200).send({ status: "ok", item: { NID_AUT, NID_SES } });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send({ status: "err" });
+  }
+};
+const getNaverCookie = async (req, res) => {
+  try {
+    global.NID_AUT = NID_AUT;
+    global.NID_SES = NID_SES;
+
+    return res.status(200).send({
+      status: "ok",
+      item: { NID_AUT: global.NID_AUT, NID_SES: global.NID_SES },
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send({ status: "err" });
+  }
+};
+
 module.exports = {
   doApiPost,
   getApiTest,
@@ -607,4 +638,6 @@ module.exports = {
   doGenerateContent,
   createTechupboxPost,
   getQrLink,
+  setNaverCookie,
+  getNaverCookie,
 };

@@ -95,7 +95,10 @@ const doTechupboxPost = async (title, content, categories = 2) => {
   return new Promise((resolve) => {
     try {
       const wp = new WPAPI({
-        endpoint: "https://kin.techupbox.com/wp-json",
+        endpoint:
+          new Date().getTime() % 2 === 0
+            ? "https://kin.techupbox.com/wp-json"
+            : "https://techupbox.com/wp-json",
         username: process.env.WP_TECHUPBOX_ID || "",
         password: process.env.WP_TECHUPBOX_PW || "",
       });

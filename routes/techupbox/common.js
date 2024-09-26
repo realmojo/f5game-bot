@@ -86,8 +86,56 @@ const getRandomElement = (arr) => {
   return arr[randomIndex];
 };
 
-const doTechupboxPost = async (title, content, categories = 2) => {
+const doTechupboxPost = async (title, content, categories = 61) => {
   const fea = [];
+  for (let i = 26328; i <= 26341; i++) {
+    fea.push(i);
+  }
+  fea.push(26457);
+  fea.push(26458);
+  fea.push(26459);
+  fea.push(26460);
+  fea.push(26461);
+  fea.push(26462);
+  fea.push(26464);
+  fea.push(26465);
+  fea.push(26466);
+  fea.push(26467);
+  fea.push(26468);
+  fea.push(26469);
+  fea.push(26470);
+  fea.push(26472);
+
+  return new Promise((resolve) => {
+    try {
+      const wp = new WPAPI({
+        endpoint: "https://techupbox.com/wp-json",
+        username: process.env.WP_TECHUPBOX_ID || "",
+        password: process.env.WP_TECHUPBOX_PW || "",
+      });
+
+      wp.posts()
+        .create({
+          title: title,
+          content: content,
+          categories: [categories],
+          featured_media: getRandomElement(fea),
+          status: "publish",
+        })
+        .then(async (res) => {
+          resolve(res.link);
+          // await naverIndexingApi(res.link);
+          // googleIndexingApi(res.link);
+        });
+    } catch (e) {
+      resolve("wp err");
+    }
+  });
+};
+
+const doKinTechupboxPost = async (title, content, categories = 2) => {
+  const fea = [];
+
   for (let i = 7; i <= 34; i++) {
     fea.push(i);
   }
@@ -95,10 +143,7 @@ const doTechupboxPost = async (title, content, categories = 2) => {
   return new Promise((resolve) => {
     try {
       const wp = new WPAPI({
-        endpoint:
-          new Date().getTime() % 2 === 0
-            ? "https://kin.techupbox.com/wp-json"
-            : "https://techupbox.com/wp-json",
+        endpoint: "https://kin.techupbox.com/wp-json",
         username: process.env.WP_TECHUPBOX_ID || "",
         password: process.env.WP_TECHUPBOX_PW || "",
       });
@@ -378,6 +423,7 @@ module.exports = {
   getCategoryNumber,
   getModels,
   doTechupboxPost,
+  doKinTechupboxPost,
   removeDuplicateLinks,
   qrCreate,
   getTop10Data,

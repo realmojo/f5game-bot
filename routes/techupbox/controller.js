@@ -654,12 +654,19 @@ const getNaverCookie = async (req, res) => {
   try {
     const { currentId } = req.query;
 
+    let d = {
+      id: "",
+      NID_AUT: "",
+      NID_SES: "",
+      updated: "",
+    };
+    const { data } = await axios.get(
+      `https://api.mindpang.com/api/naver/get.php?CURRENT_ID=${currentId}`
+    );
+
     return res.status(200).send({
       status: "ok",
-      currentId: currentId ? currentId : "",
-      item: global.cookieStore[currentId]
-        ? global.cookieStore[currentId]
-        : { NID_AUT: "", NID_SES: "" },
+      item: data ? data : d,
     });
   } catch (e) {
     console.log(e);

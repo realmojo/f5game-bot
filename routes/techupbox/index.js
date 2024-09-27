@@ -8,6 +8,7 @@ router.get("/apiTest", controller.getApiTest);
 router.get("/proxy", controller.getProxyImage);
 router.get("/getModels", controller.getModels);
 router.get("/getCrawl", controller.getCrawl);
+router.get("/getCoupangData", controller.getCoupangData);
 
 router.post("/setNaverCookie", controller.setNaverCookie);
 router.get("/getNaverCookie", controller.getNaverCookie);

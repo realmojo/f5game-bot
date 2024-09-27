@@ -674,6 +674,19 @@ const getNaverCookie = async (req, res) => {
   }
 };
 
+const getCoupangData = async (req, res) => {
+  try {
+    const d = await getTop10Data("에어컨");
+    return res.status(200).send({
+      status: "ok",
+      item: d,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).send({ status: "err" });
+  }
+};
+
 module.exports = {
   doApiPost,
   getApiTest,
@@ -686,4 +699,5 @@ module.exports = {
   getModels,
   setNaverCookie,
   getNaverCookie,
+  getCoupangData,
 };

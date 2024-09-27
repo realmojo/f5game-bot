@@ -6,6 +6,7 @@ const controller = require("./controller");
 router.get("/doPost", controller.doApiPost);
 router.get("/apiTest", controller.getApiTest);
 router.get("/proxy", controller.getProxyImage);
+router.get("/getModels", controller.getModels);
 router.get("/getCrawl", controller.getCrawl);
 
 router.post("/setNaverCookie", controller.setNaverCookie);

@@ -167,18 +167,6 @@ const doKinTechupboxPost = async (title, content, categories = 2) => {
   });
 };
 
-const getModels = async () => {
-  try {
-    const { data } = await axios.get(
-      "https://api.openai.com/v1/models",
-      headers
-    );
-    return data;
-  } catch (e) {
-    console.log(e);
-  }
-};
-
 const getProductKeyword = async (title, topic) => {
   try {
     const systemMessage = {
@@ -421,7 +409,6 @@ module.exports = {
   googleIndexingApi,
   generateBlogContent,
   getCategoryNumber,
-  getModels,
   doTechupboxPost,
   doKinTechupboxPost,
   removeDuplicateLinks,

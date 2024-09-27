@@ -27,8 +27,9 @@ const {
 
 const cron = require("node-cron");
 
-global.NID_AUT = "";
-global.NID_SES = "";
+// global.NID_AUT = "";
+// global.NID_SES = "";
+global.cookieStore = [];
 
 // 내꺼 안죽이게끔 살리기
 cron.schedule("* * * * *", async () => {
@@ -130,6 +131,25 @@ const getData = async (code) => {
         resolve(res.data[0]);
       });
   });
+};
+
+const getModels = async (req, res) => {
+  try {
+    const headers = {
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+    };
+
+    const { data } = await axios.get(
+      "https://api.openai.com/v1/models",
+      headers
+    );
+    return res.status(200).send(data);
+  } catch (e) {
+    return res.status(500).send(e);
+  }
 };
 
 const numberReplace = (item) => {
@@ -615,12 +635,16 @@ const getQrLink = async (req, res) => {
 
 const setNaverCookie = async (req, res) => {
   try {
-    const { NID_AUT, NID_SES } = req.body;
+    const { CURRENT_ID, NID_AUT, NID_SES } = req.body;
 
-    global.NID_AUT = NID_AUT;
-    global.NID_SES = NID_SES;
+    global.cookieStore[CURRENT_ID] = {
+      NID_AUT,
+      NID_SES,
+    };
 
-    return res.status(200).send({ status: "ok", item: { NID_AUT, NID_SES } });
+    return res
+      .status(200)
+      .send({ status: "ok", item: global.cookieStore[CURRENT_ID] });
   } catch (e) {
     console.log(e);
     return res.status(500).send({ status: "err" });
@@ -650,6 +674,7 @@ module.exports = {
   doGenerateContent,
   createTechupboxPost,
   getQrLink,
+  getModels,
   setNaverCookie,
   getNaverCookie,
 };

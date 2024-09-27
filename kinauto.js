@@ -73,7 +73,6 @@ const run = async () => {
 
   await logWait("아이디를 입력 합니다", 1);
   await typeStringAutomatically(users[0].id);
-  // await logWait("아이디를 입력 대기중", 5);
   // await driver.findElement(By.id("id")).sendKeys(users[0].id);
   await logWait("비밀번호 창을 클릭 합니다", 1);
   await driver.findElement(By.id("pw")).click();
@@ -105,9 +104,10 @@ const run = async () => {
   await logWait("잠시 대기합니다.", 10);
   await logWait("시작합니다.", 1);
 
+  let index = 1;
   if (urls.length > 0) {
     for (const url of urls) {
-      await logWait(`${url}이동 합니다.`, 1);
+      await logWait(`${index++}, ${url} 이동 합니다.`, 1);
       await driver.get(url);
       await logWait("포스팅 스크립트를 삽입합니다.", 1);
       const kinInitScript = fs.readFileSync("kinInit.js", "utf8");
@@ -119,11 +119,6 @@ const run = async () => {
         await logWait(`대기가 ${i}초 남았습니다.`, 1);
       }
     }
-  }
-
-  try {
-  } catch (e) {
-    console.log(e);
   }
 };
 run();

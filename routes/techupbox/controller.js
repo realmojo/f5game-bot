@@ -652,12 +652,11 @@ const setNaverCookie = async (req, res) => {
 };
 const getNaverCookie = async (req, res) => {
   try {
-    global.NID_AUT = NID_AUT;
-    global.NID_SES = NID_SES;
+    const { currentId } = req.query;
 
     return res.status(200).send({
       status: "ok",
-      item: { NID_AUT: global.NID_AUT, NID_SES: global.NID_SES },
+      item: global.cookieStore[currentId],
     });
   } catch (e) {
     console.log(e);

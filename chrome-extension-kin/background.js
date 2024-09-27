@@ -32,36 +32,41 @@ const run = async () => {
       url: "https://kin.naver.com",
       name: "currentId",
     });
-    const isDelevery = await chrome.cookies.get({
-      url: "https://kin.naver.com",
-      name: `${CurrentId.value}_isDelevery`,
-    });
 
-    if (!isDelevery || isDelevery.value !== "ok") {
-      await setNaverCookie(CurrentId.value, NID_AUT.value, NID_SES.value);
-      await chrome.cookies.set(
-        {
-          url: "https://kin.naver.com",
-          name: `${CurrentId.value}_isDelevery`,
-          value: "ok",
-          domain: "kin.naver.com",
-          path: "/",
-          secure: false,
-          httpOnly: false,
-          expirationDate: Date.now() / 1000 + 600, // 현재 시간부터 1시간 후 만료
-        },
-        function (cookie) {
-          if (chrome.runtime.lastError) {
-            console.error("쿠키 설정 실패:", chrome.runtime.lastError);
-          } else {
-            console.log("쿠키가 성공적으로 설정되었습니다:", cookie);
+    if (CurrentId?.value) {
+      const isDelevery = await chrome.cookies.get({
+        url: "https://kin.naver.com",
+        name: `${CurrentId.value}_isDelevery`,
+      });
+
+      if (!isDelevery || isDelevery.value !== "ok") {
+        await setNaverCookie(CurrentId.value, NID_AUT.value, NID_SES.value);
+        await chrome.cookies.set(
+          {
+            url: "https://kin.naver.com",
+            name: `${CurrentId.value}_isDelevery`,
+            value: "ok",
+            domain: "kin.naver.com",
+            path: "/",
+            secure: false,
+            httpOnly: false,
+            expirationDate: Date.now() / 1000 + 600, // 현재 시간부터 1시간 후 만료
+          },
+          function (cookie) {
+            if (chrome.runtime.lastError) {
+              console.error("쿠키 설정 실패:", chrome.runtime.lastError);
+            } else {
+              console.log("쿠키가 성공적으로 설정되었습니다:", cookie);
+            }
           }
-        }
-      );
+        );
+      } else {
+        console.log("쿠키가 유효합니다.");
+      }
     } else {
-      console.log("쿠키가 유효합니다.");
+      console.log("현재 ID가 없습니다.");
     }
-  }, 5000);
+  }, 1000);
 };
 
 // 예제 사용

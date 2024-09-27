@@ -656,6 +656,7 @@ const getNaverCookie = async (req, res) => {
 
     return res.status(200).send({
       status: "ok",
+      currentId,
       item: global.cookieStore[currentId],
     });
   } catch (e) {

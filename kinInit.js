@@ -192,39 +192,49 @@ const startCountdown = (seconds) => {
 };
 
 const createKinContent = async (NID_AUT, NID_SES) => {
-  const answerHtml = document.getElementById("doAnswer");
+  try {
+    const answerHtml = document.getElementById("doAnswer");
 
-  const { title, description, content, answer, techupboxUrl } =
-    await getGenerateContent();
-  const { qrLink } = await getQRLink(techupboxUrl, NID_AUT, NID_SES);
-  const ogLinkItem = await getOgLink(qrLink);
+    const { title, description, content, answer, techupboxUrl } =
+      await getGenerateContent();
+    const { qrLink } = await getQRLink(techupboxUrl, NID_AUT, NID_SES);
+    const ogLinkItem = await getOgLink(qrLink);
 
-  const desciptionHtml = description
-    ? `[질문]<br/>${description}<br/><br/>`
-    : "";
-  const finalAnswer = `${desciptionHtml}[답변]<br/>${
-    answer ? answer.trim() : ""
-  }`;
+    const desciptionHtml = description
+      ? `[질문]<br/>${description}<br/><br/>`
+      : "";
+    const finalAnswer = `${desciptionHtml}[답변]<br/>${
+      answer ? answer.trim() : ""
+    }`;
 
-  const componentJson = await getComponentJson(finalAnswer);
-  console.log(componentJson);
-  const mergeJson = mergeComponent(ogLinkItem, componentJson);
+    const componentJson = await getComponentJson(finalAnswer);
+    console.log(componentJson);
+    const mergeJson = mergeComponent(ogLinkItem, componentJson);
 
-  document.title = "지식인 답변 생성 완료";
-  answerHtml.innerHTML = `${finalAnswer}<br/>${qrLink}`;
+    document.title = "지식인 답변 생성 완료";
+    answerHtml.innerHTML = `${finalAnswer}<br/>${qrLink}`;
 
-  while (1) {
-    const captcha = await getIssueCaptcha();
-    if (captcha.result.result.captcha === null) {
-      loadingText("지식인 자동 포스팅 등록");
-      await registerAnswerForSmartEditorOne(mergeJson);
-      // window.close();
+    while (1) {
+      const captcha = await getIssueCaptcha();
+      if (captcha.result.result.captcha === null) {
+        loadingText("지식인 자동 포스팅 등록");
+        await registerAnswerForSmartEditorOne(mergeJson);
+        // window.close();
+        location.reload();
+      } else {
+        document.title = "캡챠 걸림 60초 대기";
+        startCountdown(30);
+      }
+      await delay(30000);
+    }
+  } catch (e) {
+    kinGlobalItem.fetchRetry++;
+    if (kinGlobalItemkinGlobalItem.fetchRetry > 3) {
       location.reload();
     } else {
-      document.title = "캡챠 걸림 60초 대기";
-      startCountdown(30);
+      loadingText("오류가 나서 다시 실행 합니다.");
+      await createKinContent(NID_AUT, NID_SES);
     }
-    await delay(30000);
   }
 };
 
@@ -257,11 +267,13 @@ const setButtonHtml = async (NID_AUT, NID_SES, message = "") => {
 
   await delay(1000);
   document.querySelector(".endAnswerButton").click();
-  createKinContent(NID_AUT, NID_SES);
+  if (message === "") {
+    await createKinContent(NID_AUT, NID_SES);
+  }
 
-  createButton.addEventListener("click", () => {
+  createButton.addEventListener("click", async () => {
     document.querySelector(".endAnswerButton").click();
-    createKinContent(NID_AUT, NID_SES);
+    await createKinContent(NID_AUT, NID_SES);
   });
 
   copyButton.addEventListener("click", async () => {
@@ -352,7 +364,7 @@ const getGenerateContent = async () => {
           loadingText(
             `오류가 나서 지식인 답변 재실행 - ${kinGlobalItem.fetchRetry}`
           );
-          getGenerateContent();
+          // getGenerateContent();
           console.error("오류 발생:", error);
         });
     });
@@ -399,12 +411,12 @@ const getQRLink = async (link, NID_AUT, NID_SES) => {
 const getNaverCookie = async () => {
   const currentId = getCookie("currentId");
   const response = await fetch(
-    `https://f5game-bot.vercel.app/techupbox/getNaverCookie?currentId=${currentId}`
+    `https://api.mindpang.com/api/naver/get.php?CURRENT_ID=${currentId}`
   );
   const d = await response.json();
   console.log(d);
-  kinGlobalItem.NID_AUT = d.item.NID_AUT;
-  kinGlobalItem.NID_SES = d.item.NID_SES;
+  kinGlobalItem.NID_AUT = d.NID_AUT;
+  kinGlobalItem.NID_SES = d.NID_SES;
 };
 
 const getRegisterFormData = async () => {
@@ -560,15 +572,16 @@ const run = async () => {
     !kinGlobalItem.token ||
     !kinGlobalItem.tempField ||
     !kinGlobalItem.NID_AUT ||
-    !kinGlobalItem.NID_SES
+    !kinGlobalItem.NID_SES ||
+    kinGlobalItem.errorMsg
   ) {
-    setButtonHtml(
+    await setButtonHtml(
       kinGlobalItem.NID_AUT,
       kinGlobalItem.NID_SES,
       kinGlobalItem.errorMsg ? kinGlobalItem.errorMsg : "값을 체크하세요"
     );
   } else {
-    setButtonHtml(kinGlobalItem.NID_AUT, kinGlobalItem.NID_SES);
+    await setButtonHtml(kinGlobalItem.NID_AUT, kinGlobalItem.NID_SES);
   }
 };
 

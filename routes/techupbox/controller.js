@@ -633,47 +633,6 @@ const getQrLink = async (req, res) => {
   }
 };
 
-const setNaverCookie = async (req, res) => {
-  try {
-    const { CURRENT_ID, NID_AUT, NID_SES } = req.body;
-
-    global.cookieStore[CURRENT_ID] = {
-      NID_AUT,
-      NID_SES,
-    };
-
-    return res
-      .status(200)
-      .send({ status: "ok", item: global.cookieStore[CURRENT_ID] });
-  } catch (e) {
-    console.log(e);
-    return res.status(500).send({ status: "err" });
-  }
-};
-const getNaverCookie = async (req, res) => {
-  try {
-    const { currentId } = req.query;
-
-    let d = {
-      id: "",
-      NID_AUT: "",
-      NID_SES: "",
-      updated: "",
-    };
-    const { data } = await axios.get(
-      `https://api.mindpang.com/api/naver/get.php?CURRENT_ID=${currentId}`
-    );
-
-    return res.status(200).send({
-      status: "ok",
-      item: data ? data : d,
-    });
-  } catch (e) {
-    console.log(e);
-    return res.status(500).send({ status: "err" });
-  }
-};
-
 const getCoupangData = async (req, res) => {
   try {
     const d = await getTop10Data("에어컨");
@@ -697,7 +656,5 @@ module.exports = {
   createTechupboxPost,
   getQrLink,
   getModels,
-  setNaverCookie,
-  getNaverCookie,
   getCoupangData,
 };

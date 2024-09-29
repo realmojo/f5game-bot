@@ -10,8 +10,6 @@ router.get("/getModels", controller.getModels);
 router.get("/getCrawl", controller.getCrawl);
 router.get("/getCoupangData", controller.getCoupangData);
 
-router.post("/setNaverCookie", controller.setNaverCookie);
-router.get("/getNaverCookie", controller.getNaverCookie);
 router.post("/doKinToTechupboxPost", controller.doKinToTechupboxPost);
 
 router.post("/doGenerateContent", controller.doGenerateContent);

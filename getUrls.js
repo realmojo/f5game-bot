@@ -3,4 +3,5 @@ const urls = [];
 titles.forEach((item) => {
   urls.push(item.href);
 });
+
 return urls;

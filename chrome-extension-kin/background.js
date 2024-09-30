@@ -32,20 +32,21 @@ const run = async () => {
       url: "https://kin.naver.com",
       name: "currentId",
     });
+    const d = `${NID_AUT?.value || ""}_${NID_SES?.value || ""}`;
+
+    const isDelevery = await chrome.cookies.get({
+      url: "https://kin.naver.com",
+      name: `${CurrentId.value}_isDelevery`,
+    });
 
     if (CurrentId?.value) {
-      const isDelevery = await chrome.cookies.get({
-        url: "https://kin.naver.com",
-        name: `${CurrentId.value}_isDelevery`,
-      });
-
-      if (!isDelevery || isDelevery.value !== "ok") {
+      if (isDelevery?.value !== d) {
         await setNaverCookie(CurrentId.value, NID_AUT.value, NID_SES.value);
         await chrome.cookies.set(
           {
             url: "https://kin.naver.com",
             name: `${CurrentId.value}_isDelevery`,
-            value: "ok",
+            value: d,
             domain: "kin.naver.com",
             path: "/",
             secure: false,

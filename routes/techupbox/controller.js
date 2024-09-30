@@ -561,32 +561,6 @@ const doKinToTechupboxPost = async (req, res) => {
 
 /** ------------- */
 
-const getIsSutable = async (req, res) => {
-  try {
-    const { urls } = req.body;
-
-    const sutableUrls = [];
-    for (const url of urls) {
-      const { data } = await axios.get(url);
-      const $ = cheerio.load(data);
-
-      $(".iconQuestion").remove();
-      const description = $(".questionDetail").text().trim();
-      const images = $("._waitingForReplaceImage");
-
-      if (images.length === 0 && description.length > 50) {
-        sutableUrls.push(url);
-      }
-      await delay(300);
-    }
-
-    // return res.status(200).send({ status: "ok", sutable: sutable });
-    return res.status(200).send({ status: "ok", sutableUrls });
-  } catch (e) {
-    return res.status(500).send({ status: "err" });
-  }
-};
-
 const doGenerateContent = async (req, res) => {
   try {
     const { kinUrl } = req.body;
@@ -601,14 +575,17 @@ const doGenerateContent = async (req, res) => {
 
     if (images.length !== 0) {
       console.log("이미지가 있습니다.");
-      return res.status(500).send({ status: "err", err: "이미지가 있습니다." });
+      return res
+        .status(500)
+        .send({ status: "err", message: "이미지가 있습니다." });
     }
 
-    if (description.length < 50) {
+    const sumTotal = `${kinTitle}${description}`;
+    if (sumTotal.length < 50) {
       console.log("내용이 너무 짧습니다.");
       return res
         .status(500)
-        .send({ status: "err", err: "내용이 너무 짧습니다." });
+        .send({ status: "err", message: "내용이 너무 짧습니다." });
     }
 
     const results = await generateBlogContent(kinTitle, description);
@@ -700,5 +677,4 @@ module.exports = {
   getQrLink,
   getModels,
   getCoupangData,
-  getIsSutable,
 };

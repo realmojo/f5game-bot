@@ -228,13 +228,7 @@ const createKinContent = async (NID_AUT, NID_SES) => {
       await delay(30000);
     }
   } catch (e) {
-    kinGlobalItem.fetchRetry++;
-    if (kinGlobalItemkinGlobalItem.fetchRetry > 3) {
-      location.reload();
-    } else {
-      loadingText("오류가 나서 다시 실행 합니다.");
-      await createKinContent(NID_AUT, NID_SES);
-    }
+    loadingText("포스팅을 등록할 수 없습니다.");
   }
 };
 
@@ -349,9 +343,10 @@ const getGenerateContent = async () => {
           kinUrl: location.href, // 보낼 데이터
         }),
       })
-        .then((response) => {
+        .then(async (response) => {
           if (!response.ok) {
-            throw new Error("네트워크 응답에 문제가 있습니다.");
+            const errResponse = await response.json();
+            throw new Error(errResponse.message);
           }
           return response.json(); // 응답이 JSON 형식일 경우
         })
@@ -360,11 +355,7 @@ const getGenerateContent = async () => {
           resolve(data.item);
         })
         .catch((error) => {
-          kinGlobalItem.fetchRetry++;
-          loadingText(
-            `오류가 나서 지식인 답변 재실행 - ${kinGlobalItem.fetchRetry}`
-          );
-          // getGenerateContent();
+          loadingText(error);
           console.error("오류 발생:", error);
         });
     });

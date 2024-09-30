@@ -222,23 +222,37 @@ const generateBlogContent = async (title, topic) => {
 
     const systemMessage = {
       role: "system",
-      content: `포스팅의 소제목은 주제 키워드를 가끔씩 포함하고 설명은 1000자 이내로 작성해줘.(필수)
-포스팅의 글자수 길이는 공백을 제외하고 5000자 작성을 해야해.(필수)
-고유한 단어는 최소 700자 이상 필요해(필수)
-표절이 없게끔 작성하는 것이 가장 중요해(필수)
+      //       content: `포스팅의 소제목은 주제 키워드를 가끔씩 포함하고 설명은 1000자 이내로 작성해줘.(필수)
+      // 포스팅의 글자수 길이는 공백을 제외하고 5000자 작성을 해야해.(필수)
+      // 고유한 단어는 최소 700자 이상 필요해(필수)
+      // 표절이 없게끔 작성하는 것이 가장 중요해(필수)
+      // 글 내용을 워드프레스에 올릴 수 있게 HTML코드로 변환해서 작성해줘.(필수)
+      // 첫 번째 소제목에는 쿠팡파트너스 버튼 링크를 <a href="${landingUrl}" target="_blank"><button class="tech-link">👉 ${productKeyword} 알아보기</button></a> 첫 번째 소제목 h2, p 태그 바로 다음에 작성해줘(필수)
+      // 두 번째 소제목에는 쿠팡파트너스 버튼 링크를 <a href="${secondLandingUrl}" target="_blank"><button class="tech-link">👉 ${secondKeyword} 알아보기</button></a> 두 번째 소제목 h2, p 태그 바로 다음에 작성해줘(필수)
+      // 세 번째 소제목에는 쿠팡파트너스 버튼 링크를 <a href="${thirdLandingUrl}" target="_blank"><button class="tech-link">👉 ${thirdKeyword} 알아보기</button></a> 세 번째 소제목 h2, p 태그 바로 다음에 작성해줘(필수)
+      // 글 예시는 아래와 같이 해줘, 소제목과 소제목에 대한 설명은 최소 3개 이상 만들어줘.
+      // 소제목 (h2 태그 주제에 대한 키워드 일부만 넣기)
+      // 쿠팡파트너스 링크
+      // 소제목에 대한 설명(ul, li 문법과 p문법을 2:1 비율로 혼합해서 작성)
+      // title은 [질문]을 요약해서 만들어줘
+      // content에는 h1 태그를 적지 말아줘(필수)
+      // answer는 content를 기반으로 요약해서 200자 정도로 해주고 말투는 합니다, 했습니다 등의 부드럽고 공손한 텍스트로 작성해줘
+
+      // 결과값 title, content, answer를 json으로 반환해줘`,
+      content: `포스팅의 글자수 길이는 공백을 제외하고 10000자 작성을 해야해.(필수)
 글 내용을 워드프레스에 올릴 수 있게 HTML코드로 변환해서 작성해줘.(필수)
 첫 번째 소제목에는 쿠팡파트너스 버튼 링크를 <a href="${landingUrl}" target="_blank"><button class="tech-link">👉 ${productKeyword} 알아보기</button></a> 첫 번째 소제목 h2, p 태그 바로 다음에 작성해줘(필수)
 두 번째 소제목에는 쿠팡파트너스 버튼 링크를 <a href="${secondLandingUrl}" target="_blank"><button class="tech-link">👉 ${secondKeyword} 알아보기</button></a> 두 번째 소제목 h2, p 태그 바로 다음에 작성해줘(필수)
 세 번째 소제목에는 쿠팡파트너스 버튼 링크를 <a href="${thirdLandingUrl}" target="_blank"><button class="tech-link">👉 ${thirdKeyword} 알아보기</button></a> 세 번째 소제목 h2, p 태그 바로 다음에 작성해줘(필수)
-글 예시는 아래와 같이 해줘, 소제목과 소제목에 대한 설명은 최소 3개 이상 만들어줘.
+글 예시는 아래와 같이 해줘, 소제목과 소제목에 대한 설명은 5개 만들어줘.
 소제목 (h2 태그 주제에 대한 키워드 일부만 넣기)
 쿠팡파트너스 링크
-소제목에 대한 설명(ul, li 문법과 p문법을 2:1 비율로 혼합해서 작성)
+소제목에 대한 설명
 title은 [질문]을 요약해서 만들어줘
 content에는 h1 태그를 적지 말아줘(필수)
-answer는 content를 기반으로 요약해서 200자 정도로 해주고 말투는 합니다, 했습니다 등의 부드럽고 공손한 텍스트로 작성해줘
+answer는 content를 기반으로 요약해서 400자 정도로 해주고 말투는 합니다, 했습니다 등의 부드럽고 공손한 텍스트로 작성해줘
 
-결과값 title, content, answer를 json으로 반환해줘`,
+결과값 title, content, answer를 json으로 반환해줘(필수)`,
     };
     const userMessage = {
       role: "user",
@@ -251,7 +265,8 @@ answer는 content를 기반으로 요약해서 200자 정도로 해주고 말투
       {
         model: "gpt-4o-mini",
         messages: [systemMessage, userMessage],
-        temperature: 0.95,
+        temperature: 0.7,
+        max_tokens: 10000,
       },
       headers
     );

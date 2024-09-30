@@ -577,6 +577,7 @@ const getIsSutable = async (req, res) => {
       if (images.length === 0 && description.length > 50) {
         sutableUrls.push(url);
       }
+      await delay(300);
     }
 
     // return res.status(200).send({ status: "ok", sutable: sutable });

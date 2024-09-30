@@ -573,15 +573,15 @@ const doGenerateContent = async (req, res) => {
     const description = $(".questionDetail").text().trim();
     const images = $("._waitingForReplaceImage");
 
-    if (images.length !== 0) {
+    const sumTotal = `${kinTitle}${description}`;
+    if (images.length !== 0 && sumTotal.length < 100) {
       console.log("이미지가 있습니다.");
       return res
         .status(500)
         .send({ status: "err", message: "이미지가 있습니다." });
     }
 
-    const sumTotal = `${kinTitle}${description}`;
-    if (sumTotal.length < 50) {
+    if (sumTotal.length < 20) {
       console.log("내용이 너무 짧습니다.");
       return res
         .status(500)
@@ -604,19 +604,24 @@ const doGenerateContent = async (req, res) => {
     console.log("content: ", content);
     console.log("answer: ", answer);
 
-    console.log("워드프레스 글 등록 중...");
-    let techupboxUrl = "";
-    if (new Date().getTime() % 2 === 0) {
-      techupboxUrl = await doKinTechupboxPost(title, content);
-    } else {
-      techupboxUrl = await doTechupboxPost(title, content);
-    }
+    // console.log("워드프레스 글 등록 중...");
+    // let techupboxUrl = "";
+    // if (new Date().getTime() % 2 === 0) {
+    //   techupboxUrl = await doKinTechupboxPost(title, content);
+    // } else {
+    //   techupboxUrl = await doTechupboxPost(title, content);
+    // }
 
-    console.log("워드프레스 글 등록 완료");
+    // console.log("워드프레스 글 등록 완료");
+
+    // return res.status(200).send({
+    //   status: "ok",
+    //   item: { title, description, content, answer, techupboxUrl },
+    // });
 
     return res.status(200).send({
       status: "ok",
-      item: { title, description, content, answer, techupboxUrl },
+      item: { title, description, content, answer },
     });
   } catch (e) {
     console.log(e);

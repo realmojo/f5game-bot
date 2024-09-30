@@ -30,21 +30,21 @@ const users = [
     pw: "zoahzjvl!@3",
     max: 30,
     current: 0,
-    dirId: 10, // 스포츠
+    dirId: 9, // 여행
   },
   {
-    id: "unixseen",
+    id: "crinex88",
     pw: "zoahzjvl!@3",
     max: 30,
     current: 0,
-    dirId: 4, // 경제
+    dirId: 5, // 쇼핑
   },
   // {
-  //   id: "crinex88",
+  //   id: "unixseen",
   //   pw: "zoahzjvl!@3",
   //   max: 30,
   //   current: 0,
-  //   dirId: 8, // 생활
+  //   dirId: 4, // 경제
   // },
 ];
 
@@ -81,7 +81,10 @@ const closeAlertIfPresent = async (driver, timeout = 1000) => {
     await alert.accept();
     console.log("Alert 창을 닫았습니다.");
 
-    if (alertText.indexOf("등급에서 하루에") !== -1) {
+    if (
+      alertText.indexOf("등급에서 하루에") !== -1 ||
+      alertText.indexOf("전문가") !== -1
+    ) {
       return true;
     } else {
       return false;
@@ -89,7 +92,7 @@ const closeAlertIfPresent = async (driver, timeout = 1000) => {
   } catch (error) {
     if (error.name === "TimeoutError") {
       // Alert 창이 나타나지 않음
-      console.log("Alert 창이 존재하지 않습니다. 계속 진행합니다.");
+      // console.log("Alert 창이 존재하지 않습니다. 계속 진행합니다.");
       return false;
     } else {
       // 다른 예외 처리
@@ -148,10 +151,10 @@ const run = async () => {
     await driver.findElement(By.id("id")).click();
 
     await logWait("아이디를 입력 합니다", 2);
-    await driver.findElement(By.id("id")).sendKeys(Key.chord(Key.COMMAND, "a"));
+    await driver.findElement(By.id("id")).sendKeys(Key.COMMAND, "a");
 
     await logWait("아이디를 입력 합니다", 2);
-    await driver.findElement(By.id("id")).sendKeys(Key.chord(Key.COMMAND, "v"));
+    await driver.findElement(By.id("id")).sendKeys(Key.COMMAND, "v");
     // await clipboardy.default.readSync();
 
     // await typeStringAutomatically(users[0].id);
@@ -162,10 +165,10 @@ const run = async () => {
     await driver.findElement(By.id("pw")).click();
 
     await logWait("비밀번호를 입력 합니다", 2);
-    await driver.findElement(By.id("pw")).sendKeys(Key.chord(Key.COMMAND, "a"));
+    await driver.findElement(By.id("pw")).sendKeys(Key.COMMAND, "a");
 
     await logWait("비밀번호를 입력 합니다", 2);
-    await driver.findElement(By.id("pw")).sendKeys(Key.chord(Key.COMMAND, "v"));
+    await driver.findElement(By.id("pw")).sendKeys(Key.COMMAND, "v");
     // await typeStringAutomatically(users[0].pw);
     // await driver.findElement(By.id("pw")).sendKeys(user.pw);
 
@@ -212,7 +215,10 @@ const run = async () => {
             let timer = 90;
             for (let i = timer; i > 0; i--) {
               console.log(`${i}초 남았습니다.`, 1);
-              closeAlertIfPresent(driver, 1000);
+              let postAlert = await closeAlertIfPresent(driver, 1000);
+              if (postAlert) {
+                break;
+              }
             }
             user.current++;
           }

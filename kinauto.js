@@ -151,10 +151,10 @@ const run = async () => {
     await driver.findElement(By.id("id")).click();
 
     await logWait("아이디를 입력 합니다", 2);
-    await driver.findElement(By.id("id")).sendKeys(Key.COMMAND, "a");
+    await driver.findElement(By.id("id")).sendKeys(Key.chord(Key.COMMAND, "a"));
 
     await logWait("아이디를 입력 합니다", 2);
-    await driver.findElement(By.id("id")).sendKeys(Key.COMMAND, "v");
+    await driver.findElement(By.id("id")).sendKeys(Key.chord(Key.COMMAND, "v"));
     // await clipboardy.default.readSync();
 
     // await typeStringAutomatically(users[0].id);
@@ -165,10 +165,10 @@ const run = async () => {
     await driver.findElement(By.id("pw")).click();
 
     await logWait("비밀번호를 입력 합니다", 2);
-    await driver.findElement(By.id("pw")).sendKeys(Key.COMMAND, "a");
+    await driver.findElement(By.id("pw")).sendKeys(Key.chord(Key.COMMAND, "a"));
 
     await logWait("비밀번호를 입력 합니다", 2);
-    await driver.findElement(By.id("pw")).sendKeys(Key.COMMAND, "v");
+    await driver.findElement(By.id("pw")).sendKeys(Key.chord(Key.COMMAND, "v"));
     // await typeStringAutomatically(users[0].pw);
     // await driver.findElement(By.id("pw")).sendKeys(user.pw);
 

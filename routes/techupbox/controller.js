@@ -604,25 +604,25 @@ const doGenerateContent = async (req, res) => {
     console.log("content: ", content);
     console.log("answer: ", answer);
 
-    // console.log("워드프레스 글 등록 중...");
-    // let techupboxUrl = "";
-    // if (new Date().getTime() % 2 === 0) {
-    //   techupboxUrl = await doKinTechupboxPost(title, content);
-    // } else {
-    //   techupboxUrl = await doTechupboxPost(title, content);
-    // }
+    console.log("워드프레스 글 등록 중...");
+    let techupboxUrl = "";
+    if (new Date().getTime() % 2 === 0) {
+      techupboxUrl = await doKinTechupboxPost(title, content);
+    } else {
+      techupboxUrl = await doTechupboxPost(title, content);
+    }
 
-    // console.log("워드프레스 글 등록 완료");
-
-    // return res.status(200).send({
-    //   status: "ok",
-    //   item: { title, description, content, answer, techupboxUrl },
-    // });
+    console.log("워드프레스 글 등록 완료");
 
     return res.status(200).send({
       status: "ok",
-      item: { title, description, content, answer },
+      item: { title, description, content, answer, techupboxUrl },
     });
+
+    // return res.status(200).send({
+    //   status: "ok",
+    //   item: { title, description, content, answer },
+    // });
   } catch (e) {
     console.log(e);
     return res.status(500).send({ status: "err" });

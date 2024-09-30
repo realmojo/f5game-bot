@@ -575,14 +575,14 @@ const doGenerateContent = async (req, res) => {
 
     if (images.length !== 0) {
       console.log("이미지가 있습니다.");
-      return res.status(200).send({ status: "ok", err: "이미지가 있습니다." });
+      return res.status(500).send({ status: "err", err: "이미지가 있습니다." });
     }
 
     if (description.length < 50) {
       console.log("내용이 너무 짧습니다.");
       return res
-        .status(200)
-        .send({ status: "ok", err: "내용이 너무 짧습니다." });
+        .status(500)
+        .send({ status: "err", err: "내용이 너무 짧습니다." });
     }
 
     const results = await generateBlogContent(kinTitle, description);

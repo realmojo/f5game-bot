@@ -14,7 +14,7 @@ const users = [
     pw: "zoahzjvl!@3",
     max: 30,
     current: 0,
-    dirId: 5, // 쇼핑
+    dirId: 8, // 생활
   },
   {
     id: "tedevspace",
@@ -28,7 +28,7 @@ const users = [
     pw: "zoahzjvl!@3",
     max: 30,
     current: 0,
-    dirId: 4, // 생활
+    dirId: 4, // 경제
   },
   {
     id: "hotsixlight",

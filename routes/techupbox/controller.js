@@ -571,6 +571,20 @@ const doGenerateContent = async (req, res) => {
     $(".iconQuestion").remove();
     const kinTitle = $(".endTitleSection").text().trim();
     const description = $(".questionDetail").text().trim();
+    const images = $("._waitingForReplaceImage");
+
+    if (images.length !== 0) {
+      console.log("이미지가 있습니다.");
+      return res.status(200).send({ status: "ok", err: "이미지가 있습니다." });
+    }
+
+    if (description.length < 50) {
+      console.log("내용이 너무 짧습니다.");
+      return res
+        .status(200)
+        .send({ status: "ok", err: "내용이 너무 짧습니다." });
+    }
+
     const results = await generateBlogContent(kinTitle, description);
     console.log(results.choices[0].message.content);
 
@@ -624,7 +638,10 @@ const getQrLink = async (req, res) => {
   try {
     const { link, NID_AUT, NID_SES } = req.body;
 
-    const qrLink = await qrCreate(new Date().getTime(), link, NID_AUT, NID_SES);
+    let qrLink = "";
+    if (link && NID_AUT && NID_SES) {
+      qrLink = await qrCreate(new Date().getTime(), link, NID_AUT, NID_SES);
+    }
 
     return res.status(200).send({ status: "ok", item: { qrLink } });
   } catch (e) {

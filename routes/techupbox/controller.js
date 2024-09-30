@@ -561,6 +561,31 @@ const doKinToTechupboxPost = async (req, res) => {
 
 /** ------------- */
 
+const getIsSutable = async (req, res) => {
+  try {
+    const { urls } = req.body;
+
+    const sutableUrls = [];
+    for (const url of urls) {
+      const { data } = await axios.get(url);
+      const $ = cheerio.load(data);
+
+      $(".iconQuestion").remove();
+      const description = $(".questionDetail").text().trim();
+      const images = $("._waitingForReplaceImage");
+
+      if (images.length === 0 && description.length > 50) {
+        sutableUrls.push(url);
+      }
+    }
+
+    // return res.status(200).send({ status: "ok", sutable: sutable });
+    return res.status(200).send({ status: "ok", sutableUrls });
+  } catch (e) {
+    return res.status(500).send({ status: "err" });
+  }
+};
+
 const doGenerateContent = async (req, res) => {
   try {
     const { kinUrl } = req.body;
@@ -674,4 +699,5 @@ module.exports = {
   getQrLink,
   getModels,
   getCoupangData,
+  getIsSutable,
 };

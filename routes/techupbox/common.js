@@ -239,7 +239,7 @@ const generateBlogContent = async (title, topic) => {
       // answer는 content를 기반으로 요약해서 200자 정도로 해주고 말투는 합니다, 했습니다 등의 부드럽고 공손한 텍스트로 작성해줘
 
       // 결과값 title, content, answer를 json으로 반환해줘`,
-      content: `포스팅의 글자수 길이는 공백을 제외하고 10000자 작성을 해야해.(필수)
+      content: `포스팅의 content 길이는 공백을 제외하고 10000자 작성을 해야해.(필수)
 글 내용을 워드프레스에 올릴 수 있게 HTML코드로 변환해서 작성해줘.(필수)
 첫 번째 소제목에는 쿠팡파트너스 버튼 링크를 <a href="${landingUrl}" target="_blank"><button class="tech-link">👉 ${productKeyword} 알아보기</button></a> 첫 번째 소제목 h2, p 태그 바로 다음에 작성해줘(필수)
 두 번째 소제목에는 쿠팡파트너스 버튼 링크를 <a href="${secondLandingUrl}" target="_blank"><button class="tech-link">👉 ${secondKeyword} 알아보기</button></a> 두 번째 소제목 h2, p 태그 바로 다음에 작성해줘(필수)

@@ -15,5 +15,6 @@ router.post("/doKinToTechupboxPost", controller.doKinToTechupboxPost);
 router.post("/doGenerateContent", controller.doGenerateContent);
 router.post("/createTechupboxPost", controller.createTechupboxPost);
 router.post("/getQrLink", controller.getQrLink);
+router.post("/getIsSutable", controller.getIsSutable);
 
 module.exports = router;

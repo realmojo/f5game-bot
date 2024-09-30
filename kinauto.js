@@ -11,33 +11,26 @@ global.driver = "";
 // C:\Program Files (x86)\Google\Chrome\Application\chrome.exe --remote-debugging-port=9222 --user-data-dir="C:/ChromeTEMP"
 
 const users = [
-  {
-    id: "crinex88",
-    pw: "zoahzjvl!@3",
-    max: 30,
-    current: 0,
-    dirId: 8, // 생활
-  },
-  {
-    id: "tedevspace",
-    pw: "zoahzjvl!@3",
-    max: 30,
-    current: 0,
-    dirId: 1, // 컴퓨터통신
-  },
-  {
-    id: "g3andg2",
-    pw: "zoahzjvl!@3",
-    max: 30,
-    current: 0,
-    dirId: 4, // 경제
-  },
+  // {
+  //   id: "tedevspace",
+  //   pw: "zoahzjvl!@3",
+  //   max: 30,
+  //   current: 0,
+  //   dirId: 1, // 컴퓨터통신
+  // },
+  // {
+  //   id: "g3andg2",
+  //   pw: "zoahzjvl!@3",
+  //   max: 30,
+  //   current: 0,
+  //   dirId: 4, // 경제
+  // },
   {
     id: "hotsixlight",
     pw: "zoahzjvl!@3",
     max: 30,
     current: 0,
-    dirId: 6, // 사회, 정치
+    dirId: 10, // 스포츠
   },
   {
     id: "unixseen",
@@ -46,6 +39,13 @@ const users = [
     current: 0,
     dirId: 4, // 경제
   },
+  // {
+  //   id: "crinex88",
+  //   pw: "zoahzjvl!@3",
+  //   max: 30,
+  //   current: 0,
+  //   dirId: 8, // 생활
+  // },
 ];
 
 const sleep = (ms) => {
@@ -65,10 +65,10 @@ const typeStringAutomatically = async (text) => {
   }
 };
 
-const closeAlertIfPresent = async (driver) => {
+const closeAlertIfPresent = async (driver, timeout = 1000) => {
   try {
     // Alert 창이 나타날 때까지 최대 3초 대기
-    await driver.wait(until.alertIsPresent(), 1000);
+    await driver.wait(until.alertIsPresent(), timeout);
 
     // Alert 창으로 전환
     let alert = await driver.switchTo().alert();
@@ -108,6 +108,9 @@ const run = async () => {
     .build();
   console.log("start");
 
+  // 스크립트 타임아웃 설정 (30초)
+  await driver.manage().setTimeouts({ script: 60000 });
+
   for (const user of users) {
     await logWait(`${user.id}로 작업을 진행 합니다`, 3);
 
@@ -145,6 +148,9 @@ const run = async () => {
     await driver.findElement(By.id("id")).click();
 
     await logWait("아이디를 입력 합니다", 2);
+    await driver.findElement(By.id("id")).sendKeys(Key.chord(Key.COMMAND, "a"));
+
+    await logWait("아이디를 입력 합니다", 2);
     await driver.findElement(By.id("id")).sendKeys(Key.chord(Key.COMMAND, "v"));
     // await clipboardy.default.readSync();
 
@@ -154,6 +160,9 @@ const run = async () => {
     await clipboardy.default.writeSync(user.pw);
     await logWait("비밀번호 창을 클릭 합니다", 2);
     await driver.findElement(By.id("pw")).click();
+
+    await logWait("비밀번호를 입력 합니다", 2);
+    await driver.findElement(By.id("pw")).sendKeys(Key.chord(Key.COMMAND, "a"));
 
     await logWait("비밀번호를 입력 합니다", 2);
     await driver.findElement(By.id("pw")).sendKeys(Key.chord(Key.COMMAND, "v"));
@@ -187,7 +196,7 @@ const run = async () => {
       let index = 1;
       for (const url of urls) {
         try {
-          const isAlert = await closeAlertIfPresent(driver);
+          const isAlert = await closeAlertIfPresent(driver, 1000);
 
           if (isAlert) {
             user.current = 50;
@@ -202,7 +211,8 @@ const run = async () => {
 
             let timer = 90;
             for (let i = timer; i > 0; i--) {
-              await logWait(`${i}초 남았습니다.`, 1);
+              console.log(`${i}초 남았습니다.`, 1);
+              closeAlertIfPresent(driver, 1000);
             }
             user.current++;
           }

@@ -9,7 +9,7 @@ const axiosRetry = require("axios-retry").default;
 
 // axios-retry 설정
 axiosRetry(axios, {
-  retries: 3, // 최대 재시도 횟수
+  retries: 2, // 최대 재시도 횟수
   retryDelay: (retryCount) => {
     console.log(`Retry attempt: ${retryCount}`);
     return retryCount * 1000; // 재시도 간격 (1초, 2초, 3초)

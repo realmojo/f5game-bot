@@ -651,7 +651,12 @@ const getQrLink = async (req, res) => {
       qrLink = await qrCreate(new Date().getTime(), link, NID_AUT, NID_SES);
     }
 
-    return res.status(200).send({ status: "ok", item: { qrLink } });
+    return res
+      .status(200)
+      .send({
+        status: "ok",
+        item: { qrLink: qrLink !== "no data" ? qrLink : link },
+      });
   } catch (e) {
     console.log(e);
     return res.status(500).send({ status: "err" });

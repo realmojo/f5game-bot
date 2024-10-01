@@ -314,7 +314,6 @@ const qrCreate = async (title, link, NID_AUT, NID_SES) => {
     const params = {
       infoType: "url",
       qrColorBorderCd: "#03C75A",
-      qrDesc: "",
       qrDirectLink: link,
       qrDirectLinkTypeCd: 29,
       qrName: title,
@@ -348,6 +347,7 @@ const qrCreate = async (title, link, NID_AUT, NID_SES) => {
     if (data?.data) {
       return `https://m.site.naver.com/${data?.data}`;
     }
+
     return link;
   } catch (e) {
     return "no data";

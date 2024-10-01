@@ -180,7 +180,7 @@ const run = async () => {
     await logWait("지식인을 접속 합니다", 1);
 
     let urls = [];
-    for (let i = 1; i < 6; i++) {
+    for (let i = 1; i < 10; i++) {
       const kinCategoryUrl = `https://kin.naver.com/qna/list.naver?dirId=${user.dirId}&page=${i}`;
       await driver.get(kinCategoryUrl);
 
@@ -212,9 +212,9 @@ const run = async () => {
             await driver.executeScript(kinInitScript);
             await logWait("포스팅을 진행합니다.", 1);
 
-            let timer = 90;
+            let timer = 80;
             for (let i = timer; i > 0; i--) {
-              console.log(`${i}초 남았습니다.`, 1);
+              console.log(`${i}초 남았습니다.`);
               let postAlert = await closeAlertIfPresent(driver, 1000);
               if (postAlert) {
                 break;

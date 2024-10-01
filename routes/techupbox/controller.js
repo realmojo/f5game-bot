@@ -584,7 +584,7 @@ const doGenerateContent = async (req, res) => {
     // 제목이나 내용에 물음표가 있으면 내용이 짧아도 진행한다.
     if (
       kinTitle.indexOf("?") === -1 &&
-      description.indexOf("?") !== -1 &&
+      description.indexOf("?") === -1 &&
       sumTotal.length < 20
     ) {
       console.log("내용이 너무 짧습니다.");

@@ -1,5 +1,5 @@
 const webdriver = require("selenium-webdriver");
-const robot = require("robotjs");
+// const robot = require("robotjs");
 const { Builder, By, Key, until } = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const fs = require("fs");
@@ -11,13 +11,13 @@ global.driver = "";
 // C:\Program Files (x86)\Google\Chrome\Application\chrome.exe --remote-debugging-port=9222 --user-data-dir="C:/ChromeTEMP"
 
 const users = [
-  // {
-  //   id: "tedevspace",
-  //   pw: "zoahzjvl!@3",
-  //   max: 30,
-  //   current: 0,
-  //   dirId: 1, // 컴퓨터통신
-  // },
+  {
+    id: "tedevspace",
+    pw: "zoahzjvl!@3",
+    max: 30,
+    current: 0,
+    dirId: 1, // 컴퓨터통신
+  },
   // {
   //   id: "g3andg2",
   //   pw: "zoahzjvl!@3",
@@ -32,13 +32,13 @@ const users = [
   //   current: 0,
   //   dirId: 9, // 여행
   // },
-  {
-    id: "crinex88",
-    pw: "zoahzjvl!@3",
-    max: 30,
-    current: 0,
-    dirId: 5, // 쇼핑
-  },
+  // {
+  //   id: "crinex88",
+  //   pw: "zoahzjvl!@3",
+  //   max: 30,
+  //   current: 0,
+  //   dirId: 5, // 쇼핑
+  // },
   // {
   //   id: "unixseen",
   //   pw: "zoahzjvl!@3",
@@ -57,13 +57,13 @@ const logWait = async (message = "기다립니다", ms = 1) => {
   await global.driver.sleep(ms * 1000);
 };
 
-const typeStringAutomatically = async (text) => {
-  for (let char of text) {
-    console.log(char);
-    robot.typeString(char);
-    await sleep(200); // 100 밀리초 지연 (필요에 따라 조절 가능)
-  }
-};
+// const typeStringAutomatically = async (text) => {
+//   for (let char of text) {
+//     console.log(char);
+//     robot.typeString(char);
+//     await sleep(200); // 100 밀리초 지연 (필요에 따라 조절 가능)
+//   }
+// };
 
 const closeAlertIfPresent = async (driver, timeout = 1000) => {
   try {
@@ -83,6 +83,7 @@ const closeAlertIfPresent = async (driver, timeout = 1000) => {
 
     if (
       alertText.indexOf("등급에서 하루에") !== -1 ||
+      alertText.indexOf("이미지가") !== -1 ||
       alertText.indexOf("전문가") !== -1
     ) {
       return true;

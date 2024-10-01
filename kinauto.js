@@ -25,13 +25,13 @@ const users = [
   //   current: 0,
   //   dirId: 4, // 경제
   // },
-  {
-    id: "hotsixlight",
-    pw: "zoahzjvl!@3",
-    max: 30,
-    current: 0,
-    dirId: 9, // 여행
-  },
+  // {
+  //   id: "hotsixlight",
+  //   pw: "zoahzjvl!@3",
+  //   max: 30,
+  //   current: 0,
+  //   dirId: 9, // 여행
+  // },
   {
     id: "crinex88",
     pw: "zoahzjvl!@3",

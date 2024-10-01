@@ -356,6 +356,7 @@ const getGenerateContent = async () => {
         })
         .catch((error) => {
           loadingText(error);
+          alert(error);
           console.error("오류 발생:", error);
         });
     });

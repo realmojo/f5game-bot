@@ -11,13 +11,6 @@ global.driver = "";
 // C:\Program Files (x86)\Google\Chrome\Application\chrome.exe --remote-debugging-port=9222 --user-data-dir="C:/ChromeTEMP"
 
 const users = [
-  {
-    id: "tedevspace",
-    pw: "zoahzjvl!@3",
-    max: 30,
-    current: 0,
-    dirId: 1, // 컴퓨터통신
-  },
   // {
   //   id: "g3andg2",
   //   pw: "zoahzjvl!@3",
@@ -32,18 +25,25 @@ const users = [
   //   current: 0,
   //   dirId: 9, // 여행
   // },
-  // {
-  //   id: "crinex88",
-  //   pw: "zoahzjvl!@3",
-  //   max: 30,
-  //   current: 0,
-  //   dirId: 5, // 쇼핑
-  // },
+  {
+    id: "tedevspace",
+    pw: "zoahzjvl!@3",
+    max: 30,
+    current: 0,
+    dirId: 1, // 컴퓨터통신
+  },
+  {
+    id: "crinex88",
+    pw: "zoahzjvl!@3",
+    max: 30,
+    current: 0,
+    dirId: 5, // 쇼핑
+  },
 ];
 
-const sleep = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
+// const sleep = (ms) => {
+//   return new Promise((resolve) => setTimeout(resolve, ms));
+// };
 
 const logWait = async (message = "기다립니다", ms = 1) => {
   console.log(message);
@@ -94,7 +94,6 @@ const closeAlertIfPresent = async (driver, timeout = 1000) => {
     }
   }
 };
-
 const run = async () => {
   const clipboardy = await import("clipboardy");
   const chromeOptions = new chrome.Options();
@@ -144,11 +143,11 @@ const run = async () => {
     await logWait("아이디를 창을 클릭 합니다", 2);
     await driver.findElement(By.id("id")).click();
 
-    await logWait("아이디를 입력 합니다", 2);
-    await driver.findElement(By.id("id")).sendKeys(Key.chord(Key.COMMAND, "a"));
+    // await logWait("아이디를 입력 합니다", 2);
+    // await driver.findElement(By.id("id")).sendKeys(Key.chord(Key.COMMAND, "a"));
 
     await logWait("아이디를 입력 합니다", 2);
-    await driver.findElement(By.id("id")).sendKeys(Key.chord(Key.COMMAND, "v"));
+    await driver.findElement(By.id("id")).sendKeys(Key.chord(Key.META, "v"));
     // await clipboardy.default.readSync();
 
     // await typeStringAutomatically(users[0].id);
@@ -158,11 +157,11 @@ const run = async () => {
     await logWait("비밀번호 창을 클릭 합니다", 2);
     await driver.findElement(By.id("pw")).click();
 
-    await logWait("비밀번호를 입력 합니다", 2);
-    await driver.findElement(By.id("pw")).sendKeys(Key.chord(Key.COMMAND, "a"));
+    // await logWait("비밀번호를 입력 합니다", 2);
+    // await driver.findElement(By.id("pw")).sendKeys(Key.chord(Key.COMMAND, "a"));
 
     await logWait("비밀번호를 입력 합니다", 2);
-    await driver.findElement(By.id("pw")).sendKeys(Key.chord(Key.COMMAND, "v"));
+    await driver.findElement(By.id("pw")).sendKeys(Key.chord(Key.META, "v"));
     // await typeStringAutomatically(users[0].pw);
     // await driver.findElement(By.id("pw")).sendKeys(user.pw);
 

@@ -39,13 +39,6 @@ const users = [
   //   current: 0,
   //   dirId: 5, // 쇼핑
   // },
-  // {
-  //   id: "unixseen",
-  //   pw: "zoahzjvl!@3",
-  //   max: 30,
-  //   current: 0,
-  //   dirId: 4, // 경제
-  // },
 ];
 
 const sleep = (ms) => {

@@ -237,6 +237,7 @@ const generateBlogContent = async (title, topic) => {
       // 결과값 title, content, answer를 json으로 반환해줘(필수)`,
       content: `글 내용을 워드프레스에 올릴 수 있게 HTML코드로 변환해서 작성해줘.(필수)
 <h2>소제목</h2>, <p>내용</p>, <ul><li>내용</li></ul> 최소 5000자 이상 작성해줘
+마지막 소제목에는 결론 대신에 다른 내용을 넣어줘
 answer는 내용을 기반으로 요약해서 400자 정도로 해주고 말투는 합니다, 했습니다 등의 부드럽고 공손한 텍스트로 작성해줘
 결과값 title, content, answer를 json으로 반환해줘(필수)`,
     };

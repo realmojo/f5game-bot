@@ -574,7 +574,12 @@ const doGenerateContent = async (req, res) => {
     const images = $("._waitingForReplaceImage");
 
     const sumTotal = `${kinTitle}${description}`;
-    if (images.length !== 0 && sumTotal.length < 100) {
+    if (
+      kinTitle.indexOf("?") === -1 &&
+      description.indexOf("?") === -1 &&
+      images.length !== 0 &&
+      sumTotal.length < 100
+    ) {
       console.log("이미지가 있습니다.");
       return res
         .status(500)

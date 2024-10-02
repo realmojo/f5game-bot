@@ -167,32 +167,32 @@ const doKinTechupboxPost = async (title, content, categories = 2) => {
   });
 };
 
-const getProductKeyword = async (title, topic) => {
-  try {
-    const systemMessage = {
-      role: "system",
-      content: `keyword는 메인주제와 메인설명에 대해 상품과 관련된 키워드를 1개만 작성해줘.`,
-    };
-    const userMessage = {
-      role: "user",
-      content: `[질문: 메인주제(${title.trim()})에 대한, 메인설명(${topic})]에 대해서 상품키워드를 추출해줘`,
-    };
-    console.log(userMessage);
-    const { data } = await axios.post(
-      "https://api.openai.com/v1/chat/completions",
-      {
-        model: "gpt-4o-mini",
-        messages: [systemMessage, userMessage],
-        temperature: 0.95,
-      },
-      headers
-    );
+// const getProductKeyword = async (title, topic) => {
+//   try {
+//     const systemMessage = {
+//       role: "system",
+//       content: `keyword는 메인주제와 메인설명에 대해 상품과 관련된 키워드를 1개만 작성해줘.`,
+//     };
+//     const userMessage = {
+//       role: "user",
+//       content: `[질문: 메인주제(${title.trim()})에 대한, 메인설명(${topic})]에 대해서 상품키워드를 추출해줘`,
+//     };
+//     console.log(userMessage);
+//     const { data } = await axios.post(
+//       "https://api.openai.com/v1/chat/completions",
+//       {
+//         model: "gpt-4o-mini",
+//         messages: [systemMessage, userMessage],
+//         temperature: 0.95,
+//       },
+//       headers
+//     );
 
-    return data.choices[0].message.content;
-  } catch (e) {
-    return "";
-  }
-};
+//     return data.choices[0].message.content;
+//   } catch (e) {
+//     return "";
+//   }
+// };
 
 // CHAT GPT API 요청 생성
 const generateBlogContent = async (title, topic) => {
@@ -235,15 +235,27 @@ const generateBlogContent = async (title, topic) => {
       // answer는 content를 기반으로 요약해서 400자 정도로 해주고 말투는 합니다, 했습니다 등의 부드럽고 공손한 텍스트로 작성해줘
 
       // 결과값 title, content, answer를 json으로 반환해줘(필수)`,
-      content: `글 내용을 워드프레스에 올릴 수 있게 HTML코드로 변환해서 작성해줘.(필수)
-<h2>소제목</h2>, <p>내용</p>, <ul><li>내용</li></ul> 최소 5000자 이상 작성해줘
-마지막 소제목에는 결론 대신 내용을 하나더 추가해줘
-answer는 내용을 기반으로 요약해서 400자 정도로 해주고 말투는 합니다, 했습니다 등의 부드럽고 공손한 텍스트로 작성해줘
+      //       content: `글 내용을 워드프레스에 올릴 수 있게 HTML코드로 변환해서 작성해줘.(필수)
+      // content는 html 코드로 내용을 최대한 길게 작성해줘(필수)
+      // answer는 내용을 기반으로 요약해서 1000자 정도로 해주고 말투는 합니다, 했습니다 등의 부드럽고 공손한 텍스트로 작성해줘(필수)
+      // 결과값 title, content, answer를 json으로 반환해줘(필수)`,
+      content: `You are ChatGPT, a large language model trained by OpenAI.
+                Follow these specific instructions:
+                1. 응답은 한글 4000자 이상 작성이 필요합니다.
+                2. 여러 토픽에 대해 고유한 의견을 제공하며, 중복 답변을 피합니다.
+                3. 영어 문서를 찾아 한글로 번역한 후 작성합니다.
+                4. 구글SEO, 네이버SEO에 최적화된 글을 작성합니다.
+                6. 글의 소제목은 주제 키워드를 포함하고, 1000자 이내로 설명합니다.
+                7. 글의 총 길이는 공백 제외 4000자 내외로 작성합니다.
+                8. 표절이 없도록 작성하고, 사람이 쓴 것처럼 자연스럽게 작성합니다.
+                9. 글의 중간에 적절한 이모티콘을 사용합니다.
+content는 html 코드로 내용을 최대한 길게 작성해줘(필수)
+answer는 내용을 기반으로 요약해서 1000자 정도로 해주고 말투는 합니다, 했습니다 등의 부드럽고 공손한 텍스트로 작성해줘(필수)
 결과값 title, content, answer를 json으로 반환해줘(필수)`,
     };
     const userMessage = {
       role: "user",
-      content: `[질문: 메인주제(${title.trim()})에 대한, 메인설명(${topic})]에 대해서 블로그 글을 작성해줘`,
+      content: `제목: [${title.trim()}], 내용: [${topic}]에 대한 해결책을 작성해줘`,
     };
 
     console.log(userMessage);
@@ -252,7 +264,7 @@ answer는 내용을 기반으로 요약해서 400자 정도로 해주고 말투�
       {
         model: "gpt-4o-mini",
         messages: [systemMessage, userMessage],
-        temperature: 0.5,
+        temperature: 0.95,
         max_tokens: 10000,
       },
       headers

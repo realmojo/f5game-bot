@@ -11,20 +11,13 @@ global.driver = "";
 // C:\Program Files (x86)\Google\Chrome\Application\chrome.exe --remote-debugging-port=9222 --user-data-dir="C:/ChromeTEMP"
 
 const users = [
-  // {
-  //   id: "g3andg2",
-  //   pw: "zoahzjvl!@3",
-  //   max: 30,
-  //   current: 0,
-  //   dirId: 4, // 경제
-  // },
-  // {
-  //   id: "hotsixlight",
-  //   pw: "zoahzjvl!@3",
-  //   max: 30,
-  //   current: 0,
-  //   dirId: 9, // 여행
-  // },
+  {
+    id: "hotsixlight",
+    pw: "zoahzjvl!@3",
+    max: 30,
+    current: 0,
+    dirId: 9, // 여행
+  },
   {
     id: "tedevspace",
     pw: "zoahzjvl!@3",
@@ -38,6 +31,20 @@ const users = [
     max: 30,
     current: 0,
     dirId: 5, // 쇼핑
+  },
+  {
+    id: "codimojo",
+    pw: "zoahzjvl!@3",
+    max: 30,
+    current: 0,
+    dirId: 11, // 교육, 학문
+  },
+  {
+    id: "g3andg2",
+    pw: "zoahzjvl!@3",
+    max: 30,
+    current: 0,
+    dirId: 4, // 경제
   },
 ];
 
@@ -177,7 +184,7 @@ const run = async () => {
       const kinCategoryUrl = `https://kin.naver.com/qna/list.naver?dirId=${user.dirId}&page=${i}`;
       await driver.get(kinCategoryUrl);
 
-      await logWait("스크립트를 삽입합니다.", 1);
+      await logWait(`${i}페이지 스크립트를 삽입합니다.`, 1);
       const getUrlScript = fs.readFileSync("getUrls.js", "utf8");
       const u = await driver.executeScript(getUrlScript);
       urls = urls.concat(u);
@@ -195,25 +202,23 @@ const run = async () => {
           const isAlert = await closeAlertIfPresent(driver, 1000);
 
           if (isAlert) {
-            user.current = 50;
             break;
-          } else if (user.current < 50) {
-            await logWait(`${index++}. ${url} 이동 합니다.(${user.id})`, 1);
-            await driver.get(url);
-            await logWait("포스팅 스크립트를 삽입합니다.", 1);
-            const kinInitScript = fs.readFileSync("kinInit.js", "utf8");
-            await driver.executeScript(kinInitScript);
-            await logWait("포스팅을 진행합니다.", 1);
+          }
 
-            let timer = 80;
-            for (let i = timer; i > 0; i--) {
-              console.log(`${i}초 남았습니다.`);
-              let postAlert = await closeAlertIfPresent(driver, 1000);
-              if (postAlert) {
-                break;
-              }
+          await logWait(`${index++}. ${url} 이동 합니다.(${user.id})`, 1);
+          await driver.get(url);
+          await logWait("포스팅 스크립트를 삽입합니다.", 1);
+          const kinInitScript = fs.readFileSync("kinInit.js", "utf8");
+          await driver.executeScript(kinInitScript);
+          await logWait("포스팅을 진행합니다.", 1);
+
+          let timer = 300;
+          for (let i = timer; i > 0; i--) {
+            console.log(`${i}초 남았습니다.`);
+            let postAlert = await closeAlertIfPresent(driver, 1000);
+            if (postAlert) {
+              break;
             }
-            user.current++;
           }
         } catch (e) {
           console.log(e);

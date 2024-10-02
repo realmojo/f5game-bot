@@ -119,7 +119,6 @@ const doTechupboxPost = async (title, content, categories = 61) => {
           title: title,
           content: content,
           categories: [categories],
-          featured_media: getRandomElement(fea),
           status: "publish",
         })
         .then(async (res) => {
@@ -153,7 +152,6 @@ const doKinTechupboxPost = async (title, content, categories = 2) => {
           title: title,
           content: content,
           categories: [categories],
-          featured_media: getRandomElement(fea),
           status: "publish",
         })
         .then(async (res) => {

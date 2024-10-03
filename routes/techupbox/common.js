@@ -250,7 +250,7 @@ const generateBlogContent = async (title, topic) => {
                 9. 글의 중간에 적절한 이모티콘을 사용합니다.
 title은 제목과 내용을 토대로 작성해줘
 content는 html 코드로 내용을 최대한 길게 작성해줘(필수)
-answer는 내용을 기반으로 요약해서 1000자 정도로 해주고 이모지콘도 적당히 넣어주고 말투는 해요, 합니다, 했습니다 등의 부드럽고 공손한 텍스트로 작성해줘(필수)
+answer는 내용을 기반으로 요약해서 2000자 정도로 해주고 이모지콘도 적당히 넣어주고 말투는 해요, 합니다, 했습니다 등의 부드럽고 공손한 텍스트로 작성해줘(필수)
 결과값 title, content, answer를 json으로 반환해줘(필수)`,
     };
     const userMessage = {

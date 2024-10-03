@@ -44,7 +44,7 @@ const users = [
     pw: "zoahzjvl!@3",
     max: 30,
     current: 0,
-    dirId: 4, // 경제
+    dirId: 4, // 쇼핑 전문가
   },
 ];
 

@@ -12,6 +12,7 @@ const {
   generateBlogContent,
   qrCreate,
   getTop10Data,
+  insertBreaksAtSecondPeriod,
 } = require("./common");
 const { replaceAll, toSingleLine, delay } = require("../../utils/util");
 const {

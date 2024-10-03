@@ -622,7 +622,6 @@ const doGenerateContent = async (req, res) => {
     } else {
       techupboxUrl = await doTechupboxPost(title, content);
     }
-
     console.log("워드프레스 글 등록 완료");
 
     return res.status(200).send({

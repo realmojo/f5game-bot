@@ -37,7 +37,7 @@ const users = [
     pw: "zoahzjvl!@3",
     max: 30,
     current: 0,
-    dirId: 11, // 교육, 학문
+    dirId: 1, // 컴퓨터 통신 전문가
   },
   {
     id: "g3andg2",

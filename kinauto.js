@@ -39,13 +39,6 @@ const users = [
     current: 0,
     dirId: 1, // 컴퓨터 통신 전문가
   },
-  {
-    id: "g3andg2",
-    pw: "zoahzjvl!@3",
-    max: 30,
-    current: 0,
-    dirId: 4, // 쇼핑 전문가
-  },
 ];
 
 // const sleep = (ms) => {

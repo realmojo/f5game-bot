@@ -522,11 +522,11 @@ const doKinToTechupboxPost = async (req, res) => {
     console.log("answer: ", answer);
 
     let techupboxUrl = "";
-    if (new Date().getTime() % 2 === 0) {
-      techupboxUrl = await doKinTechupboxPost(title, content);
-    } else {
-      techupboxUrl = await doTechupboxPost(title, content);
-    }
+    // if (new Date().getTime() % 2 === 0) {
+    //   techupboxUrl = await doKinTechupboxPost(title, content);
+    // } else {
+    techupboxUrl = await doTechupboxPost(title, content);
+    // }
 
     const qrLink = await qrCreate(
       new Date().getTime(),
@@ -617,11 +617,11 @@ const doGenerateContent = async (req, res) => {
 
     console.log("워드프레스 글 등록 중...");
     let techupboxUrl = "";
-    if (new Date().getTime() % 2 === 0) {
-      techupboxUrl = await doKinTechupboxPost(title, content);
-    } else {
-      techupboxUrl = await doTechupboxPost(title, content);
-    }
+    // if (new Date().getTime() % 2 === 0) {
+    //   techupboxUrl = await doKinTechupboxPost(title, content);
+    // } else {
+    techupboxUrl = await doTechupboxPost(title, content);
+    // }
     console.log("워드프레스 글 등록 완료");
 
     return res.status(200).send({

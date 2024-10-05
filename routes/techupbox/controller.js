@@ -12,18 +12,8 @@ const {
   generateBlogContent,
   qrCreate,
   getTop10Data,
-  insertBreaksAtSecondPeriod,
 } = require("./common");
 const { replaceAll, toSingleLine, delay } = require("../../utils/util");
-const {
-  doTheqooPost,
-  doBobaedreamPost,
-  doNatepannPost,
-  doTeamblindPost,
-  doDdanziPost,
-  doInstizPost,
-  getLinks,
-} = require("./community");
 // var key = require("./wpServiceAccount.json");
 
 const cron = require("node-cron");
@@ -37,35 +27,6 @@ cron.schedule("* */5 * * *", async () => {
   const { data } = await axios.get("https://f5game-bot.vercel.app/ping");
   console.log(data);
 });
-
-// utc 시간 적용 +9 -> 24시 === 새벽 0시
-// cron.schedule("0 */1 * * *", async () => {
-//   try {
-//     const links = await getLinks();
-//     let wpLink = "";
-//     for (const link of links) {
-//       console.log(link);
-//       if (link.type === "theqoo") {
-//         wpLink = await doTheqooPost(link);
-//       } else if (link.type === "bobaedream") {
-//         wpLink = await doBobaedreamPost(link);
-//       } else if (link.type === "natepann") {
-//         wpLink = await doNatepannPost(link);
-//       } else if (link.type === "teamblind") {
-//         wpLink = await doTeamblindPost(link);
-//       } else if (link.type === "ddanzi") {
-//         wpLink = await doDdanziPost(link);
-//       } else if (link.type === "instiz") {
-//         wpLink = await doInstizPost(link);
-//       }
-//       console.log(`${link.type}: (${link.link} / ${wpLink}) 포스팅 완료.`);
-//       await delay(10000);
-//     }
-//     console.log("good~");
-//   } catch (e) {
-//     console.log(e);
-//   }
-// });
 
 // utc 시간 적용 +9 -> 24시 === 새벽 0시ddf
 // cron.schedule("*/8 * * * *", async () => {
@@ -461,35 +422,6 @@ const getProxyImage = async (req, res) => {
   });
 };
 
-const getCrawl = async (req, res) => {
-  try {
-    const links = await getLinks();
-    let wpLink = "";
-    for (const link of links) {
-      console.log(link);
-      if (link.type === "theqoo") {
-        wpLink = await doTheqooPost(link);
-      } else if (link.type === "bobaedream") {
-        wpLink = await doBobaedreamPost(link);
-      } else if (link.type === "natepann") {
-        wpLink = await doNatepannPost(link);
-      } else if (link.type === "teamblind") {
-        wpLink = await doTeamblindPost(link);
-      } else if (link.type === "ddanzi") {
-        wpLink = await doDdanziPost(link);
-      } else if (link.type === "instiz") {
-        wpLink = await doInstizPost(link);
-      }
-      console.log(`${link.type}: (${link.link} / ${wpLink}) 포스팅 완료.`);
-      await delay(10000);
-    }
-    return res.status(200).send("ok");
-  } catch (e) {
-    console.log(e);
-    return res.status(500).send({ status: "err" });
-  }
-};
-
 const doKinToTechupboxPost = async (req, res) => {
   try {
     const { kinUrl, NID_AUT, NID_SES } = req.body;
@@ -689,7 +621,6 @@ module.exports = {
   getApiTest,
   getProxyImage,
   doKinToTechupboxPost,
-  getCrawl,
   doGenerateContent,
   createTechupboxPost,
   getQrLink,

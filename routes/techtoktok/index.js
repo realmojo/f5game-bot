@@ -7,7 +7,6 @@ router.get("/doPostFortune", controller.postApiFortune);
 router.get("/doPostDream", controller.postApiDream);
 router.get("/getModelList", controller.getModelList);
 router.get("/apiTest", controller.getApiTest);
-router.get("/crawl", controller.getCrawl);
 router.post("/doKinToTechtoktokPost", controller.doKinToTechtoktokPost);
 
 module.exports = router;

@@ -25,6 +25,7 @@ app.use("/keywordegg", require("./routes/keywordegg"));
 app.use("/instagram", require("./routes/instagram"));
 app.use("/mindpang", require("./routes/mindpang"));
 app.use("/naver", require("./routes/naver"));
+app.use("/newstiz", require("./routes/newstiz"));
 app.use("/storypickup", require("./routes/storypickup"));
 app.use("/techtoktok", require("./routes/techtoktok"));
 app.use("/techupbox", require("./routes/techupbox"));

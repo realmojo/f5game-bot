@@ -2,8 +2,9 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 const moment = require("moment");
 const path = require("path");
+const { nanoid } = require("nanoid");
 
-const { doTechupboxPost, removeDuplicateLinks } = require("../common");
+const { doNewstizPost, removeDuplicateLinks } = require("../common");
 const { uploadImageToS3, replaceAll, shuffle } = require("../../../utils/util");
 const axiosRetry = require("axios-retry").default;
 
@@ -61,13 +62,13 @@ const doTheqooPost = async (item) => {
       let imgSrc = $(img).attr("src");
 
       const fileName = `${pathname}/${path.basename(imgSrc)}`;
-      const imageUrl = await uploadImageToS3(imgSrc, "techtoktok", fileName);
+      const imageUrl = await uploadImageToS3(imgSrc, "newstiz", fileName);
       $(img).attr("src", imageUrl);
     }
 
     let title = item.title;
     let content = article.html();
-    let wpLink = await doTechupboxPost(title, content, 41);
+    let wpLink = await doNewstizPost(title, content);
 
     return wpLink;
   } catch (e) {
@@ -111,14 +112,14 @@ const doBobaedreamPost = async (item) => {
       let imgSrc = $(img).attr("src");
 
       const fileName = `${pathname}/${path.basename(imgSrc)}`;
-      const imageUrl = await uploadImageToS3(imgSrc, "techtoktok", fileName);
+      const imageUrl = await uploadImageToS3(imgSrc, "newstiz", fileName);
       $(img).attr("src", imageUrl);
     }
 
     let title = item.title;
     let content = article.html();
 
-    let wpLink = await doTechupboxPost(title, content, 41);
+    let wpLink = await doNewstizPost(title, content);
 
     return wpLink;
   } catch (e) {
@@ -150,7 +151,10 @@ const getNatepannLinks = async () => {
 
 const doNatepannPost = async (item) => {
   try {
-    const { data: lists } = await axios.get(item.link);
+    // const { data: lists } = await axios.get(item.link);
+    // const { data: lists } = await axios.get(
+    //   "https://pann.nate.com/talk/373283734"
+    // );
 
     const $ = cheerio.load(lists);
     let article = $("#contentArea");
@@ -160,24 +164,28 @@ const doNatepannPost = async (item) => {
       article.html().indexOf("Video") !== -1 ||
       article.html().indexOf("mp4") !== -1
     ) {
-      console.log(item.link, "비디오라서 넘어갑니다.");
+      // console.log(item.link, "비디오라서 넘어갑니다.");
       return "err";
     }
-    const imgs = article.find("img");
+    const imgs = article.find("a");
     const pathname = `images/${moment().format("YYYY-MM-DD")}`;
     for (let img of imgs) {
-      let imgSrc = $(img).attr("src");
+      let imgSrc = `https://pann.nate.com${$(img).attr("href")}`;
 
-      const fileName = `${pathname}/${path.basename(imgSrc)}`;
-      const imageUrl = await uploadImageToS3(imgSrc, "techtoktok", fileName);
-      $(img).attr("src", imageUrl);
-      $(img).parent().attr("src", imageUrl);
+      console.log(imgSrc);
+
+      const fileName = `${pathname}/${nanoid()}`;
+      console.log(fileName);
+      const imageUrl = await uploadImageToS3(imgSrc, "newstiz", fileName);
+      console.log(imageUrl);
+      $(img).attr("href", imageUrl);
+      $(img).find("img").attr("src", imageUrl);
     }
 
     let title = item.title;
     let content = article.html();
 
-    let wpLink = await doTechupboxPost(title, content, 41);
+    let wpLink = await doNewstizPost(title, content);
 
     return wpLink;
   } catch (e) {
@@ -204,6 +212,7 @@ const getTeamblindLinks = async () => {
       }
     });
     links = removeDuplicateLinks(links);
+    console.log(links);
 
     return links;
   } catch (e) {
@@ -218,20 +227,21 @@ const doTeamblindPost = async (item) => {
     let article = $(".article-view-contents");
 
     article.find(".article_info").remove();
+    article.find(".tag-actions").remove();
     const imgs = article.find("img");
     const pathname = `images/${moment().format("YYYY-MM-DD")}`;
     for (let img of imgs) {
       let imgSrc = $(img).attr("src");
 
       const fileName = `${pathname}/${path.basename(imgSrc)}`;
-      const imageUrl = await uploadImageToS3(imgSrc, "techtoktok", fileName);
+      const imageUrl = await uploadImageToS3(imgSrc, "newstiz", fileName);
       $(img).attr("src", imageUrl);
     }
 
     let title = item.title;
     let content = article.html();
 
-    let wpLink = await doTechupboxPost(title, content, 41);
+    let wpLink = await doNewstizPost(title, content);
 
     return wpLink;
   } catch (e) {
@@ -275,14 +285,14 @@ const doDdanziPost = async (item) => {
       let imgSrc = $(img).attr("src");
 
       const fileName = `${pathname}/${path.basename(imgSrc)}`;
-      const imageUrl = await uploadImageToS3(imgSrc, "techtoktok", fileName);
+      const imageUrl = await uploadImageToS3(imgSrc, "newstiz", fileName);
       $(img).attr("src", imageUrl);
     }
 
     let title = item.title;
     let content = article.html();
 
-    let wpLink = await doTechupboxPost(title, content, 41);
+    let wpLink = await doNewstizPost(title, content);
 
     return wpLink;
   } catch (e) {
@@ -345,14 +355,14 @@ const doInstizPost = async (item) => {
       let imgSrc = `http:${$(img).attr("src")}`;
 
       const fileName = `${pathname}/${path.basename(imgSrc)}`;
-      const imageUrl = await uploadImageToS3(imgSrc, "techtoktok", fileName);
+      const imageUrl = await uploadImageToS3(imgSrc, "newstiz", fileName);
       $(img).attr("src", imageUrl);
     }
 
     let title = item.title;
     let content = article.html();
 
-    let wpLink = await doTechupboxPost(title, content, 41);
+    let wpLink = await doNewstizPost(title, content);
 
     return wpLink;
   } catch (e) {
@@ -365,14 +375,14 @@ const getLinks = async () => {
   let links = [];
   const theqooLinks = await getTheqooLinks();
   const bobaedreamLinks = await getBobaedreamLinks();
-  const natepannLinks = await getNatepannLinks();
-  // const teamblindLinks = await getTeamblindLinks();
+  //// const natepannLinks = await getNatepannLinks();
+  const teamblindLinks = await getTeamblindLinks();
   const ddanziLinks = await getDdanziLinks();
   const instizLinks = await getInstizLinks();
   links = links.concat(theqooLinks);
   links = links.concat(bobaedreamLinks);
-  links = links.concat(natepannLinks);
-  // links = links.concat(teamblindLinks);
+  // links = links.concat(natepannLinks);
+  links = links.concat(teamblindLinks);
   links = links.concat(ddanziLinks);
   links = links.concat(instizLinks);
 

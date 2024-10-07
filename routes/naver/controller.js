@@ -201,6 +201,7 @@ const getKeywords = async (req, res) => {
     console.log("keyword: ", keyword);
     const naverItems = [];
     const googleItems = [];
+    const totalItems = [];
 
     const { data: naverResult } = await axios.get(
       `https://ac.search.naver.com/nx/ac?q=${keyword}&con=1&frm=nv&ans=2&r_format=json&r_enc=UTF-8&r_unicode=0&t_koreng=1&run=2&rev=4&q_enc=UTF-8&st=100`
@@ -208,6 +209,7 @@ const getKeywords = async (req, res) => {
 
     for (const item of naverResult.items[0]) {
       naverItems.push(item[0]);
+      totalItems.push(item[0]);
     }
 
     const response = await axios({
@@ -222,12 +224,17 @@ const getKeywords = async (req, res) => {
       const decodedData = iconv.decode(response.data, "euc-kr");
       const f = JSON.parse(decodedData.toString().replace(")]}'", ""));
       for (const item of f[0]) {
-        googleItems.push(item[0].replace("<b>", "").replace("</b>", ""));
+        const a = item[0].replace("<b>", "").replace("</b>", "");
+        googleItems.push(a);
+        totalItems.push(a);
       }
     }
+
+    const uniqueTotalItems = [...new Set(totalItems)];
+
     return res
       .status(200)
-      .send({ naverItems: naverItems, googleItems: googleItems });
+      .send({ naverItems, googleItems, totalItems: uniqueTotalItems });
   } catch (e) {
     console.log(e);
     return res.status(200).send("no data");

@@ -1,5 +1,7 @@
 const axios = require("axios");
 const crypto = require("crypto");
+const iconv = require("iconv-lite");
+
 const { replaceAll } = require("../../utils/util");
 
 // Access Key, Secret Key, Customer ID를 상수로 정의
@@ -193,7 +195,47 @@ const doCreateQrUrl = async (req, res) => {
   }
 };
 
+const getKeywords = async (req, res) => {
+  try {
+    const { keyword } = req.query;
+    console.log("keyword: ", keyword);
+    const naverItems = [];
+    const googleItems = [];
+
+    const { data: naverResult } = await axios.get(
+      `https://ac.search.naver.com/nx/ac?q=${keyword}&con=1&frm=nv&ans=2&r_format=json&r_enc=UTF-8&r_unicode=0&t_koreng=1&run=2&rev=4&q_enc=UTF-8&st=100`
+    );
+
+    for (const item of naverResult.items[0]) {
+      naverItems.push(item[0]);
+    }
+
+    const response = await axios({
+      method: "get",
+      url: `https://www.google.com/complete/search?q=${encodeURIComponent(
+        keyword
+      )}&cp=2&client=gws-wiz&xssi=t&gs_pcrt=undefined&hl=ko&authuser=0&psi=N9ADZ_zIF73e2roPuMmq6Q4.1728303159789&dpr=1`, // euc-kr 인코딩된 응답을 반환하는 URL
+      responseType: "arraybuffer",
+    });
+
+    if (response.data) {
+      const decodedData = iconv.decode(response.data, "euc-kr");
+      const f = JSON.parse(decodedData.toString().replace(")]}'", ""));
+      for (const item of f[0]) {
+        googleItems.push(item[0].replace("<b>", "").replace("</b>", ""));
+      }
+    }
+    return res
+      .status(200)
+      .send({ naverItems: naverItems, googleItems: googleItems });
+  } catch (e) {
+    console.log(e);
+    return res.status(200).send("no data");
+  }
+};
+
 module.exports = {
   getList,
   doCreateQrUrl,
+  getKeywords,
 };

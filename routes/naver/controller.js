@@ -224,7 +224,8 @@ const getKeywords = async (req, res) => {
       const decodedData = iconv.decode(response.data, "euc-kr");
       const f = JSON.parse(decodedData.toString().replace(")]}'", ""));
       for (const item of f[0]) {
-        const a = item[0].replace("<b>", "").replace("</b>", "");
+        let a = replaceAll(item[0], "<b>", "");
+        a = replaceAll(a, "</b>", "");
         googleItems.push(a);
         totalItems.push(a);
       }

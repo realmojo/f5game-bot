@@ -1,84 +1,133 @@
-// const getNaverCookie = async () => {
-//   try {
-//     const response = await fetch("https://api.mindpang.com/api/");
-//     return response.json();
-//   } catch (e) {
-//     console.log("실패: ", e);
-//   }
-// };
+const getAdRemoveItems = async () => {
+  try {
+    const response = await fetch(
+      "https://api.mindpang.com/api/adremove/getItem.php"
+    );
+    const d = await response.json();
+    const f = {
+      version: "1.0.0",
+      items: d.items,
+    };
+    localStorage.setItem("f5-ad-remove", JSON.stringify(f));
+    return d;
+  } catch (e) {
+    console.log("실패: ", e);
+  }
+};
 
-// const run = async () => {
-//   // const { item } = await getNaverCookie();
-//   // localStorage.setItem("NID_AUT", item.NID_AUT);
-//   // localStorage.setItem("NID_SES", item.NID_SES);
-// };
+const getLocalstorageItems = async () => {
+  const d = (await localStorage.getItem("f5-ad-remove")) || "";
+  return d ? JSON.parse(d) : "";
+};
 
-// run();
-
-const getNaverRemove = () => {
-  const naverItems = [
-    {
-      selector: "#ad_timeboard",
-      isNone: true,
-      isParentNone: true,
-    },
-    {
-      selector: "#right-ad-1",
-      isNone: true,
-      isParentNone: true,
-    },
-    {
-      selector: "#right-ad-2",
-      isNone: true,
-      isParentNone: true,
-    },
-    {
-      selector: '[title="right-shopping"]',
-      isNone: true,
-      isParentNone: true,
-    },
-    {
-      selector: ".ad_section",
-      isNone: true,
-      isParentNone: false,
-    },
-    {
-      selector: "#search-right-second",
-      isNone: true,
-      isParentNone: false,
-    },
-    {
-      selector: "#newsstand",
-      isNone: false,
-      isParentNone: false,
-      style: {
-        key: "marginTop",
-        value: 0,
-      },
-    },
-  ];
+const doRemove = async () => {
+  let items = [];
+  const preItems = await getLocalstorageItems();
+  if (preItems?.version) {
+    items = preItems.items;
+  } else {
+    const { items: removeItems } = await getAdRemoveItems();
+    items = removeItems;
+  }
+  const currentHref = location.href;
 
   let element = "";
-  for (const item of naverItems) {
-    element = document.querySelector(item.selector);
-    if (element) {
-      if (item.isNone) {
-        element.style.display = "none";
-      }
-      if (item.isParentNone) {
-        element.parentNode.style.display = "none";
-      }
-      if (item?.style) {
-        element.style[item.style.key] = item.style.value;
+  for (const d of items) {
+    if (currentHref.indexOf(d.type) !== -1) {
+      for (const item of d.items) {
+        element = document.querySelector(item.selector);
+        if (element) {
+          if (item.isNone) {
+            element.style.display = "none";
+          }
+          if (item.isParentNone) {
+            element.parentNode.style.display = "none";
+          }
+          if (item?.style) {
+            element.style[item.style.key] = item.style.value;
+          }
+        }
       }
     }
   }
 };
 
+const eventScript = () => {
+  console.log(23234);
+  const selectAllCheckbox = document.getElementById("selectAll");
+  const groupCheckboxes = document.querySelectorAll(".group-checkbox");
+  // 전체 체크박스 클릭 시 그룹 체크박스 전체 선택/해제 함수
+  if (selectAllCheckbox) {
+    selectAllCheckbox.addEventListener("change", function () {
+      console.log(123123);
+      groupCheckboxes.forEach((checkbox) => {
+        checkbox.checked = selectAllCheckbox.checked;
+      });
+    });
+  }
+
+  if (groupCheckboxes) {
+    // 그룹 체크박스 중 하나라도 해제될 경우 전체 체크박스 해제
+    groupCheckboxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", function (event) {
+        if (!checkbox.checked) {
+          selectAllCheckbox.checked = false;
+        } else if (Array.from(groupCheckboxes).every((cb) => cb.checked)) {
+          selectAllCheckbox.checked = true;
+        }
+        handleCheckboxChange(event);
+      });
+    });
+  }
+
+  // 체크박스에 이벤트 리스너 추가
+  // const checkboxes = document.querySelectorAll(".group-checkbox");
+  // checkboxes.forEach((checkbox) => {
+  //   checkbox.addEventListener("change", handleCheckboxChange);
+  // });
+
+  // 페이지 로드 시 기존 값에 따라 체크 상태 설정
+  window.addEventListener("DOMContentLoaded", () => {
+    const selectedValues = getSelectedValues();
+    checkboxes.forEach((checkbox) => {
+      if (selectedValues.includes(checkbox.value)) {
+        checkbox.checked = true;
+      }
+    });
+  });
+};
+
+const getSelectedValues = () => {
+  const storedValues = localStorage.getItem("f5-ad-remove-exclude");
+  return storedValues ? JSON.parse(storedValues) : [];
+};
+
+// LocalStorage에 값 저장하기
+const saveSelectedValues = (values) => {
+  localStorage.setItem("f5-ad-remove-exclude", JSON.stringify(values));
+};
+
+// 체크박스 클릭 시 처리 함수
+const handleCheckboxChange = (event) => {
+  const value = event.target.value;
+  let selectedValues = getSelectedValues();
+
+  if (event.target.checked) {
+    if (!selectedValues.includes(value)) {
+      selectedValues.push(value);
+    }
+  } else {
+    selectedValues = selectedValues.filter((val) => val !== value);
+  }
+
+  saveSelectedValues(selectedValues);
+  console.log("현재 선택된 값:", selectedValues);
+};
+
 const run = () => {
   setTimeout(() => {
-    console.log("ad remove");
-    getNaverRemove();
+    // doRemove();
+    eventScript();
   }, 1);
 };
 

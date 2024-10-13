@@ -4,12 +4,131 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@4.12.13/dist/full.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <style>
+      .tabs {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    </style>
     <title>AD Remove</title>
   </head>
 
   <body style="width: 300px; height: 300px">
-    네이버 광고 제거
+    <div role="tablist" class="w-full tabs tabs-bordered">
+      <input
+        type="radio"
+        name="my_tabs_1"
+        role="tab"
+        class="tab"
+        aria-label="네이버"
+        checked="checked"
+      />
+      <div role="tabpanel" class="tab-content p-10">
+        <ul class="menu bg-base-200 rounded-box w-56">
+          <li>
+            <label class="cursor-pointer label">
+              <span class="label-text">전체</span>
+              <input
+                type="checkbox"
+                checked="checked"
+                id="selectAll"
+                class="checkbox checkbox-accent checkbox-sm"
+                value="all"
+              />
+            </label>
+          </li>
+          <li>
+            <label class="cursor-pointer label">
+              <span class="label-text">메인 배너</span>
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox checkbox-accent checkbox-sm group-checkbox"
+                value="#ad_timeboard"
+              />
+            </label>
+          </li>
+          <li>
+            <label class="cursor-pointer label">
+              <span class="label-text">메인 상단 우측</span>
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox checkbox-accent checkbox-sm group-checkbox"
+                value=".search-right-second"
+              />
+            </label>
+          </li>
+          <li>
+            <label class="cursor-pointer label">
+              <span class="label-text">우측 배너 1</span>
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox checkbox-accent checkbox-sm group-checkbox"
+                value="#right-ad-1"
+              />
+            </label>
+          </li>
+          <li>
+            <label class="cursor-pointer label">
+              <span class="label-text">쇼핑 광고</span>
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox checkbox-accent checkbox-sm group-checkbox"
+                value="[title='right-shopping']"
+              />
+            </label>
+          </li>
+          <li>
+            <label class="cursor-pointer label">
+              <span class="label-text">우측 배너 2</span>
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox checkbox-accent checkbox-sm group-checkbox"
+                value="#right-ad-2"
+              />
+            </label>
+          </li>
+          <li>
+            <label class="cursor-pointer label">
+              <span class="label-text">키워드 광고</span>
+              <input
+                type="checkbox"
+                checked="checked"
+                class="checkbox checkbox-accent checkbox-sm group-checkbox"
+                value=".ad_section"
+              />
+            </label>
+          </li>
+        </ul>
+      </div>
 
-    <!-- <script src="index.js"></script> -->
+      <input
+        type="radio"
+        name="my_tabs_1"
+        role="tab"
+        class="tab"
+        aria-label="다음"
+      />
+      <div role="tabpanel" class="tab-content p-10">다음</div>
+
+      <input
+        type="radio"
+        name="my_tabs_1"
+        role="tab"
+        class="tab"
+        aria-label="구글"
+      />
+      <div role="tabpanel" class="tab-content p-10">구글</div>
+    </div>
+
+    <script src="index.js"></script>
   </body>
 </html>

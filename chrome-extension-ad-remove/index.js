@@ -53,13 +53,11 @@ const doRemove = async () => {
 };
 
 const eventScript = () => {
-  console.log(23234);
   const selectAllCheckbox = document.getElementById("selectAll");
   const groupCheckboxes = document.querySelectorAll(".group-checkbox");
   // 전체 체크박스 클릭 시 그룹 체크박스 전체 선택/해제 함수
   if (selectAllCheckbox) {
     selectAllCheckbox.addEventListener("change", function () {
-      console.log(123123);
       groupCheckboxes.forEach((checkbox) => {
         checkbox.checked = selectAllCheckbox.checked;
       });

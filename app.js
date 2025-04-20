@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(cors());
 app.use((req, res, next) => {
-  // console.log("origin: ", req.headers.origin);
+  console.log("origin: ", req.headers.origin);
   res.header("Access-Control-Allow-Origin", req.headers.origin); // 클라이언트의 정확한 도메인 설정
   res.header("Access-Control-Allow-Credentials", "true"); // 쿠키 허용
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");

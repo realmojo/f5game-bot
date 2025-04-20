@@ -9,26 +9,15 @@ const { extractCoupangProductInfo } = require("./common");
 // "categoryId": "5187",
 const getItem = async (req, res) => {
   try {
-    let { productId, venderId } = req.query;
-
-    keyword = replaceAll(keyword, " ", "");
-    const items = await fetchKeyword(keyword);
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    const data = {
-      items: items,
-    };
-    const { data: response } = await axios.post(
-      "https://api.mindpang.com/api/keyword/add.php",
-      data,
-      config
-    );
-
-    return res.status(200).send({ status: response, keyword, items });
+    let { id, productId, vendorItemId, itemId } = req.query;
+    if (id) {
+      const { data } = await axios.get(
+        `https://api.mindpang.com/api/coupang/getItemById.php?id=${id}`
+      );
+      return res.status(200).send({ status: "ok", data });
+    } else {
+      return new Error("no id");
+    }
   } catch (e) {
     console.log(e);
     return res.status(200).send("no data");

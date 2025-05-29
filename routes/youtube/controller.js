@@ -302,6 +302,25 @@ const getYoutubeJson = async (req, res) => {
 const getYoutubeDownloadListInfo = ($) => {
   const results = [];
 
+  // 모든 script 태그 중에 audioUrl이 포함된 스크립트 찾기
+  let audioUrl = null;
+
+  $("script").each((_, script) => {
+    const scriptContent = $(script).html();
+    const match = scriptContent.match(
+      /const\s+audioUrl\s*=\s*['"]([^'"]+)['"]/
+    );
+    if (match) {
+      audioUrl = match[1];
+    }
+  });
+
+  if (audioUrl) {
+    console.log("🔊 Audio URL 추출 성공:", audioUrl);
+  } else {
+    console.log("❌ audioUrl을 찾을 수 없습니다.");
+  }
+
   // 테이블 안의 각 행(tr)을 순회
   $("table.list tbody tr").each((_, tr) => {
     const $tr = $(tr);
@@ -324,7 +343,7 @@ const getYoutubeDownloadListInfo = ($) => {
     }
   });
 
-  return results;
+  return { results, audioUrl };
 };
 
 const getSSYoutubeDownload = async (req, res) => {
@@ -377,9 +396,9 @@ const getSSYoutubeDownload = async (req, res) => {
     );
     const $ = cheerio.load(data);
 
-    const results = await getYoutubeDownloadListInfo($);
+    const { results, audioUrl } = await getYoutubeDownloadListInfo($);
 
-    return res.status(200).send({ success: "true", results });
+    return res.status(200).send({ success: "true", results, audioUrl });
   } catch (e) {
     return res.status(200).send({ status: "err", message: e.message });
   }

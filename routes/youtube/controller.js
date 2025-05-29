@@ -83,7 +83,7 @@ const getYoutubeScript = async (req, res) => {
     const $ = cheerio.load(data);
 
     let title = "Youtube";
-    let thumbnail = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+    let thumbnail = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
     const ytInitialData = await getytInitialData($);
     if (ytInitialData) {
       title =
@@ -189,7 +189,7 @@ const getYoutubeDownloadInfo = async (req, res) => {
             related_videos.push({
               id: f.videoId,
               title: f.title.simpleText,
-              thumbnail: `https://i.ytimg.com/vi/${f.videoId}/maxresdefault.jpg`,
+              thumbnail: `https://i.ytimg.com/vi/${f.videoId}/hqdefault.jpg`,
             });
           }
         });

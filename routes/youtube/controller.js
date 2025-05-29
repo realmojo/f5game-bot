@@ -166,7 +166,7 @@ const getYoutubeDownloadInfo = async (req, res) => {
     const $ = cheerio.load(data);
 
     let title = "Youtube";
-    let thumbnail = `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+    let thumbnail = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
     const keywords = $('meta[name="keywords"]').attr("content")
       ? $('meta[name="keywords"]').attr("content").split(", ")
       : [];

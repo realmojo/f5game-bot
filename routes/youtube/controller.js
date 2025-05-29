@@ -2,6 +2,8 @@ const axios = require("axios");
 // const ytdl = require("ytdl-core");
 const ytdl = require("ytdl-core-discord");
 const cheerio = require("cheerio");
+const FormData = require("form-data");
+const fs = require("fs");
 const { ensureHttps } = require("../../utils/util");
 
 const getYoutubeTransKey = (html) => {
@@ -295,10 +297,91 @@ const getYoutubeJson = async (req, res) => {
   }
 };
 
+const getSSYoutubeDownload = async (req, res) => {
+  try {
+    // console.log(123);
+    // let formData = new FormData();
+    // formData.append("videoURL", "https://www.youtube.com/watch?v=IKHJAGX1Jzg");
+
+    // let config = {
+    //   method: "post",
+    //   maxBodyLength: Infinity,
+    //   url: "https://ssyoutube.online/yt-video-detail/",
+    //   headers: {
+    //     Referer: "https://ssyoutube.online/ko/youtube-video-downloader-ko/",
+    //     // ...formData.getHeaders(),
+    //   },
+    //   formData: formData,
+    // };
+
+    // const dd = await axios.request(config);
+    // console.log(dd.data);
+
+    const myHeaders = new Headers();
+    myHeaders.append(
+      "Referer",
+      "https://ssyoutube.online/ko/youtube-video-downloader-ko/"
+    );
+    myHeaders.append("Host", "ssyoutube.online");
+
+    const formdata = new FormData();
+    formdata.append("videoURL", "https://www.youtube.com/watch?v=IKHJAGX1Jzg");
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: formdata,
+      redirect: "follow",
+    };
+
+    fetch("https://ssyoutube.online/yt-video-detail/", requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        fs.writeFile("./ttt.html", result, () => {});
+      })
+      .catch((error) => console.error(error));
+
+    // const $ = cheerio.load(data);
+    // const results = [];
+    // console.log($(".list").html());
+
+    // fs.writeFile("./ttt.html", $.html(), () => {
+    //   console.log("done");
+    // });
+    // // console.log($(".list").html());
+    // $(".list tbody tr").each((i, row) => {
+    //   const $cells = $(row).find("td");
+
+    //   // 예시 기준 (필요에 따라 인덱스 조정):
+    //   // type → 첫 번째 열 (0)
+    //   // size → 두 번째 열 (1)
+    //   // downloadUrl → 세 번째 열 내부 <a href="">
+
+    //   const type = $cells.eq(0).text().trim();
+    //   const size = $cells.eq(1).text().trim();
+    //   const downloadUrl = $cells.eq(2).find("button").attr("data-url");
+
+    //   console.log(type, size, downloadUrl);
+    //   if (type && size && downloadUrl) {
+    //     results.push({
+    //       type,
+    //       size,
+    //       downloadUrl,
+    //     });
+    //   }
+    // });
+    // console.log(results);
+    return res.status(200).send({ success: "true", result: "11" });
+  } catch (e) {
+    return res.status(200).send({ status: "err", message: e.message });
+  }
+};
+
 module.exports = {
   getYoutubeScript,
   getYoutubeDownloadInfo,
   getYoutubeJson,
   getProgressId,
   getProgressing,
+  getSSYoutubeDownload,
 };

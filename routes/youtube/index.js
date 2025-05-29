@@ -9,4 +9,6 @@ router.get("/progressing", controller.getProgressing);
 router.get("/getProgressId", controller.getProgressId);
 router.get("/json", controller.getYoutubeJson);
 
+router.get("/new/download", controller.getSSYoutubeDownload);
+
 module.exports = router;

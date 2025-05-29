@@ -304,6 +304,7 @@ const getYoutubeDownloadListInfo = ($) => {
 
   // 모든 script 태그 중에 audioUrl이 포함된 스크립트 찾기
   let audioUrl = null;
+  let nonce = null;
 
   $("script").each((_, script) => {
     const scriptContent = $(script).html();
@@ -313,12 +314,23 @@ const getYoutubeDownloadListInfo = ($) => {
     if (match) {
       audioUrl = match[1];
     }
+    const nonceMatch = scriptContent.match(
+      /['"]X-WP-Nonce['"]\s*:\s*['"]([a-zA-Z0-9]+)['"]/
+    );
+    if (nonceMatch) {
+      nonce = nonceMatch[1];
+    }
   });
 
   if (audioUrl) {
     console.log("🔊 Audio URL 추출 성공:", audioUrl);
   } else {
     console.log("❌ audioUrl을 찾을 수 없습니다.");
+  }
+  if (nonce) {
+    console.log("🔊 nonce 추출 성공:", nonce);
+  } else {
+    console.log("❌ nonce을 찾을 수 없습니다.");
   }
 
   // 테이블 안의 각 행(tr)을 순회
@@ -343,7 +355,47 @@ const getYoutubeDownloadListInfo = ($) => {
     }
   });
 
-  return { results, audioUrl };
+  return { results, audioUrl, nonce };
+};
+
+const getAjaxInfo = async (req, res) => {
+  try {
+    const { nonce, jsonBody } = req.body;
+
+    const ajaxurl = "https://ssyoutube.online/wp-admin/admin-ajax.php";
+    // 인증서 무시하는 https 에이전트 생성
+    const agent = new https.Agent({
+      rejectUnauthorized: false, // 인증서 검증 무시
+    });
+
+    const form = new FormData();
+    form.append("action", "process_video_merge");
+    form.append("nonce", nonce);
+    form.append("request_data", JSON.stringify(jsonBody));
+
+    const headers = {
+      ...form.getHeaders(), // FormData용 Content-Type 자동 설정
+      Referer: "https://ssyoutube.online/yt-video-detail/",
+      Origin: "https://ssyoutube.online",
+      Accept: "*/*",
+      "Cache-Control": "no-cache",
+      Host: "ssyoutube.online", // 이 값은 실제 요청 시 domain과 맞지 않아 오류가 날 수 있음
+      "Accept-Encoding": "gzip, deflate, br",
+      Connection: "keep-alive",
+      "X-WP-Nonce": nonce,
+      "Content-Type":
+        "multipart/form-data; boundary=----WebKitFormBoundaryQPMbJAQBgBBCDgb3",
+    };
+
+    const { data } = await axios.post(ajaxurl, form, {
+      headers,
+      httpsAgent: agent,
+    });
+
+    return res.status(200).send({ success: "true", data });
+  } catch (e) {
+    return res.status(200).send({ status: "err", message: e.message });
+  }
 };
 
 const getSSYoutubeDownload = async (req, res) => {
@@ -396,9 +448,9 @@ const getSSYoutubeDownload = async (req, res) => {
     );
     const $ = cheerio.load(data);
 
-    const { results, audioUrl } = await getYoutubeDownloadListInfo($);
+    const { results, audioUrl, nonce } = await getYoutubeDownloadListInfo($);
 
-    return res.status(200).send({ success: "true", results, audioUrl });
+    return res.status(200).send({ success: "true", results, audioUrl, nonce });
   } catch (e) {
     return res.status(200).send({ status: "err", message: e.message });
   }
@@ -411,4 +463,5 @@ module.exports = {
   getProgressId,
   getProgressing,
   getSSYoutubeDownload,
+  getAjaxInfo,
 };

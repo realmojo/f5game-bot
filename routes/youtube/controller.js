@@ -4,6 +4,8 @@ const ytdl = require("ytdl-core-discord");
 const cheerio = require("cheerio");
 const FormData = require("form-data");
 const fs = require("fs");
+const https = require("https");
+
 const { ensureHttps } = require("../../utils/util");
 
 const getYoutubeTransKey = (html) => {
@@ -297,81 +299,87 @@ const getYoutubeJson = async (req, res) => {
   }
 };
 
+const getYoutubeDownloadListInfo = ($) => {
+  const results = [];
+
+  // 테이블 안의 각 행(tr)을 순회
+  $("table.list tbody tr").each((_, tr) => {
+    const $tr = $(tr);
+
+    // 화질 (1번째 칼럼)
+    const qualityText = $tr.find("td").eq(0).text().trim().replace(/\s+/g, " ");
+
+    // 용량 (2번째 칼럼)
+    const sizeText = $tr.find("td").eq(1).text().trim();
+
+    // 다운로드 URL (3번째 칼럼 내 button 태그의 data-url)
+    const downloadUrl = $tr.find("td").eq(2).find("button").attr("data-url");
+
+    if (qualityText && sizeText && downloadUrl) {
+      results.push({
+        quality: qualityText,
+        size: sizeText,
+        url: downloadUrl,
+      });
+    }
+  });
+
+  return results;
+};
+
 const getSSYoutubeDownload = async (req, res) => {
   try {
-    // console.log(123);
-    // let formData = new FormData();
-    // formData.append("videoURL", "https://www.youtube.com/watch?v=IKHJAGX1Jzg");
+    const { url } = req.query;
+    if (!url) {
+      throw new Error("url required");
+    }
+    if (!isYouTubeURL(url)) {
+      throw new Error("Invalid url.");
+    }
+    let id = "";
 
-    // let config = {
-    //   method: "post",
-    //   maxBodyLength: Infinity,
-    //   url: "https://ssyoutube.online/yt-video-detail/",
-    //   headers: {
-    //     Referer: "https://ssyoutube.online/ko/youtube-video-downloader-ko/",
-    //     // ...formData.getHeaders(),
-    //   },
-    //   formData: formData,
-    // };
+    if (url.indexOf("shorts") !== -1 || url.indexOf("youtu.be") !== -1) {
+      const split = url.split("?");
+      const t = split[0].split("/");
+      id = t[t.length - 1];
+    } else {
+      const split = url.split("v=");
+      id = split.length === 2 ? split[1] : "";
+    }
 
-    // const dd = await axios.request(config);
-    // console.log(dd.data);
+    const reUrl = `https://www.youtube.com/watch?v=${id}`;
+    // 인증서 무시하는 https 에이전트 생성
+    const agent = new https.Agent({
+      rejectUnauthorized: false, // 인증서 검증 무시
+    });
 
-    const myHeaders = new Headers();
-    myHeaders.append(
-      "Referer",
-      "https://ssyoutube.online/ko/youtube-video-downloader-ko/"
-    );
-    myHeaders.append("Host", "ssyoutube.online");
+    const form = new FormData();
+    form.append("videoURL", reUrl);
 
-    const formdata = new FormData();
-    formdata.append("videoURL", "https://www.youtube.com/watch?v=IKHJAGX1Jzg");
-
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: formdata,
-      redirect: "follow",
+    const headers = {
+      ...form.getHeaders(), // FormData용 Content-Type 자동 설정
+      Referer: "https://ssyoutube.online/ko/youtube-video-downloader-ko/",
+      Origin: "https://ssyoutube.online",
+      Accept: "*/*",
+      "Cache-Control": "no-cache",
+      Host: "ssyoutube.online", // 이 값은 실제 요청 시 domain과 맞지 않아 오류가 날 수 있음
+      "Accept-Encoding": "gzip, deflate, br",
+      Connection: "keep-alive",
     };
 
-    fetch("https://ssyoutube.online/yt-video-detail/", requestOptions)
-      .then((response) => response.text())
-      .then((result) => {
-        fs.writeFile("./ttt.html", result, () => {});
-      })
-      .catch((error) => console.error(error));
+    const { data } = await axios.post(
+      "https://ssyoutube.online/yt-video-detail/",
+      form,
+      {
+        headers,
+        httpsAgent: agent,
+      }
+    );
+    const $ = cheerio.load(data);
 
-    // const $ = cheerio.load(data);
-    // const results = [];
-    // console.log($(".list").html());
+    const results = await getYoutubeDownloadListInfo($);
 
-    // fs.writeFile("./ttt.html", $.html(), () => {
-    //   console.log("done");
-    // });
-    // // console.log($(".list").html());
-    // $(".list tbody tr").each((i, row) => {
-    //   const $cells = $(row).find("td");
-
-    //   // 예시 기준 (필요에 따라 인덱스 조정):
-    //   // type → 첫 번째 열 (0)
-    //   // size → 두 번째 열 (1)
-    //   // downloadUrl → 세 번째 열 내부 <a href="">
-
-    //   const type = $cells.eq(0).text().trim();
-    //   const size = $cells.eq(1).text().trim();
-    //   const downloadUrl = $cells.eq(2).find("button").attr("data-url");
-
-    //   console.log(type, size, downloadUrl);
-    //   if (type && size && downloadUrl) {
-    //     results.push({
-    //       type,
-    //       size,
-    //       downloadUrl,
-    //     });
-    //   }
-    // });
-    // console.log(results);
-    return res.status(200).send({ success: "true", result: "11" });
+    return res.status(200).send({ success: "true", results });
   } catch (e) {
     return res.status(200).send({ status: "err", message: e.message });
   }

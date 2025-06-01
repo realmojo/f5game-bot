@@ -384,6 +384,8 @@ const getAjaxInfo = async (req, res) => {
       "Accept-Encoding": "gzip, deflate, br",
       Connection: "keep-alive",
       "X-WP-Nonce": nonce,
+      "Content-Type":
+        "multipart/form-data; boundary=----WebKitFormBoundaryQPMbJAQBgBBCDgb3",
     };
 
     const { data } = await axios.post(ajaxurl, form, {

@@ -161,7 +161,8 @@ const getYoutubeDownloadInfo = async (req, res) => {
       id = split.length === 2 ? split[1] : "";
     }
 
-    const { data } = await axios.get(url);
+    const reUrl = `https://www.youtube.com/watch?v=${id}`;
+    const { data } = await axios.get(reUrl);
 
     const $ = cheerio.load(data);
 
@@ -383,8 +384,6 @@ const getAjaxInfo = async (req, res) => {
       "Accept-Encoding": "gzip, deflate, br",
       Connection: "keep-alive",
       "X-WP-Nonce": nonce,
-      "Content-Type":
-        "multipart/form-data; boundary=----WebKitFormBoundaryQPMbJAQBgBBCDgb3",
     };
 
     const { data } = await axios.post(ajaxurl, form, {

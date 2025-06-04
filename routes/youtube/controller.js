@@ -173,11 +173,21 @@ const getYoutubeDownloadInfo = async (req, res) => {
       : [];
 
     const ytInitialData = await getytInitialData($);
+
+    // console.log(ytInitialData);
+    // fs.writeFileSync(
+    //   "./test.json",
+    //   JSON.stringify(ytInitialData, null, 2),
+    //   () => {}
+    // );
     let related_videos = [];
     if (ytInitialData) {
-      title =
-        ytInitialData?.contents?.twoColumnWatchNextResults?.results?.results
-          ?.contents[0].videoPrimaryInfoRenderer.title.runs[0].text;
+      title = ytInitialData?.playerOverlays?.playerOverlayRenderer?.videoDetails
+        ?.playerOverlayVideoDetailsRenderer?.title?.simpleText
+        ? ytInitialData?.playerOverlays?.playerOverlayRenderer?.videoDetails
+            ?.playerOverlayVideoDetailsRenderer?.title?.simpleText
+        : ytInitialData?.contents?.twoColumnWatchNextResults?.results?.results
+            ?.contents[0].videoPrimaryInfoRenderer.title.runs[0].text;
 
       const df =
         ytInitialData?.contents?.twoColumnWatchNextResults?.secondaryResults

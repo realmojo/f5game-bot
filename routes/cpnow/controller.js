@@ -133,6 +133,11 @@ const getCpUrl = async (req, res) => {
   try {
     const { link, X_TOKEN, CT_AT } = req.query;
 
+    console.log(link);
+    console.log(X_TOKEN);
+    console.log(CT_AT);
+    const AFATK = replaceAll(X_TOKEN, " ", "+");
+
     const url = `https://partners.coupang.com/api/v1/url/any?coupangUrl=${encodeURIComponent(
       link
     )}`;
@@ -141,13 +146,16 @@ const getCpUrl = async (req, res) => {
       maxBodyLength: Infinity,
       url,
       headers: {
-        "X-Token": X_TOKEN,
-        Cookie: `CT_AT=${CT_AT}; AFATK=${X_TOKEN};`,
+        "X-Token": AFATK,
+        Cookie: `CT_AT=${CT_AT}; AFATK=${AFATK};`,
       },
     };
 
+    console.log(config);
+
     const response = await axios.request(config);
-    return res.status(200).send(response);
+    // console.log(response);
+    return res.status(200).send(response.data);
   } catch (e) {
     console.log(e);
     return res.status(500).send(e);

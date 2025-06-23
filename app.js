@@ -10,7 +10,13 @@ server.setTimeout(500000);
 
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(bodyParser.json({ limit: "50mb" }));
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Token", "Cookie"],
+  })
+);
 app.use((req, res, next) => {
   // console.log("origin: ", req.headers.origin);
   // res.header("Access-Control-Allow-Origin", req.headers.origin); // 클라이언트의 정확한 도메인 설정

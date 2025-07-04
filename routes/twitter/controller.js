@@ -40,7 +40,7 @@ const getTwitterVideos = async (req, res) => {
 
     const a = body_2.legacy.entities.media[0].video_info.variants;
     const content = body_2.legacy.full_text;
-    const filter = a.filter((item) => item.bitrate);
+    const filter = a.filter((item) => item.bitrate >= 0);
     const filterMap = filter.map((item) => {
       return {
         ...item,

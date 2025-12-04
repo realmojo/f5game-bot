@@ -1,6 +1,6 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
-const instagramDl = require("@sasmeee/igdl");
+// const instagramDl = require("@sasmeee/igdl");
 const { ensureHttps } = require("../../utils/util");
 
 const getInstagramDownloadInfo = async (req, res) => {
@@ -21,7 +21,8 @@ const getInstagramDownloadInfo = async (req, res) => {
       ? $('meta[property="og:image"]').attr("content")
       : "";
 
-    const items = await instagramDl(ensureHttps(url));
+    // const items = await instagramDl(ensureHttps(url));
+    const items = [];
     const info = {
       title,
       thumbnail,

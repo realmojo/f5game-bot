@@ -19,7 +19,6 @@
   },
   "homepage": "https://github.com/realmojo/f5game-bot#readme",
   "dependencies": {
-    "@sasmeee/igdl": "^1.0.0",
     "aws-sdk": "^2.1290.0",
     "axios": "^1.6.7",
     "axios-retry": "^4.5.0",

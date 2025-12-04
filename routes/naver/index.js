@@ -6,5 +6,6 @@ const controller = require("./controller");
 router.get("/list", controller.getList);
 router.get("/qrCreate", controller.doCreateQrUrl);
 router.get("/keyword", controller.getKeywords);
+router.get("/naver-me-link", controller.getNaverMeLink);
 
 module.exports = router;

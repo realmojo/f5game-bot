@@ -242,8 +242,75 @@ const getKeywords = async (req, res) => {
   }
 };
 
+const getNaverMeLink = async (req, res) => {
+  try {
+    const { targetUrl } = req.query;
+    console.log("targetUrl: ", targetUrl);
+    const callback = `window.spi_${Date.now()}`;
+    const url = `https://link.naver.com/bridge?url=${encodeURIComponent(
+      targetUrl
+    )}`;
+    const naverMeUrl = `https://me2do.naver.com/common/requestJsonpV2?_callback=${callback}&svcCode=0000&url=${url}`;
+
+    const response = await fetch(naverMeUrl, {
+      method: "GET",
+      headers: {
+        accept: "*/*",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+        referer: url,
+        "sec-ch-ua":
+          '"Chromium";v="142", "Google Chrome";v="143", "Not_A Brand";v="24"',
+        "sec-ch-ua-mobile": "?1",
+        "sec-ch-ua-platform": '"Android"',
+        "sec-fetch-dest": "script",
+        "sec-fetch-mode": "no-cors",
+        "sec-fetch-site": "same-site",
+        "user-agent":
+          "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Mobile Safari/537.36",
+        Cookie:
+          "NNB=JYZZ5NCLL4YWS; SRT30=1764843339; SRT5=1764843339; BUC=QqSpYwwZ8JTnrSEafhNQZ3FnB3Kp0L8QZ4Nvj0Wmivw=",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch place info: ${response.status}`);
+    }
+
+    // JSONP 응답을 텍스트로 받기
+    const text = await response.text();
+
+    // JSONP 콜백 함수 제거하고 JSON 파싱
+    // 형식: window.spi_9047229174({...})
+    const jsonMatch = text.match(/\((.+)\)/);
+    if (jsonMatch) {
+      try {
+        const d = JSON.parse(jsonMatch[1]);
+        console.log("d: ", d);
+        // return d?.result?.url ?? "";
+        return res.status(200).send(d?.result?.url ?? "");
+      } catch {
+        // 중첩된 JSON이 있을 수 있으므로 다시 시도
+        const cleaned = jsonMatch[1].replace(/^\(|\)$/g, "");
+        return res.status(200).send(JSON.parse(cleaned));
+      }
+    }
+
+    // JSONP 형식이 아닌 경우 직접 파싱 시도
+    try {
+      return res.status(200).send(JSON.parse(text));
+    } catch {
+      throw new Error("Failed to parse JSONP response");
+    }
+  } catch (e) {
+    console.log(e);
+    return res.status(200).send("no data");
+  }
+};
+
 module.exports = {
   getList,
   doCreateQrUrl,
   getKeywords,
+  getNaverMeLink,
 };

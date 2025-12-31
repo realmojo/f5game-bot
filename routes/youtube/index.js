@@ -8,6 +8,7 @@ router.get("/download", controller.getYoutubeDownloadInfo);
 router.get("/progressing", controller.getProgressing);
 router.get("/getProgressId", controller.getProgressId);
 router.get("/json", controller.getYoutubeJson);
+router.get("/getUrlData", controller.getUrlData);
 
 router.get("/new/download", controller.getSSYoutubeDownload);
 router.post("/new/download/ajax", controller.getAjaxInfo);

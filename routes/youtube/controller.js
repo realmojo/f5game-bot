@@ -467,6 +467,22 @@ const getSSYoutubeDownload = async (req, res) => {
   }
 };
 
+const getUrlData = async (req, res) => {
+  try {
+    const { url } = req.query;
+    if (!url) {
+      throw new Error("url required");
+    }
+    const { data } = await axios.get(url);
+    const $ = cheerio.load(data);
+    const title = $("title").text().replace("블라인드 | 썸·연애: ", "");
+    const content = $("#contentArea").text();
+    return res.status(200).send({ title, content });
+  } catch (e) {
+    return res.status(200).send({ status: "err", message: e.message });
+  }
+};
+
 module.exports = {
   getYoutubeScript,
   getYoutubeDownloadInfo,
@@ -475,4 +491,5 @@ module.exports = {
   getProgressing,
   getSSYoutubeDownload,
   getAjaxInfo,
+  getUrlData,
 };
